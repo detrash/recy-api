@@ -26,7 +26,7 @@ phases:
     runtime-versions:
       nodejs: 16
     commands:
-      - echo "Instal dependencies"
+      - echo "Install dependencies"
       - npm install
   pre_build:
     commands:
