@@ -5,12 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { promisify } from 'util';
+import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { expressjwt } from 'express-jwt';
 import { expressJwtSecret, GetVerificationKey } from 'jwks-rsa';
-import { Reflector } from '@nestjs/core';
 import { PERMISSION_SCOPES, Role, ROLES_KEY } from 'src/util/constants';
-import { GqlExecutionContext } from '@nestjs/graphql';
+import { promisify } from 'util';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
@@ -32,7 +32,7 @@ export class AuthorizationGuard implements CanActivate {
     // const res = httpContext.getResponse();
 
     const { req, res } = GqlExecutionContext.create(context).getContext();
-
+    console.log('------------------------------------------\n', req.headers);
     const checkJWT = promisify(
       expressjwt({
         secret: expressJwtSecret({
