@@ -7,6 +7,7 @@ import {
 import { PrismaService } from 'src/database/prisma/prisma.service';
 import { MessagesHelper } from 'src/helpers/messages.helper';
 import { ResidueType } from 'src/http/graphql/entities/form.entity';
+import { DocumentType } from 'src/http/graphql/entities/S3.entity';
 import { CreateFormInput } from 'src/http/graphql/inputs/create-form-input';
 import { RESIDUES_FIELDS_BY_TYPE } from 'src/util/constants';
 import { S3Service } from './s3.service';
@@ -20,16 +21,24 @@ export class FormsService {
     private readonly usersService: UsersService,
   ) {}
 
-  async getFormVideoUrl(formId: string, residueType: ResidueType) {
+  async getFormDocumentsUrl(
+    formId: string,
+    residueType: ResidueType,
+    documentType: DocumentType,
+  ) {
     const formData = await this.findByFormId(formId);
 
-    const residueVideoField =
-      RESIDUES_FIELDS_BY_TYPE[residueType].videoFileNameField;
+    const residueFieldByDocument =
+      documentType === DocumentType.INVOICE
+        ? RESIDUES_FIELDS_BY_TYPE[residueType].invoiceFileNameField
+        : RESIDUES_FIELDS_BY_TYPE[residueType].videoFileNameField;
 
-    if (!formData[residueVideoField])
-      throw new BadRequestException(MessagesHelper.FORM_DOES_NOT_HAVE_VIDEO);
+    if (!formData[residueFieldByDocument])
+      throw new BadRequestException(MessagesHelper.FORM_DOES_NOT_HAVE_DOCUMENT);
 
-    return this.s3Service.getPreSignedObjectUrl(formData[residueVideoField]);
+    return this.s3Service.getPreSignedObjectUrl(
+      formData[residueFieldByDocument],
+    );
   }
 
   async findByFormId(id: string) {

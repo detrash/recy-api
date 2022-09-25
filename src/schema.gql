@@ -51,19 +51,6 @@ type Form {
   createdAt: DateTime!
 }
 
-type AggregateFormData {
-  plasticKgs: Float
-  paperKgs: Float
-  metalKgs: Float
-  glassKgs: Float
-  organicKgs: Float
-}
-
-type AggregateFormByUserProfileResponse {
-  id: ProfileType!
-  data: AggregateFormData!
-}
-
 type S3 {
   videoCreateUrl: String
   videoFileName: String
@@ -79,6 +66,19 @@ enum ResidueType {
   ORGANIC
   PAPER
   PLASTIC
+}
+
+type AggregateFormData {
+  plasticKgs: Float
+  paperKgs: Float
+  metalKgs: Float
+  glassKgs: Float
+  organicKgs: Float
+}
+
+type AggregateFormByUserProfileResponse {
+  id: ProfileType!
+  data: AggregateFormData!
 }
 
 type CreateFormResponse {
@@ -113,8 +113,14 @@ type Query {
   forms: [Form!]!
   aggregateFormByUserProfile: [AggregateFormByUserProfileResponse!]!
   form(formId: String!): Form!
-  formVideoUrlByResidue(formId: String!, residueType: ResidueType!): String!
+  formDocumentsUrlByResidue(formId: String!, residueType: ResidueType!, documentType: DocumentType!): String!
   me: Me!
+}
+
+"""Represents the document type"""
+enum DocumentType {
+  INVOICE
+  VIDEO
 }
 
 type Mutation {

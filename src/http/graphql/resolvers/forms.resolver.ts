@@ -12,6 +12,7 @@ import { FormsService } from 'src/services/forms.service';
 import { UsersService } from 'src/services/users.service';
 import { Role } from 'src/util/constants';
 import { Form, ResidueType } from '../entities/form.entity';
+import { DocumentType } from '../entities/S3.entity';
 import { CreateFormInput } from '../inputs/create-form-input';
 import { AggregateFormByUserProfileResponse } from '../responses/aggregate-form-by-user-profile-response';
 import { CreateFormResponse } from '../responses/create-form-response';
@@ -48,11 +49,17 @@ export class FormsResolver {
 
   @Query(() => String)
   @Roles(Role.Admin)
-  formVideoUrlByResidue(
+  formDocumentsUrlByResidue(
     @Args('formId') formId: string,
     @Args('residueType', { type: () => ResidueType }) residueType: ResidueType,
+    @Args('documentType', { type: () => DocumentType })
+    documentType: DocumentType,
   ) {
-    return this.formsService.getFormVideoUrl(formId, residueType);
+    return this.formsService.getFormDocumentsUrl(
+      formId,
+      residueType,
+      documentType,
+    );
   }
 
   @Mutation(() => CreateFormResponse)
