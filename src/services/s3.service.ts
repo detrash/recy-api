@@ -30,6 +30,7 @@ export class S3Service implements IS3Service {
     const getObjectCommand = new GetObjectCommand({
       Bucket: this.configService.get('BUCKET_NAME') ?? '',
       Key: fileName,
+      ResponseContentDisposition: `attachment; filename="${fileName}"`,
     });
 
     const authorizedUrlGetObject = await getSignedUrl(
