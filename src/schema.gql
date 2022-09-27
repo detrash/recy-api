@@ -47,6 +47,7 @@ type Form {
   organicInvoiceFileName: String
   isFormAuthorizedByAdmin: Boolean
   walletAddress: String
+  formMetadataUrl: String
   user: User!
   createdAt: DateTime!
 }
@@ -86,6 +87,11 @@ type CreateFormResponse {
 
   """Field regarding informations on AWS S3"""
   s3: [S3!]
+}
+
+type SubmitNFTResponse {
+  createMetadataUrl: String!
+  body: String!
 }
 
 type Permissions {
@@ -128,6 +134,8 @@ type Mutation {
   updateUser(data: UpdateUserInput!): User!
   createForm(data: CreateFormInput!): CreateFormResponse!
   authorizeForm(formId: String!, isFormAuthorized: Boolean!): Form!
+  submitFormImage(formId: String!): String!
+  createNFT(formId: String!): SubmitNFTResponse!
 }
 
 input CreateUserInput {
