@@ -17,6 +17,14 @@ enum ProfileType {
   WASTE_GENERATOR
 }
 
+enum ResidueType {
+  GLASS
+  METAL
+  ORGANIC
+  PAPER
+  PLASTIC
+}
+
 model User {
   id         String @id @default(uuid())
   authUserId String @unique
@@ -39,31 +47,30 @@ model Form {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  plasticKgs             Decimal @default(0)
-  plasticVideoFileName   String?
-  plasticInvoiceFileName String?
-
-  paperKgs             Decimal @default(0)
-  paperVideoFileName   String?
-  paperInvoiceFilename String?
-
-  metalKgs             Decimal @default(0)
-  metalVideoFileName   String?
-  metalInvoiceFileName String?
-
-  glassKgs             Decimal @default(0)
-  glassVideoFileName   String?
-  glassInvoiceFileName String?
-
-  organicKgs             Decimal @default(0)
-  organicVideoFileName   String?
-  organicInvoiceFileName String?
+  document Document[]
 
   isFormAuthorizedByAdmin Boolean?
 
   formMetadataUrl String?
 
   walletAddress String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Document {
+  id String @id @default(uuid())
+
+  formId String
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  residueType ResidueType
+
+  amount Decimal
+
+  videoFileName    String?
+  invoicesFileName String[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
