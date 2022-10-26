@@ -8,6 +8,8 @@ import { MessagesHelper } from 'src/helpers/messages.helper';
 import { ResidueType } from 'src/http/graphql/entities/document.entity';
 import { ProfileType } from 'src/http/graphql/entities/user.entity';
 import { CreateFormInput } from 'src/http/graphql/inputs/create-form-input';
+import { ListFiltersInput } from 'src/http/graphql/inputs/list-filters-input';
+import { getFilters } from 'src/util/getFilters';
 import { getResidueTitle } from 'src/util/getResidueTitle';
 import { DocumentsService } from './documents.service';
 import { S3Service } from './s3.service';
@@ -34,8 +36,17 @@ export class FormsService {
     return form;
   }
 
-  listAllForms() {
+  listAllForms(filters?: ListFiltersInput) {
+    let filterOptions = [];
+
+    if (filters) {
+      filterOptions = getFilters(filters);
+    }
+
     return this.prismaService.form.findMany({
+      where: {
+        AND: filterOptions,
+      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -213,10 +224,17 @@ export class FormsService {
     };
   }
 
-  async listAllFromUserByUserId(userId: string) {
+  async listAllFromUserByUserId(userId: string, filters?: ListFiltersInput) {
+    let filterOptions = [];
+
+    if (filters) {
+      filterOptions = getFilters(filters);
+    }
+
     return this.prismaService.form.findMany({
       where: {
         userId,
+        AND: filterOptions,
       },
     });
   }
