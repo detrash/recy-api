@@ -48,7 +48,7 @@ export class FormsService {
         AND: filterOptions,
       },
       orderBy: {
-        createdAt: 'desc',
+        updatedAt: 'desc',
       },
     });
   }
@@ -299,6 +299,10 @@ export class FormsService {
       },
       [
         {
+          trait_type: 'Originating email',
+          value: user.email,
+        },
+        {
           trait_type: 'Originating wallet',
           value: form.walletAddress || '0x0',
         },
@@ -318,9 +322,9 @@ export class FormsService {
 
     const JsonMetadata = {
       attributes: residueAttributes,
-      description: 'RECY Report',
+      description: 'Recycling and composting report',
       image: `${objectUrl.origin}/images/${form.id}.png`,
-      name: user.email,
+      name: 'RECY Report',
     };
 
     const formMetadataUrl = `${objectUrl.origin}${objectUrl.pathname}`;
