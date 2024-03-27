@@ -13,6 +13,8 @@ export enum ResidueType {
   ORGANIC = 'ORGANIC',
   PAPER = 'PAPER',
   PLASTIC = 'PLASTIC',
+  TEXTILE = 'TEXTILE',
+  LANDFILL_WASTE = 'LANDFILL_WASTE',
 }
 
 registerEnumType(ResidueType, {
