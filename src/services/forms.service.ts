@@ -100,24 +100,43 @@ export class FormsService {
       }),
     ]);
 
+    const recyclerData = aggregateRecyclerData.map((data) => {
+      return {
+        amount: data._sum.amount,
+        residueType: data.residueType,
+      };
+    });
+
+    const wasteGeneratorData = aggregateWasteGenData.map((data) => {
+      return {
+        amount: data._sum.amount,
+        residueType: data.residueType,
+      };
+    });
+
+    const totalData = recyclerData.map((data) => {
+      const currentWaste = wasteGeneratorData.find(
+        (waste) => waste.residueType === data.residueType,
+      );
+      return {
+        amount:
+          Number(data.amount) + Number(currentWaste ? currentWaste.amount : 0),
+        residueType: data.residueType,
+      };
+    });
+
     return [
       {
         id: 'RECYCLER',
-        data: aggregateRecyclerData.map((data) => {
-          return {
-            amount: data._sum.amount,
-            residueType: data.residueType,
-          };
-        }),
+        data: recyclerData,
       },
       {
         id: 'WASTE_GENERATOR',
-        data: aggregateWasteGenData.map((data) => {
-          return {
-            amount: data._sum.amount,
-            residueType: data.residueType,
-          };
-        }),
+        data: wasteGeneratorData,
+      },
+      {
+        id: 'TOTAL',
+        data: totalData,
       },
     ];
   }

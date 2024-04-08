@@ -1,6 +1,5 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { ResidueType } from '../entities/document.entity';
-import { ProfileType } from '../entities/user.entity';
 
 @ObjectType()
 class AggregateFormData {
@@ -13,8 +12,8 @@ class AggregateFormData {
 
 @ObjectType()
 export class AggregateFormByUserProfileResponse {
-  @Field(() => ProfileType)
-  id: ProfileType;
+  @Field()
+  id: string;
 
   @Field(() => [AggregateFormData])
   data: AggregateFormData[];

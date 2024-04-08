@@ -74,7 +74,7 @@ type AggregateFormData {
 }
 
 type AggregateFormByUserProfileResponse {
-  id: ProfileType!
+  id: String!
   data: [AggregateFormData!]!
 }
 
