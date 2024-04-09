@@ -10,4 +10,7 @@ ADD COLUMN     "glassVideoFileName" TEXT,
 ADD COLUMN     "metalVideoFileName" TEXT,
 ADD COLUMN     "organicVideoFileName" TEXT,
 ADD COLUMN     "paperVideoFileName" TEXT,
-ADD COLUMN     "plasticVideoFileName" TEXT;
+ADD COLUMN     "plasticVideoFileName" TEXT,
+ADD COLUMN     "textileVideoFileName" TEXT,
+ADD COLUMN     "landfillwasteVideoFileName" TEXT;
+

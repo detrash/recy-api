@@ -23,6 +23,8 @@ enum ResidueType {
   ORGANIC
   PAPER
   PLASTIC
+  TEXTILE
+  LANDFILL_WASTE
 }
 
 model User {
