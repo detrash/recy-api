@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "DocumentType" AS ENUM ('GLASS', 'METAL', 'ORGANIC', 'PAPER', 'PLASTIC');
+CREATE TYPE "DocumentType" AS ENUM ('GLASS', 'METAL', 'ORGANIC', 'PAPER', 'PLASTIC', 'TEXTILE','LANDFILL_WASTE');
 
 -- CreateTable
 CREATE TABLE "Document" (

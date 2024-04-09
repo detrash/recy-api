@@ -28,6 +28,8 @@ CREATE TABLE "Form" (
     "userId" TEXT NOT NULL,
     "recyclerVideoUrl" TEXT,
     "plasticKgs" DECIMAL(65,30),
+    "textileKgs" DECIMAL(65,30),
+    "landfillwasteKgs" DECIMAL(65,30),
     "paperKgs" DECIMAL(65,30),
     "metalKgs" DECIMAL(65,30),
     "glassKgs" DECIMAL(65,30),
