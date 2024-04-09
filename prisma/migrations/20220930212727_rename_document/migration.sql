@@ -6,7 +6,7 @@
 
 */
 -- CreateEnum
-CREATE TYPE "ResidueType" AS ENUM ('GLASS', 'METAL', 'ORGANIC', 'PAPER', 'PLASTIC');
+CREATE TYPE "ResidueType" AS ENUM ('GLASS', 'METAL', 'ORGANIC', 'PAPER', 'PLASTIC', 'TEXTILE','LANDFILL_WASTE');
 
 -- AlterTable
 ALTER TABLE "Document" DROP COLUMN "documentType",

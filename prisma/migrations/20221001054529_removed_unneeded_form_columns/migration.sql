@@ -33,4 +33,10 @@ DROP COLUMN "paperKgs",
 DROP COLUMN "paperVideoFileName",
 DROP COLUMN "plasticInvoiceFileName",
 DROP COLUMN "plasticKgs",
-DROP COLUMN "plasticVideoFileName";
+DROP COLUMN "plasticVideoFileName",
+DROP COLUMN "textileInvoiceFileName",
+DROP COLUMN "textileKgs",
+DROP COLUMN "textileVideoFileName",
+DROP COLUMN "landfillwasteInvoiceFileName",
+DROP COLUMN "landfillwasteKgs",
+DROP COLUMN "landfillwasteVideoFileName";
