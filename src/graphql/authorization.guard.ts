@@ -7,7 +7,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { expressjwt } from 'express-jwt';
+import { Response } from 'express';
+import { expressjwt, Request } from 'express-jwt';
 import { expressJwtSecret, GetVerificationKey } from 'jwks-rsa';
 import { PERMISSION_SCOPES, Role, ROLES_KEY } from 'src/util/constants';
 import { promisify } from 'util';
@@ -26,7 +27,16 @@ export class AuthorizationGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const { req, res } = GqlExecutionContext.create(context).getContext();
+    const { req, res } = GqlExecutionContext.create(context).getContext<{
+      req: Request;
+      res: Response;
+    }>();
+
+    // Only check for permissions on GraphQL requests
+    if (req.path !== '/graphql') {
+      return true;
+    }
+
     const checkJWT = promisify(
       expressjwt({
         secret: expressJwtSecret({

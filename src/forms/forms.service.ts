@@ -5,16 +5,16 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 import { MessagesHelper } from 'src/helpers/messages.helper';
+import { getFilters } from 'src/util/getFilters';
+import { getResidueTitle } from 'src/util/getResidueTitle';
+
+import { DocumentsService } from '@/documents/documents.service';
 import { ResidueType } from '@/graphql/entities/document.entity';
 import { ProfileType } from '@/graphql/entities/user.entity';
 import { CreateFormInput } from '@/graphql/inputs/create-form-input';
 import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
-import { getFilters } from 'src/util/getFilters';
-import { getResidueTitle } from 'src/util/getResidueTitle';
-
-import { DocumentsService } from './documents.service';
-import { S3Service } from '../s3/s3.service';
-import { UsersService } from '../users/users.service';
+import { S3Service } from '@/s3/s3.service';
+import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class FormsService {
