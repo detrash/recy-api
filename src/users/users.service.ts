@@ -5,10 +5,11 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 import { MessagesHelper } from 'src/helpers/messages.helper';
-import { CreateUserInput } from 'src/http/graphql/inputs/create-user-input';
-import { ListFiltersInput } from 'src/http/graphql/inputs/list-filters-input';
-import { UpdateUserInput } from 'src/http/graphql/inputs/update-user-input';
 import { getFilters } from 'src/util/getFilters';
+
+import { CreateUserInput } from '@/graphql/inputs/create-user-input';
+import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
+import { UpdateUserInput } from '@/graphql/inputs/update-user-input';
 
 @Injectable()
 export class UsersService {

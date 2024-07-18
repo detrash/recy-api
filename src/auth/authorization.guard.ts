@@ -21,16 +21,11 @@ export class AuthorizationGuard implements CanActivate {
     private configService: ConfigService,
     private reflector: Reflector,
   ) {
-    this.AUTH0_AUDIENCE = this.configService.get('AUTH0_AUDIENCE') ?? '';
-    this.AUTH0_DOMAIN = this.configService.get('AUTH0_DOMAIN') ?? '';
+    this.AUTH0_AUDIENCE = this.configService.get('AUTH0_AUDIENCE');
+    this.AUTH0_DOMAIN = this.configService.get('AUTH0_DOMAIN');
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // const httpContext = context.switchToHttp();
-
-    // const req = httpContext.getRequest();
-    // const res = httpContext.getResponse();
-
     const { req, res } = GqlExecutionContext.create(context).getContext();
     const checkJWT = promisify(
       expressjwt({

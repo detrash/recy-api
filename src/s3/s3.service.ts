@@ -7,7 +7,8 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
-import { IS3CreateResponseData, IS3Service } from 'src/http/dto/s3.dto';
+
+import { IS3CreateResponseData, IS3Service } from '@/dto/s3.dto';
 
 @Injectable()
 export class S3Service implements IS3Service {
