@@ -5,6 +5,7 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
+
 import { Form } from './form.entity';
 
 export enum ResidueType {

@@ -1,4 +1,5 @@
 import { Field, Float, InputType } from '@nestjs/graphql';
+
 import { ResidueType } from '../entities/document.entity';
 
 @InputType()

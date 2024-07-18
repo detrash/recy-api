@@ -2,6 +2,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Roles } from 'src/http/auth/roles.decorator';
 import { DocumentsService } from 'src/services/documents.service';
 import { Role } from 'src/util/constants';
+
 import { Document, ResidueType } from '../entities/document.entity';
 
 @Resolver(() => Document)

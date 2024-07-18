@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+
 import { ProfileType } from '../entities/user.entity';
 
 @InputType()
