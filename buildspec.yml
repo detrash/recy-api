@@ -1,22 +1,21 @@
 version: 0.2
 
 #env:
-  #variables:
-     # key: "value"
-     # key: "value"
-  #parameter-store:
-     # key: "value"
-     # key: "value"
-  #secrets-manager:
-     # key: secret-id:json-key:version-stage:version-id
-     # key: secret-id:json-key:version-stage:version-id
+#variables:
+# key: "value"
+# key: "value"
+#parameter-store:
+# key: "value"
+# key: "value"
+#secrets-manager:
+# key: secret-id:json-key:version-stage:version-id
+# key: secret-id:json-key:version-stage:version-id
 phases:
   install:
-    # runtime-versions:
-    #   nodejs: 16
+    runtime-versions:
+      nodejs: 20
     commands:
-      - echo "Install dependencies & Node 16"
-      - n 16
+      - echo "Install dependencies"
       - npm install
   pre_build:
     commands:
@@ -26,17 +25,17 @@ phases:
     commands:
       - npm run build
   #post_build:
-    #commands:
-      # - command
-      # - command
+  #commands:
+  # - command
+  # - command
 #reports:
-  #report-name-or-arn:
-    #files:
-      # - location
-      # - location
-    #base-directory: location
-    #discard-paths: yes
-    #file-format: JunitXml | CucumberJson
+#report-name-or-arn:
+#files:
+# - location
+# - location
+#base-directory: location
+#discard-paths: yes
+#file-format: JunitXml | CucumberJson
 artifacts:
   files:
     - '**/*'
@@ -45,5 +44,5 @@ artifacts:
   #discard-paths: yes
   #base-directory: location
 #cache:
-  #paths:
-    # - paths
+#paths:
+# - paths

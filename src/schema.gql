@@ -19,6 +19,8 @@ enum ResidueType {
   ORGANIC
   PAPER
   PLASTIC
+  TEXTILE
+  LANDFILL_WASTE
 }
 
 """
@@ -157,6 +159,8 @@ input CreateFormInput {
   ORGANIC: ResidueInput
   PAPER: ResidueInput
   PLASTIC: ResidueInput
+  TEXTILE: ResidueInput
+  LANDFILL_WASTE: ResidueInput
   walletAddress: String
 }
 
