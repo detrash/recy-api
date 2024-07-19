@@ -11,6 +11,8 @@ import { CreateUserInput } from '@/graphql/inputs/create-user-input';
 import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
 import { UpdateUserInput } from '@/graphql/inputs/update-user-input';
 
+import { FindUserDto } from './dtos/find-user.dto';
+
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
@@ -64,7 +66,11 @@ export class UsersService {
     return currentUser;
   }
 
-  findAll(filters?: ListFiltersInput) {
+  /**
+   *
+   * @deprecated Use `findAllNew` instead
+   */
+  async findAll(filters?: ListFiltersInput) {
     let filterOptions = [];
 
     if (filters) {
@@ -76,6 +82,32 @@ export class UsersService {
         AND: filterOptions,
       },
     });
+  }
+
+  async findAllNew(args: FindUserDto) {
+    const { page, limit, orderBy, sortBy, ...filters } = args;
+
+    const users = await this.prisma.user.findMany({
+      where: filters,
+      take: limit,
+      skip: (page - 1) * limit,
+      orderBy: {
+        [sortBy]: orderBy,
+      },
+    });
+
+    const total = await this.prisma.user.count({
+      where: filters,
+    });
+
+    return {
+      data: users,
+      pagination: {
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findUserByAuthUserId(authUserId: string) {
