@@ -3,6 +3,7 @@ import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -23,8 +24,13 @@ export class UsersController {
     summary: 'Get user by ID',
     description: 'Returns user',
   })
+  @ApiParam({
+    type: 'string',
+    name: 'id',
+    example: '0000742d-ee03-463b-a558-d79728f8a171',
+  })
   @ApiOkResponse({
-    description: 'Returns deploy hash',
+    description: 'Returns user',
     type: User,
   })
   findUserById(@Param('id') id: string) {
@@ -33,8 +39,13 @@ export class UsersController {
 
   @Get('/auth0/:auth0Id')
   @ApiOperation({
-    summary: 'Get user by ID',
+    summary: 'Get user by Auth0 ID',
     description: 'Returns user',
+  })
+  @ApiParam({ type: 'string', name: 'auth0Id', example: 'auth0|1234567890' })
+  @ApiOkResponse({
+    description: 'Returns user',
+    type: User,
   })
   findUserByAuth0Id(@Param('auth0Id') auth0Id: string) {
     return this.usersService.findUserByAuthUserId(auth0Id);

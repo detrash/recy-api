@@ -8,7 +8,7 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { Type as DataType } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsNumber, IsOptional, Max, Min } from 'class-validator';
 
 class Pagination {
   @ApiProperty()
@@ -48,14 +48,19 @@ export function PaginationQuery<T>(superClass: Constructor<T>) {
     @IsNumber()
     @IsOptional()
     @DataType(() => Number)
-    @ApiPropertyOptional({ default: 1 })
+    @ApiPropertyOptional({ default: 1, description: 'Page number' })
     @Min(1)
     readonly page: number = 1;
 
     @IsNumber()
     @IsOptional()
     @DataType(() => Number)
-    @ApiPropertyOptional({ default: 20 })
+    @ApiPropertyOptional({
+      default: 20,
+      description: 'Number of items per page',
+    })
+    @Min(5)
+    @Max(100)
     readonly limit: number = 20;
 
     @IsOptional()
@@ -64,13 +69,15 @@ export function PaginationQuery<T>(superClass: Constructor<T>) {
         superClass['_OPENAPI_METADATA_FACTORY'](),
       ),
       default: 'createdAt',
+      description: 'Sort by field',
     })
     readonly sortBy: string = 'createdAt';
 
     @IsOptional()
     @ApiPropertyOptional({
       enum: ['asc', 'desc'],
-      default: 'createdAt',
+      default: 'asc',
+      description: 'Sort order',
     })
     readonly orderBy: string = 'asc';
   }
