@@ -16,6 +16,8 @@ import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
 import { S3Service } from '@/s3/s3.service';
 import { UsersService } from '@/users/users.service';
 
+import { FindFormDto } from './dtos/find-form.dto';
+
 @Injectable()
 export class FormsService {
   constructor(
@@ -52,6 +54,35 @@ export class FormsService {
         updatedAt: 'desc',
       },
     });
+  }
+
+  async findAllNew(args: FindFormDto) {
+    const { page, limit, orderBy, sortBy, includeDocuments, ...filters } = args;
+
+    const forms = await this.prismaService.form.findMany({
+      where: filters,
+      take: limit,
+      skip: (page - 1) * limit,
+      orderBy: {
+        [sortBy]: orderBy,
+      },
+      include: {
+        document: includeDocuments ? true : false,
+      },
+    });
+
+    const total = await this.prismaService.form.count({
+      where: filters,
+    });
+
+    return {
+      data: forms,
+      pagination: {
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async aggregateFormByUserProfile() {
