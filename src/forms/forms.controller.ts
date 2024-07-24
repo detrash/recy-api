@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -9,8 +9,12 @@ import {
 
 import { ApiOkResponsePaginated } from '@/dto/paginated.dto';
 
-import { FindFormDto } from './dtos/find-form.dto';
-import { Form } from './dtos/form.dto';
+import {
+  AggregateFormByUserProfileResponse,
+  CreateFormInput,
+  FindFormDto,
+  Form,
+} from './dtos';
 import { FormsService } from './forms.service';
 
 @ApiTags('forms')
@@ -18,6 +22,49 @@ import { FormsService } from './forms.service';
 @Controller({ path: 'forms', version: '1' })
 export class FormsController {
   constructor(private readonly formsService: FormsService) {}
+
+  @Get('/status')
+  @ApiOperation({
+    summary: 'form status',
+    description: 'Returns form status by user profile',
+  })
+  @ApiOkResponse({
+    description: 'form status',
+    type: AggregateFormByUserProfileResponse,
+  })
+  aggregateFormByUserProfile() {
+    return this.formsService.aggregateFormByUserProfile();
+  }
+
+  @Post(':formId/image-url')
+  @ApiOperation({
+    summary: 'returns presigned url for image upload',
+    description: 'Returns presigned url for image upload',
+  })
+  submitFormImage(@Param('formId') formId: string) {
+    return this.formsService.submitFormImage(formId);
+  }
+
+  @Put(':formId/authorize')
+  @ApiOperation({
+    summary: 'authorize form by admin',
+    description: 'Returns presigned url for image upload',
+  })
+  @ApiOkResponse({
+    description: 'form object',
+    type: Form,
+  })
+  authorizeForm(
+    @Param('formId') formId: string,
+    @Query('isFormAuthorized') isFormAuthorized: boolean,
+  ) {
+    return this.formsService.authorizeForm(formId, isFormAuthorized);
+  }
+
+  @Post('')
+  createForm(@Body() createFormDto: CreateFormInput) {
+    return this.formsService.createForm(createFormDto);
+  }
 
   @Get(':id')
   @ApiOperation({

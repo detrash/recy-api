@@ -7,7 +7,7 @@ import { ToBoolean } from '@/util/to-boolean';
 import { Form } from './form.dto';
 
 export class FindFormDto extends PaginationQuery(
-  PartialType(OmitType(Form, ['documents'] as const)),
+  PartialType(OmitType(Form, ['documents', 'user'] as const)),
 ) {
   @IsOptional()
   @IsBoolean()
