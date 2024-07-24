@@ -62,6 +62,18 @@ export class FormsController {
     return this.formsService.authorizeForm(formId, isFormAuthorized);
   }
 
+  @Put(':formId/metadata')
+  @ApiOperation({
+    summary: 'creates form metadata',
+    description: 'creates form metadata for NFT',
+  })
+  @ApiOkResponse({
+    description: 'form metadata',
+  })
+  createFormMetadata(@Param('formId') formId: string) {
+    return this.formsService.createFormMetadata(formId);
+  }
+
   @Post('')
   @ApiOperation({
     summary: 'creates a new form',
