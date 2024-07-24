@@ -1,7 +1,14 @@
 import { Field, Float, InputType, ObjectType } from '@nestjs/graphql';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 import { ResidueType } from '@/documents';
 
@@ -9,12 +16,17 @@ import { Form } from './form.dto';
 
 @InputType()
 export class ResidueInput {
+  @IsNumber()
+  @ValidateIf((object, value) => value !== null)
   @Field(() => Float, { nullable: true })
-  amount: number;
+  amount: number | null;
 
+  @IsOptional()
+  @IsString()
   @Field({ nullable: true })
   videoFileName?: string;
 
+  @IsArray()
   @Field(() => [String])
   invoicesFileName: string[];
 }
@@ -22,10 +34,10 @@ export class ResidueInput {
 @ObjectType()
 export class S3 {
   @Field({ nullable: true })
-  videoCreateUrl: string;
+  videoCreateUrl: string | null;
 
   @Field({ nullable: true })
-  videoFileName: string;
+  videoFileName: string | null;
 
   @Field(() => [String])
   invoicesCreateUrl: string[];
@@ -48,6 +60,7 @@ export class CreateFormDto {
   authUserId: string;
 
   @Type(() => ResidueInput)
+  @ValidateIf((object, value) => !!value)
   @ApiPropertyOptional({
     type: ResidueInput,
   })
@@ -55,6 +68,7 @@ export class CreateFormDto {
   [ResidueType.GLASS]?: ResidueInput;
 
   @Type(() => ResidueInput)
+  @ValidateIf((object, value) => !!value)
   @ApiPropertyOptional({
     type: ResidueInput,
   })
@@ -62,6 +76,7 @@ export class CreateFormDto {
   [ResidueType.METAL]?: ResidueInput;
 
   @Type(() => ResidueInput)
+  @ValidateIf((object, value) => !!value)
   @ApiPropertyOptional({
     type: ResidueInput,
   })
@@ -69,6 +84,7 @@ export class CreateFormDto {
   [ResidueType.ORGANIC]?: ResidueInput;
 
   @Type(() => ResidueInput)
+  @ValidateIf((object, value) => !!value)
   @ApiPropertyOptional({
     type: ResidueInput,
   })
@@ -76,6 +92,7 @@ export class CreateFormDto {
   [ResidueType.PAPER]?: ResidueInput;
 
   @Type(() => ResidueInput)
+  @ValidateIf((object, value) => !!value)
   @ApiPropertyOptional({
     type: ResidueInput,
   })
@@ -83,6 +100,7 @@ export class CreateFormDto {
   [ResidueType.PLASTIC]?: ResidueInput;
 
   @Type(() => ResidueInput)
+  @ValidateIf((object, value) => !!value)
   @ApiPropertyOptional({
     type: ResidueInput,
   })
@@ -90,6 +108,7 @@ export class CreateFormDto {
   [ResidueType.TEXTILE]?: ResidueInput;
 
   @Type(() => ResidueInput)
+  @ValidateIf((object, value) => !!value)
   @ApiPropertyOptional({
     type: ResidueInput,
   })

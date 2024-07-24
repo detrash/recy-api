@@ -189,6 +189,7 @@ export class FormsService {
         residueProps?.videoFileName || residueProps.invoicesFileName.length,
     );
 
+    // Only RECYCLER and WASTE_GENERATOR can upload videos and invoices
     if (
       user.profileType !== ProfileType.RECYCLER &&
       user.profileType !== ProfileType.WASTE_GENERATOR &&
