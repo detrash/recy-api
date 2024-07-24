@@ -15,7 +15,7 @@ import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
 import { S3Service } from '@/s3/s3.service';
 import { UsersService } from '@/users/users.service';
 
-import { CreateFormInput, FindFormDto } from './dtos';
+import { CreateFormDto, FindFormDto } from './dtos';
 
 @Injectable()
 export class FormsService {
@@ -181,7 +181,7 @@ export class FormsService {
     authUserId,
     walletAddress,
     ...restFormData
-  }: CreateFormInput) {
+  }: CreateFormDto) {
     const user = await this.usersService.findUserByAuthUserId(authUserId);
 
     const hasUploadedVideoOrInvoice = Object.entries(restFormData).some(

@@ -133,15 +133,15 @@ type Query {
 }
 
 type Mutation {
-  createUser(data: CreateUserInput!): User!
+  createUser(data: CreateUserDto!): User!
   updateUser(data: UpdateUserInput!): User!
-  createForm(data: CreateFormInput!): CreateFormResponse!
+  createForm(data: CreateFormDto!): CreateFormResponse!
   authorizeForm(formId: String!, isFormAuthorized: Boolean!): Form!
   submitFormImage(formId: String!): String!
   createFormMetadata(formId: String!): SubmitNFTResponse!
 }
 
-input CreateUserInput {
+input CreateUserDto {
   name: String!
   profileType: ProfileType!
   phoneNumber: String!
@@ -155,7 +155,9 @@ input UpdateUserInput {
   email: String
 }
 
-input CreateFormInput {
+input CreateFormDto {
+  """Auth0 User ID"""
+  authUserId: String!
   GLASS: ResidueInput
   METAL: ResidueInput
   ORGANIC: ResidueInput

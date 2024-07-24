@@ -5,6 +5,7 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 import { Timestamp } from '@/dto/timestamp.dto';
 import { Form } from '@/forms';
@@ -41,6 +42,7 @@ export class Document extends Timestamp {
   @Field(() => [String])
   invoicesFileName: string[];
 
+  @ApiHideProperty()
   @Field(() => Form)
   form: Form;
   formId: string;

@@ -1,1 +1,1 @@
-export { CreateFormInput } from '@/forms';
+export { CreateFormDto as CreateFormInput } from '@/forms';

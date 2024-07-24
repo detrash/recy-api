@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 import { Timestamp } from '@/dto/timestamp.dto';
@@ -63,6 +63,7 @@ export class User extends Timestamp {
   @Field(() => ProfileType)
   profileType: ProfileType;
 
+  @ApiHideProperty()
   @Field(() => [Form])
   forms: Form[];
 }

@@ -11,7 +11,8 @@ import { ApiOkResponsePaginated } from '@/dto/paginated.dto';
 
 import {
   AggregateFormByUserProfileResponse,
-  CreateFormInput,
+  CreateFormDto,
+  CreateFormResponse,
   FindFormDto,
   Form,
 } from './dtos';
@@ -62,7 +63,15 @@ export class FormsController {
   }
 
   @Post('')
-  createForm(@Body() createFormDto: CreateFormInput) {
+  @ApiOperation({
+    summary: 'creates a new form',
+    description: 'returns',
+  })
+  @ApiOkResponse({
+    description: 'form object and urls for upload',
+    type: CreateFormResponse,
+  })
+  createForm(@Body() createFormDto: CreateFormDto) {
     return this.formsService.createForm(createFormDto);
   }
 
