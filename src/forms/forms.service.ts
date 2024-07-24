@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma/prisma.service';
@@ -8,16 +9,18 @@ import { MessagesHelper } from 'src/helpers/messages.helper';
 import { getFilters } from 'src/util/getFilters';
 import { getResidueTitle } from 'src/util/getResidueTitle';
 
-import { DocumentsService } from '@/documents/documents.service';
-import { ResidueType } from '@/graphql/entities/document.entity';
+import { DocumentsService, ResidueType } from '@/documents';
 import { ProfileType } from '@/graphql/entities/user.entity';
-import { CreateFormInput } from '@/graphql/inputs/create-form-input';
 import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
 import { S3Service } from '@/s3/s3.service';
 import { UsersService } from '@/users/users.service';
 
+import { CreateFormDto, FindFormDto } from './dtos';
+
 @Injectable()
 export class FormsService {
+  private readonly logger = new Logger(FormsService.name);
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly s3Service: S3Service,
@@ -37,6 +40,9 @@ export class FormsService {
     return form;
   }
 
+  /**
+   * @deprecated
+   */
   listAllForms(filters?: ListFiltersInput) {
     let filterOptions = [];
 
@@ -52,6 +58,35 @@ export class FormsService {
         updatedAt: 'desc',
       },
     });
+  }
+
+  async findAllNew(args: FindFormDto) {
+    const { page, limit, orderBy, sortBy, includeDocuments, ...filters } = args;
+
+    const forms = await this.prismaService.form.findMany({
+      where: filters,
+      take: limit,
+      skip: (page - 1) * limit,
+      orderBy: {
+        [sortBy]: orderBy,
+      },
+      include: {
+        document: includeDocuments ? true : false,
+      },
+    });
+
+    const total = await this.prismaService.form.count({
+      where: filters,
+    });
+
+    return {
+      data: forms,
+      pagination: {
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async aggregateFormByUserProfile() {
@@ -146,7 +181,7 @@ export class FormsService {
     authUserId,
     walletAddress,
     ...restFormData
-  }: CreateFormInput) {
+  }: CreateFormDto) {
     const user = await this.usersService.findUserByAuthUserId(authUserId);
 
     const hasUploadedVideoOrInvoice = Object.entries(restFormData).some(
@@ -154,6 +189,7 @@ export class FormsService {
         residueProps?.videoFileName || residueProps.invoicesFileName.length,
     );
 
+    // Only RECYCLER and WASTE_GENERATOR can upload videos and invoices
     if (
       user.profileType !== ProfileType.RECYCLER &&
       user.profileType !== ProfileType.WASTE_GENERATOR &&
