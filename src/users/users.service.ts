@@ -7,10 +7,10 @@ import { PrismaService } from 'src/database/prisma/prisma.service';
 import { MessagesHelper } from 'src/helpers/messages.helper';
 import { getFilters } from 'src/util/getFilters';
 
-import { CreateUserInput } from '@/graphql/inputs/create-user-input';
 import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
 import { UpdateUserInput } from '@/graphql/inputs/update-user-input';
 
+import { CreateUserDto } from './dtos';
 import { FindUserDto } from './dtos/find-user.dto';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class UsersService {
     });
   }
 
-  async createUser({ authUserId, ...userInfo }: CreateUserInput) {
+  async createUser({ authUserId, ...userInfo }: CreateUserDto) {
     const userExists = await this.prisma.user.findUnique({
       where: {
         authUserId,

@@ -142,17 +142,21 @@ type Mutation {
 }
 
 input CreateUserDto {
+  """Auth0 User ID"""
+  authUserId: String!
   name: String!
-  profileType: ProfileType!
-  phoneNumber: String!
   email: String!
+  phoneNumber: String!
+  profileType: ProfileType!
 }
 
 input UpdateUserInput {
+  """Auth0 User ID"""
+  authUserId: String
   name: String
-  profileType: ProfileType
-  phoneNumber: String
   email: String
+  phoneNumber: String
+  profileType: ProfileType
 }
 
 input CreateFormDto {

@@ -45,7 +45,7 @@ export class User extends Timestamp {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
-    example: 'jhon@examp.com',
+    example: 'jhon@example.com',
   })
   @Field()
   email: string;

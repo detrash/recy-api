@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -9,9 +9,7 @@ import {
 
 import { ApiOkResponsePaginated } from '@/dto/paginated.dto';
 
-import { CreateUserDto } from './dtos';
-import { FindUserDto } from './dtos/find-user.dto';
-import { User } from './dtos/user.dto';
+import { CreateUserDto, FindUserDto, UpdateUserDto, User } from './dtos';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
@@ -73,5 +71,14 @@ export class UsersController {
   })
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
+  }
+
+  @Put('')
+  @ApiOperation({
+    summary: 'updates a new user',
+    description: 'updates a new user',
+  })
+  updateUser(@Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(updateUserDto);
   }
 }
