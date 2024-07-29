@@ -7,13 +7,13 @@ export class SupportDto {
 
   @IsString()
   @IsNotEmpty()
-  company_type: string;
+  companyType: string;
 
   @IsNumber()
   @IsNotEmpty()
-  employees_quantity: number;
+  employeesQuantity: number;
 
   @IsNumber()
   @IsNotEmpty()
-  waste_foot_print: number;
+  wasteFootPrint: number;
 }

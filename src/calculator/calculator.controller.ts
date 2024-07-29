@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CalculatorSupportEmail } from 'emails';
 
 import { Mail } from '@/mail/interfaces/mail.interface';
 import { MailService } from '@/mail/mail.service';
@@ -29,13 +30,13 @@ export class CalculatorController {
 
     const mail: Mail = {
       to: supportDto.email,
-      from: 'no-reply@recy.life',
+      from: 'no-reply@app.recy.life',
       subject: 'Contact Information',
-      // Todo: Add a template for the email
-      html: `Thank you for contacting us. Here is your information: 
-      Company Type: ${supportDto.company_type}, 
-      Employees Quantity: ${supportDto.employees_quantity}, 
-      Waste Footprint: ${supportDto.waste_foot_print}`,
+      react: CalculatorSupportEmail({
+        companyType: supportDto.companyType,
+        employeesQuantity: supportDto.employeesQuantity,
+        wasteFootPrint: supportDto.wasteFootPrint,
+      }),
     };
 
     try {
