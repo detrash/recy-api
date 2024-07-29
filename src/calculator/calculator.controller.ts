@@ -29,7 +29,7 @@ export class CalculatorController {
 
     const mail: Mail = {
       to: supportDto.email,
-      from: 'no-reply@recy.life.com',
+      from: 'no-reply@recy.life',
       subject: 'Contact Information',
       // Todo: Add a template for the email
       html: `Thank you for contacting us. Here is your information: 
