@@ -1,5 +1,5 @@
 export class ResultDto {
   walletAddress: string;
-  cREcys: number;
+  cRecys: number;
   wasteFootprint: number;
 }
