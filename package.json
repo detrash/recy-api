@@ -43,6 +43,7 @@
     "graphql": "^16.5.0",
     "jwks-rsa": "^2.1.4",
     "reflect-metadata": "^0.1.13",
+    "resend": "^3.5.0",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
   },
