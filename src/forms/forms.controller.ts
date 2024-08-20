@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 
+import { ApiAuthOperation } from '@/decorators/apiDecoratorFactory';
 import { ApiOkResponsePaginated } from '@/dto/paginated.dto';
 
 import {
@@ -19,7 +19,7 @@ import {
 import { FormsService } from './forms.service';
 
 @ApiTags('forms')
-@ApiBearerAuth('access-token')
+// @ApiBearerAuth('access-token')
 @Controller({ path: 'forms', version: '1' })
 export class FormsController {
   constructor(private readonly formsService: FormsService) {}
@@ -37,10 +37,14 @@ export class FormsController {
     return this.formsService.aggregateFormByUserProfile();
   }
 
-  @Post(':formId/image-url')
-  @ApiOperation({
+  @ApiAuthOperation({
+    path: ':formId/image-url',
+    method: 'POST',
     summary: 'returns presigned url for image upload',
     description: 'Returns presigned url for image upload',
+    authRoute: false,
+
+    responseType: String,
   })
   submitFormImage(@Param('formId') formId: string) {
     return this.formsService.submitFormImage(formId);

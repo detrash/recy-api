@@ -16,6 +16,7 @@ enum ProfileType {
   HODLER
   RECYCLER
   WASTE_GENERATOR
+  ADMIN
 }
 
 enum ResidueType {
