@@ -3,6 +3,7 @@ const usersMessages = {
   USER_NOT_FOUND: 'User not found',
   USER_DOES_NOT_HAS_PERMISSION_TO_UPLOAD:
     'User do not have permission to submit files',
+  USER_UNAUTHORIZED: "User doesn't have access to this route",
 };
 
 const formMessages = {

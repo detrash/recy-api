@@ -6,16 +6,15 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import { Request, Response } from 'express'; // Use Request from 'express'
-import { expressjwt } from 'express-jwt';
-import { expressJwtSecret, GetVerificationKey } from 'jwks-rsa';
+import { Request, Response } from 'express';
+import { expressjwt, GetVerificationKey } from 'express-jwt';
+import { expressJwtSecret } from 'jwks-rsa';
 import { PERMISSION_SCOPES, Role, ROLES_KEY } from 'src/util/constants';
 import { promisify } from 'util';
 
 interface AuthenticatedRequest extends Request {
   auth?: {
     permissions?: string[];
-    [key: string]: any;
   };
 }
 
@@ -58,7 +57,7 @@ export class RestAuthorizationGuard implements CanActivate {
         [context.getHandler(), context.getClass()],
       );
 
-      const scopeRules = req?.auth?.permissions as string[];
+      const scopeRules = req?.auth?.permissions;
       if (requiredRoles) {
         if (!scopeRules?.length) return false;
 

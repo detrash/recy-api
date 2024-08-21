@@ -6,10 +6,16 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 import { Roles } from '@/auth/roles.decorator';
-import { RestAuthorizationGuard } from '@/graphql/rest-authorization.guard';
+import { RestAuthorizationGuard } from '@/guards/authorization.guard';
+import { MessagesHelper } from '@/helpers/messages.helper';
 import { Role } from '@/util/constants';
 
 interface ApiAuthOptions {
@@ -28,13 +34,11 @@ export function ApiAuthOperation(options: ApiAuthOptions) {
       summary: options.summary,
       description: options.description,
     }),
+    ApiUnauthorizedResponse({ description: MessagesHelper.USER_UNAUTHORIZED }),
     ApiOkResponse({ description: options.summary, type: options.responseType }),
     options.authRoute && ApiBearerAuth('access-token'),
-    options.authRoute &&
-      options.roles &&
-      options.roles.length &&
-      Roles(options.roles) &&
-      UseGuards(RestAuthorizationGuard),
+    options.authRoute && UseGuards(RestAuthorizationGuard),
+    Roles(options.roles),
   ].filter(Boolean) as MethodDecorator[];
 
   switch (options.method) {

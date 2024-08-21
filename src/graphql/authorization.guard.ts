@@ -13,6 +13,8 @@ import { expressJwtSecret, GetVerificationKey } from 'jwks-rsa';
 import { PERMISSION_SCOPES, Role, ROLES_KEY } from 'src/util/constants';
 import { promisify } from 'util';
 
+import { MessagesHelper } from '@/helpers/messages.helper';
+
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
   private AUTH0_AUDIENCE: string;
@@ -60,13 +62,19 @@ export class AuthorizationGuard implements CanActivate {
 
       const scopeRules = req?.auth.permissions as string[];
       if (requiredRoles) {
-        if (!scopeRules?.length) return false;
+        if (!scopeRules?.length) {
+          throw new UnauthorizedException(MessagesHelper.USER_UNAUTHORIZED);
+        }
 
         const [requiredRole] = requiredRoles;
 
         const hasAccess = scopeRules.every((scopeType) =>
           PERMISSION_SCOPES[requiredRole].includes(scopeType),
         );
+
+        if (!hasAccess) {
+          throw new UnauthorizedException(MessagesHelper.USER_UNAUTHORIZED);
+        }
 
         return hasAccess;
       }
