@@ -9,12 +9,14 @@ import { FormsModule } from './forms';
 import { GraphQLModule } from './graphql/graphql.module';
 import { MailModule } from './mail/mail.module';
 import { UsersModule } from './users/users.module';
+import { DocumentsModule } from './documents';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule.forRoot(),
     GraphQLModule,
+    DocumentsModule,
     UsersModule,
     FormsModule,
     CalculatorModule,
@@ -23,4 +25,4 @@ import { UsersModule } from './users/users.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
