@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { MailModule } from '@/mail';
+import { MailModule } from '@/shared/mail';
 
 import { CalculatorController } from './calculator.controller';
 import { CalculatorService } from './calculator.service';
