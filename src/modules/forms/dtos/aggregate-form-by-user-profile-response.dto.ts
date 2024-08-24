@@ -1,6 +1,6 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 
-import { ResidueType } from '@/documents';
+import { ResidueType } from '@/modules/documents';
 
 @ObjectType()
 class AggregateFormData {

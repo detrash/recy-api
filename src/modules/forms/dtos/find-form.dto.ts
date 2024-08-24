@@ -1,8 +1,8 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { IsBoolean, IsOptional } from 'class-validator';
 
-import { PaginationQuery } from '@/dto/paginated.dto';
-import { ToBoolean } from '@/util/to-boolean';
+import { PaginationQuery } from '@/shared/dtos/paginated.dto';
+import { ToBoolean } from '@/shared/utils/to-boolean';
 
 import { Form } from './form.dto';
 

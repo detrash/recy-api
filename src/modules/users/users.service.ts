@@ -3,15 +3,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma/prisma.service';
-import { MessagesHelper } from 'src/helpers/messages.helper';
-import { getFilters } from 'src/util/getFilters';
 
+import { PrismaService } from '@/modules/database/prisma/prisma.service';
 import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
 import { UpdateUserInput } from '@/graphql/inputs/update-user-input';
+import { FindUserDto } from '@/modules/users/dtos/find-user.dto';
+import { MessagesHelper } from '@/shared/helpers/messages.helper';
+import { getFilters } from '@/shared/utils/getFilters';
 
 import { CreateUserDto } from './dtos';
-import { FindUserDto } from './dtos/find-user.dto';
 
 @Injectable()
 export class UsersService {

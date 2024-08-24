@@ -8,7 +8,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 
-import { IS3CreateResponseData, IS3Service } from '@/dto/s3.dto';
+import { IS3CreateResponseData, IS3Service } from '@/shared/dtos/s3.dto';
 
 @Injectable()
 export class S3Service implements IS3Service {

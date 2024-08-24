@@ -1,1 +1,1 @@
-export { CreateUserDto as CreateUserInput } from '@/users';
+export { CreateUserDto as CreateUserInput } from '@/modules/users';

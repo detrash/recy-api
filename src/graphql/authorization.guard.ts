@@ -10,7 +10,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { Response } from 'express';
 import { expressjwt, Request } from 'express-jwt';
 import { expressJwtSecret, GetVerificationKey } from 'jwks-rsa';
-import { PERMISSION_SCOPES, Role, ROLES_KEY } from 'src/util/constants';
+import { PERMISSION_SCOPES, Role, ROLES_KEY } from '@/shared/utils/constants';
 import { promisify } from 'util';
 
 @Injectable()

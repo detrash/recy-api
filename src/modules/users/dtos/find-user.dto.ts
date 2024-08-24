@@ -1,6 +1,6 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
 
-import { PaginationQuery } from '@/dto/paginated.dto';
+import { PaginationQuery } from '@/shared/dtos/paginated.dto';
 
 import { User } from './user.dto';
 

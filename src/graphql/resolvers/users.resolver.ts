@@ -6,12 +6,12 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { Role } from 'src/util/constants';
 
-import { AuthUser, CurrentUser } from '@/auth/current-user';
-import { Roles } from '@/auth/roles.decorator';
-import { FormsService } from '@/forms/forms.service';
-import { UsersService } from '@/users/users.service';
+import { AuthUser, CurrentUser } from '@/modules/auth/current-user';
+import { Roles } from '@/modules/auth/roles.decorator';
+import { FormsService } from '@/modules/forms/forms.service';
+import { UsersService } from '@/modules/users/users.service';
+import { Role } from '@/shared/utils/constants';
 
 import { Form } from '../entities/form.entity';
 import { User } from '../entities/user.entity';

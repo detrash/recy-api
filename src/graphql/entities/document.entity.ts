@@ -1,1 +1,1 @@
-export { Document, ResidueType } from '@/documents';
+export { Document, ResidueType } from '@/modules/documents';

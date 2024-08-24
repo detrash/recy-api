@@ -1,8 +1,8 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 
-import { AuthUser, CurrentUser } from '@/auth/current-user';
-import { FormsService } from '@/forms/forms.service';
-import { UsersService } from '@/users/users.service';
+import { AuthUser, CurrentUser } from '@/modules/auth/current-user';
+import { FormsService } from '@/modules/forms/forms.service';
+import { UsersService } from '@/modules/users/users.service';
 
 import { Form } from '../entities/form.entity';
 import { User } from '../entities/user.entity';

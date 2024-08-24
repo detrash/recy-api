@@ -1,1 +1,1 @@
-export { ProfileType, User } from '@/users';
+export { ProfileType, User } from '@/modules/users';

@@ -1,1 +1,1 @@
-export { Form } from '@/forms';
+export { Form } from '@/modules/forms';

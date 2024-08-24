@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CalculatorModule } from './calculator/calculator.module';
-import { DatabaseModule } from './database/database.module';
-import { FormsModule } from './forms';
+import { DatabaseModule } from './modules/database/database.module';
+import { FormsModule } from './modules/forms';
 import { GraphQLModule } from './graphql/graphql.module';
-import { MailModule } from './mail/mail.module';
-import { UsersModule } from './users/users.module';
-import { DocumentsModule } from './documents';
+import { CalculatorModule } from './modules/calculator/calculator.module';
+import { DocumentsModule } from './modules/documents';
+import { MailModule } from './modules/mail/mail.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -25,4 +25,4 @@ import { DocumentsModule } from './documents';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

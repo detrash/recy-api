@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { DocumentsModule } from '@/documents';
-import { S3Module } from '@/s3';
-import { UsersModule } from '@/users';
+import { DocumentsModule } from '@/modules/documents';
+import { S3Module } from '@/modules/s3';
+import { UsersModule } from '@/modules/users';
 
 import { FormsController } from './forms.controller';
 import { FormsService } from './forms.service';

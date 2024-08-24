@@ -1,1 +1,1 @@
-export { S3 } from '@/forms';
+export { S3 } from '@/modules/forms';

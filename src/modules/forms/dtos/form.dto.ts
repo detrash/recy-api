@@ -10,10 +10,10 @@ import {
   ValidateIf,
 } from 'class-validator';
 
-import { Document } from '@/documents';
-import { Timestamp } from '@/dto/timestamp.dto';
-import { User } from '@/users';
-import { ToBoolean } from '@/util/to-boolean';
+import { Document } from '@/modules/documents';
+import { User } from '@/modules/users';
+import { Timestamp } from '@/shared/dtos/timestamp.dto';
+import { ToBoolean } from '@/shared/utils/to-boolean';
 
 @ObjectType()
 export class Form extends Timestamp {

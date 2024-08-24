@@ -1,1 +1,1 @@
-export { AggregateFormByUserProfileResponse } from '@/forms';
+export { AggregateFormByUserProfileResponse } from '@/modules/forms';

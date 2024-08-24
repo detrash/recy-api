@@ -1,1 +1,1 @@
-export { CreateFormResponse } from '@/forms';
+export { CreateFormResponse } from '@/modules/forms';

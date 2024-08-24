@@ -4,16 +4,16 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma/prisma.service';
-import { MessagesHelper } from 'src/helpers/messages.helper';
-import { getFilters } from 'src/util/getFilters';
-import { getResidueTitle } from 'src/util/getResidueTitle';
 
-import { DocumentsService, ResidueType } from '@/documents';
+import { PrismaService } from '@/modules/database/prisma/prisma.service';
 import { ProfileType } from '@/graphql/entities/user.entity';
 import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
-import { S3Service } from '@/s3/s3.service';
-import { UsersService } from '@/users/users.service';
+import { S3Service } from '@/modules/s3/s3.service';
+import { DocumentsService, ResidueType } from '@/modules/documents';
+import { UsersService } from '@/modules/users/users.service';
+import { MessagesHelper } from '@/shared/helpers/messages.helper';
+import { getFilters } from '@/shared/utils/getFilters';
+import { getResidueTitle } from '@/shared/utils/getResidueTitle';
 
 import { CreateFormDto, FindFormDto } from './dtos';
 

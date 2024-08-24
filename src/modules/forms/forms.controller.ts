@@ -7,7 +7,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { ApiOkResponsePaginated } from '@/dto/paginated.dto';
+import { ApiOkResponsePaginated } from '@/shared/dtos/paginated.dto';
 
 import {
   AggregateFormByUserProfileResponse,

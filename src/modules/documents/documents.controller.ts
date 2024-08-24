@@ -1,5 +1,3 @@
-
-
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -10,21 +8,23 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { Roles } from '@/modules/auth/roles.decorator';
+import { Role } from '@/shared/utils/constants';
+
 import { DocumentsService } from './documents.service';
-import { Role } from 'src/util/constants';
-import { Roles } from '@/auth/roles.decorator';
 import { ResidueType } from './dtos';
 
 @ApiTags('documents')
 @ApiBearerAuth('access-token')
 @Controller({ path: 'documents', version: '1' })
 export class DocumentsController {
-  constructor(private readonly documentsService: DocumentsService) { }
+  constructor(private readonly documentsService: DocumentsService) {}
 
   @Get('video-url')
   @ApiOperation({
     summary: 'Get document video URL by residue type',
-    description: 'Returns the video URL for the specified residue type and form ID',
+    description:
+      'Returns the video URL for the specified residue type and form ID',
   })
   @ApiQuery({
     type: 'string',
@@ -34,10 +34,11 @@ export class DocumentsController {
   @ApiQuery({
     name: 'residueType',
     enum: ResidueType,
-    example: ResidueType.GLASS
+    example: ResidueType.GLASS,
   })
   @ApiOkResponse({
-    description: 'Returns the video URL for the specified residue type and form ID',
+    description:
+      'Returns the video URL for the specified residue type and form ID',
     type: String,
   })
   @Roles(Role.Admin)
@@ -45,13 +46,17 @@ export class DocumentsController {
     @Query('formId') formId: string,
     @Query('residueType') residueType: ResidueType,
   ) {
-    return this.documentsService.getDocumentVideoUrlByResidue(formId, residueType);
+    return this.documentsService.getDocumentVideoUrlByResidue(
+      formId,
+      residueType,
+    );
   }
 
   @Get('invoices-url')
   @ApiOperation({
     summary: 'Get document invoices URL by residue type',
-    description: 'Returns the invoices URL for the specified residue type and form ID',
+    description:
+      'Returns the invoices URL for the specified residue type and form ID',
   })
   @ApiQuery({
     type: 'string',
@@ -61,10 +66,11 @@ export class DocumentsController {
   @ApiQuery({
     name: 'residueType',
     enum: ResidueType,
-    example: ResidueType.GLASS
+    example: ResidueType.GLASS,
   })
   @ApiOkResponse({
-    description: 'Returns the invoices URL for the specified residue type and form ID',
+    description:
+      'Returns the invoices URL for the specified residue type and form ID',
     type: [String],
   })
   @Roles(Role.Admin)
@@ -72,6 +78,9 @@ export class DocumentsController {
     @Query('formId') formId: string,
     @Query('residueType') residueType: ResidueType,
   ) {
-    return this.documentsService.getDocumentInvoicesUrlByResidue(formId, residueType);
+    return this.documentsService.getDocumentInvoicesUrlByResidue(
+      formId,
+      residueType,
+    );
   }
 }
