@@ -1,8 +1,8 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { Role } from '@/shared/utils/constants';
 
 import { Roles } from '@/_auth/roles.decorator';
-import { Document, DocumentsService, ResidueType } from '@/documents';
+import { Document, DocumentsService, ResidueType } from '@/modules/documents';
+import { Role } from '@/shared/utils/constants';
 
 @Resolver(() => Document)
 export class DocumentsResolver {

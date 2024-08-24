@@ -10,7 +10,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 
-import { ResidueType } from '@/documents';
+import { ResidueType } from '@/modules/documents';
 
 import { Form } from './form.dto';
 

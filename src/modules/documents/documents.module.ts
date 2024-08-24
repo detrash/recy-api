@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { S3Module } from '@/legacy/s3';
+import { S3Module } from '@/_s3';
 
-import { DocumentsService } from './documents.service';
 import { DocumentsController } from './documents.controller';
+import { DocumentsService } from './documents.service';
 
 @Module({
   imports: [S3Module],
@@ -11,4 +11,4 @@ import { DocumentsController } from './documents.controller';
   providers: [DocumentsService],
   exports: [DocumentsService],
 })
-export class DocumentsModule { }
+export class DocumentsModule {}

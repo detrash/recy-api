@@ -10,9 +10,9 @@ import {
   ValidateIf,
 } from 'class-validator';
 
-import { Document } from '@/documents';
-import { Timestamp } from '@/shared/dto/timestamp.dto';
+import { Document } from '@/modules/documents';
 import { User } from '@/modules/users';
+import { Timestamp } from '@/shared/dto/timestamp.dto';
 import { ToBoolean } from '@/shared/utils/to-boolean';
 
 @ObjectType()

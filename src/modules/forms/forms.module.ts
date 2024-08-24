@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { DocumentsModule } from '@/documents';
-import { S3Module } from '@/legacy/s3';
+import { S3Module } from '@/_s3';
+import { DocumentsModule } from '@/modules/documents';
 import { UsersModule } from '@/modules/users';
 
 import { FormsController } from './forms.controller';

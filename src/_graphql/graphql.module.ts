@@ -4,9 +4,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { GraphQLModule as NestJsGraphQLModule } from '@nestjs/graphql';
 import { resolve } from 'path';
 
-import { DocumentsService } from '@/documents/documents.service';
-import { FormsService } from '@/modules/forms/forms.service';
 import { S3Service } from '@/_s3/s3.service';
+import { DocumentsService } from '@/modules/documents/documents.service';
+import { FormsService } from '@/modules/forms/forms.service';
 import { UsersService } from '@/modules/users/users.service';
 
 import { DatabaseModule } from '../_database/database.module';
