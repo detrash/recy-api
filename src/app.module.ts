@@ -3,12 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DatabaseModule } from './_database/database.module';
+import { DatabaseModule } from './modules/database/database.module';
 import { FormsModule } from './modules/forms';
-import { GraphQLModule } from './_graphql/graphql.module';
+import { GraphQLModule } from './graphql/graphql.module';
 import { CalculatorModule } from './modules/calculator/calculator.module';
 import { DocumentsModule } from './modules/documents';
-import { MailModule } from './shared/services/mail/mail.module';
+import { MailModule } from './modules/mail/mail.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({

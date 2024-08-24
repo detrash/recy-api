@@ -1,4 +1,4 @@
-import { ListFiltersInput } from '@/_graphql/inputs/list-filters-input';
+import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
 
 export function getFilters(filters: ListFiltersInput) {
   return Object.entries(filters).map(([filterKey, filterValue]) => ({

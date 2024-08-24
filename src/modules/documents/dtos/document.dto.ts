@@ -7,7 +7,7 @@ import {
 } from '@nestjs/graphql';
 import { ApiHideProperty } from '@nestjs/swagger';
 
-import { Timestamp } from '@/shared/dto/timestamp.dto';
+import { Timestamp } from '@/shared/dtos/timestamp.dto';
 import { Form } from '@/modules/forms';
 
 export enum ResidueType {

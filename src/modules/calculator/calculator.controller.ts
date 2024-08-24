@@ -2,8 +2,8 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CalculatorSupportEmail } from 'emails';
 
-import { Mail } from '@/shared/services/mail/interfaces/mail.interface';
-import { MailService } from '@/shared/services/mail/mail.service';
+import { Mail } from '@/modules/mail/interfaces/mail.interface';
+import { MailService } from '@/modules/mail/mail.service';
 
 import { CalculatorService } from './calculator.service';
 import { ResultDto, SupportDto } from './dtos';

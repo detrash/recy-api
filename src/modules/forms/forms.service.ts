@@ -5,10 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/_database/prisma/prisma.service';
-import { ProfileType } from '@/_graphql/entities/user.entity';
-import { ListFiltersInput } from '@/_graphql/inputs/list-filters-input';
-import { S3Service } from '@/_s3/s3.service';
+import { PrismaService } from '@/modules/database/prisma/prisma.service';
+import { ProfileType } from '@/graphql/entities/user.entity';
+import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
+import { S3Service } from '@/modules/s3/s3.service';
 import { DocumentsService, ResidueType } from '@/modules/documents';
 import { UsersService } from '@/modules/users/users.service';
 import { MessagesHelper } from '@/shared/helpers/messages.helper';

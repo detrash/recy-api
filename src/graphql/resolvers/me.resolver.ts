@@ -1,6 +1,6 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 
-import { AuthUser, CurrentUser } from '@/_auth/current-user';
+import { AuthUser, CurrentUser } from '@/modules/auth/current-user';
 import { FormsService } from '@/modules/forms/forms.service';
 import { UsersService } from '@/modules/users/users.service';
 

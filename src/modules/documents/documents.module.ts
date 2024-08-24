@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { S3Module } from '@/_s3';
+import { S3Module } from '@/modules/s3';
 
 import { DocumentsController } from './documents.controller';
 import { DocumentsService } from './documents.service';

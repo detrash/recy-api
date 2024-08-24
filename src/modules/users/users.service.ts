@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/_database/prisma/prisma.service';
-import { ListFiltersInput } from '@/_graphql/inputs/list-filters-input';
-import { UpdateUserInput } from '@/_graphql/inputs/update-user-input';
+import { PrismaService } from '@/modules/database/prisma/prisma.service';
+import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
+import { UpdateUserInput } from '@/graphql/inputs/update-user-input';
 import { FindUserDto } from '@/modules/users/dtos/find-user.dto';
 import { MessagesHelper } from '@/shared/helpers/messages.helper';
 import { getFilters } from '@/shared/utils/getFilters';

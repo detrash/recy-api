@@ -2,7 +2,7 @@ import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { Timestamp } from '@/shared/dto/timestamp.dto';
+import { Timestamp } from '@/shared/dtos/timestamp.dto';
 import { Form } from '@/modules/forms/dtos/form.dto';
 
 export enum ProfileType {
