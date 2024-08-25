@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
 @ApiBearerAuth('access-token')
 @Controller({ path: 'users', version: '1' })
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Get(':id')
   @ApiOperation({
@@ -80,5 +80,22 @@ export class UsersController {
   })
   updateUser(@Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser(updateUserDto);
+  }
+
+  @Get(':userId/forms')
+  @ApiOperation({
+    summary: 'Get all forms for a user',
+    description: 'Returns all forms associated with the specified user',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'The ID of the user whose forms are to be retrieved',
+    example: '12345',
+  })
+  async findAllFormsByUser(
+    @Param('userId') userId: string,
+    @Query() queryParams: FindUserDto,
+  ) {
+    return this.usersService.findAllFormsByUser(userId, queryParams);
   }
 }

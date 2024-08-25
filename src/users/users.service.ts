@@ -15,7 +15,7 @@ import { FindUserDto } from './dtos/find-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   updateLastLogin(authUserId: string) {
     return this.prisma.user.update({
@@ -133,5 +133,37 @@ export class UsersService {
     if (!user) throw new NotFoundException(MessagesHelper.USER_NOT_FOUND);
 
     return user;
+  }
+
+  async findAllFormsByUser(userId: string, args: FindUserDto) {
+    const { page, limit, orderBy, sortBy, ...filters } = args;
+
+    const forms = await this.prisma.form.findMany({
+      where: {
+        ...filters,
+        userId,
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+      orderBy: {
+        [sortBy]: orderBy,
+      },
+    });
+
+    const total = await this.prisma.form.count({
+      where: {
+        ...filters,
+        userId,
+      },
+    });
+
+    return {
+      data: forms,
+      pagination: {
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }
