@@ -33,7 +33,6 @@ export class FormsService {
       where: {
         id,
       },
-      include: { document: true },
     });
 
     if (!form) throw new NotFoundException(MessagesHelper.FORM_NOT_FOUND);
