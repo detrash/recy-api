@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -13,6 +24,8 @@ import {
   AggregateFormByUserProfileResponse,
   CreateFormDto,
   CreateFormResponse,
+  CreateImageToForm,
+  CreateImageToFormResponse,
   FindFormDto,
   Form,
 } from './dtos';
@@ -37,7 +50,7 @@ export class FormsController {
     return this.formsService.aggregateFormByUserProfile();
   }
 
-  @Post(':formId/image-url')
+  @Post(':formId/submit-image')
   @ApiOperation({
     summary: 'returns presigned url for image upload',
     description: 'Returns presigned url for image upload',

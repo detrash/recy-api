@@ -13,9 +13,11 @@ import { IS3CreateResponseData, IS3Service } from '@/shared/dtos/s3.dto';
 @Injectable()
 export class S3Service implements IS3Service {
   private s3Client: S3AWSClient;
+  private bucketName: string;
   private readonly tokenLifetime = 3600; // 60 minutes
 
   constructor(private configService: ConfigService) {
+    this.bucketName = process.env.BUCKET_NAME;
     this.s3Client = new S3AWSClient({
       region: this.configService.get('AWS_DEFAULT_REGION') ?? '',
       credentials: {
@@ -41,7 +43,7 @@ export class S3Service implements IS3Service {
       });
     }
 
-    const bucket = bucketName || this.configService.get('BUCKET_NAME');
+    const bucket = this.bucketName;
 
     const getObjectCommand = new GetObjectCommand({
       Bucket: bucket ?? '',
@@ -68,7 +70,7 @@ export class S3Service implements IS3Service {
   ): Promise<IS3CreateResponseData> {
     const hash = randomBytes(16);
 
-    const bucket = bucketName || this.configService.get('BUCKET_NAME');
+    const bucket = this.bucketName;
 
     let hashedFileName = fileName;
 

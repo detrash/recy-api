@@ -5,11 +5,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '@/modules/database/prisma/prisma.service';
 import { ProfileType } from '@/graphql/entities/user.entity';
 import { ListFiltersInput } from '@/graphql/inputs/list-filters-input';
-import { S3Service } from '@/modules/s3/s3.service';
+import { PrismaService } from '@/modules/database/prisma/prisma.service';
 import { DocumentsService, ResidueType } from '@/modules/documents';
+import { S3Service } from '@/modules/s3/s3.service';
 import { UsersService } from '@/modules/users/users.service';
 import { MessagesHelper } from '@/shared/helpers/messages.helper';
 import { getFilters } from '@/shared/utils/getFilters';
@@ -33,6 +33,7 @@ export class FormsService {
       where: {
         id,
       },
+      include: { document: true },
     });
 
     if (!form) throw new NotFoundException(MessagesHelper.FORM_NOT_FOUND);
@@ -296,7 +297,7 @@ export class FormsService {
   }
 
   async authorizeForm(formId: string, isFormAuthorized: boolean) {
-    // TO DO: Check if form was created by a RECYCLER user, we can assume that until Waste Generator type is available to use
+    // TODO: Check if form was created by a RECYCLER user, we can assume that until Waste Generator type is available to use
     // Discuss rules for approving Forms by Waste Generator
     const form = await this.findByFormId(formId);
 
@@ -323,15 +324,15 @@ export class FormsService {
     return createPublicUrl.createUrl;
   }
 
-  async submitFormImage(formId: string) {
+  async submitFormImage(formId: string): Promise<{ imageUrl: string }> {
     const form = await this.findByFormId(formId);
 
-    const createImageUrl = this.createOnPublicObject(
+    const createImageUrl = await this.createOnPublicObject(
       `${form.id}.png`,
       'images',
     );
 
-    return createImageUrl;
+    return { imageUrl: createImageUrl };
   }
 
   async createFormMetadata(formId: string) {
