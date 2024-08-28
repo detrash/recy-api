@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -24,8 +13,6 @@ import {
   AggregateFormByUserProfileResponse,
   CreateFormDto,
   CreateFormResponse,
-  CreateImageToForm,
-  CreateImageToFormResponse,
   FindFormDto,
   Form,
 } from './dtos';
