@@ -1,1 +1,0 @@
-export { AggregateFormByUserProfileResponse } from '@/forms';
