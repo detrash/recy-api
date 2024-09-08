@@ -12,9 +12,9 @@ pre-commit:
 pre-push:
   parallel: true
   commands:
-    tests:
+    api-tests:
       tags: api tests
-      run: npm run jest
+      run: npm run test
   scripts:
     "verify":
       runner: sh
