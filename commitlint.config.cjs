@@ -1,13 +1,3 @@
-// build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
-// ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
-// docs: Documentation only changes
-// feat: A new feature
-// fix: A bug fix
-// perf: A code change that improves performance
-// refactor: A code change that neither fixes a bug nor adds a feature
-// style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
-// test: Adding missing tests or correcting existing tests
-
 const Configuration = {
   extends: ['@commitlint/config-conventional'],
   rules: {
@@ -22,10 +12,10 @@ const Configuration = {
       'never',
       ['sentence-case', 'start-case', 'pascal-case', 'upper-case'],
     ],
-    'subject-empty': [2, 'never'],
+    'subject-empty': [2, 'always'],
     'subject-full-stop': [2, 'never', '.'],
     'type-case': [2, 'always', 'lower-case'],
-    'type-empty': [2, 'never'],
+    'type-empty': [2, 'always'],
     'type-enum': [
       2,
       'always',
@@ -49,4 +39,4 @@ const Configuration = {
   },
 };
 
-export default Configuration;
+module.exports = Configuration;
