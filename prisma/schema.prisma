@@ -29,7 +29,7 @@ model User {
 
 model Recycler {
   id                BigInt    @id @default(autoincrement())
-  userId            BigInt
+  userId            BigInt @unique
   organizationName  String?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @default(now()) @updatedAt
@@ -39,7 +39,7 @@ model Recycler {
 
 model Partner {
   id                BigInt    @id @default(autoincrement())
-  userId            BigInt
+  userId            BigInt @unique
   organizationName  String?
   phone             String?
   walletAddress     String?
@@ -51,7 +51,7 @@ model Partner {
 
 model WasteGenerator {
   id                BigInt    @id @default(autoincrement())
-  userId            BigInt
+  userId            BigInt @unique
   organizationName  String?
   phone             String?
   walletAddress     String?

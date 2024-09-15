@@ -12,10 +12,10 @@ const Configuration = {
       'never',
       ['sentence-case', 'start-case', 'pascal-case', 'upper-case'],
     ],
-    'subject-empty': [2, 'never'],
+    'subject-empty': [2, 'always'],
     'subject-full-stop': [2, 'never', '.'],
     'type-case': [2, 'always', 'lower-case'],
-    'type-empty': [2, 'never'],
+    'type-empty': [2, 'always'],
     'type-enum': [
       2,
       'always',

@@ -1,3 +1,5 @@
+import './shared/utils/bigint-polyfill';
+
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
@@ -44,4 +46,3 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 3333);
 }
 bootstrap();
-

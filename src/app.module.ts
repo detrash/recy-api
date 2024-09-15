@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CalculatorModule } from './modules/calculator/calculator.module';
 import { MailModule } from './modules/mail/mail.module';
+import { PartnerModule } from './modules/partner/partner.module';
 import { PrismaService } from './prisma.service';
 
 @Module({
@@ -12,6 +13,7 @@ import { PrismaService } from './prisma.service';
     ConfigModule.forRoot({ isGlobal: true }),
     CalculatorModule,
     MailModule,
+    PartnerModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
