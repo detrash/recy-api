@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { Partner, User } from '@prisma/client';
 
-import { PrismaService } from '@/prisma.service';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 import { CreatePartnerDto } from './dtos/create-partner.dto';
 import { UpdatePartnerDto } from './dtos/update-partner.dto';
