@@ -4,6 +4,7 @@ import { Partner, User } from '@prisma/client';
 import { PrismaService } from '@/prisma.service';
 
 import { CreatePartnerDto } from './dtos/create-partner.dto';
+import { UpdatePartnerDto } from './dtos/update-partner.dto';
 
 @Injectable()
 export class PartnerService {
@@ -75,10 +76,13 @@ export class PartnerService {
     return this.prisma.partner.findUnique({ where: { id } });
   }
 
-  async updatePartner(id: number, data: Partial<Partner>): Promise<Partner> {
+  async updatePartner(
+    id: number,
+    updatePartnerDto: UpdatePartnerDto,
+  ): Promise<Partner> {
     return this.prisma.partner.update({
       where: { id },
-      data,
+      data: updatePartnerDto,
     });
   }
 
