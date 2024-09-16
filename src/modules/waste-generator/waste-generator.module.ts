@@ -9,4 +9,4 @@ import { WasteGeneratorService } from './waste-generator.service';
   controllers: [WasteGeneratorController],
   providers: [WasteGeneratorService, PrismaService],
 })
-export class WasteGeneratorsModule {}
+export class WasteGeneratorModule {}

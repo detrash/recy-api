@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User, WasteGenerator } from '@prisma/client';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
@@ -11,17 +15,17 @@ export class WasteGeneratorService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createWasteGenerator(
-    createWasteGenerator: CreateWasteGeneratorDto,
+    createWasteGeneratorDto: CreateWasteGeneratorDto,
   ): Promise<WasteGenerator> {
-    if (!createWasteGenerator.organizationName) {
+    if (!createWasteGeneratorDto.organizationName) {
       throw new ConflictException('Organization Name is required');
     }
 
-    if (!createWasteGenerator.name) {
+    if (!createWasteGeneratorDto.name) {
       throw new ConflictException('Name is required');
     }
 
-    if (!createWasteGenerator.email) {
+    if (!createWasteGeneratorDto.email) {
       throw new ConflictException('Email is required');
     }
 
@@ -29,23 +33,23 @@ export class WasteGeneratorService {
 
     try {
       user = await this.prisma.user.findUnique({
-        where: { email: createWasteGenerator.email },
+        where: { email: createWasteGeneratorDto.email },
       });
 
       if (!user) {
         user = await this.prisma.user.create({
           data: {
-            name: createWasteGenerator.name,
-            email: createWasteGenerator.email,
-            phone: createWasteGenerator.phone,
-            walletAddress: createWasteGenerator.walletAddress,
+            name: createWasteGeneratorDto.name,
+            email: createWasteGeneratorDto.email,
+            phone: createWasteGeneratorDto.phone,
+            walletAddress: createWasteGeneratorDto.walletAddress,
           },
         });
       }
     } catch (error) {
       if (error.code === 'P2002') {
         throw new ConflictException(
-          `User with email ${createWasteGenerator.email} already exists.`,
+          `User with email ${createWasteGeneratorDto.email} already exists.`,
         );
       }
       throw error;
@@ -56,15 +60,15 @@ export class WasteGeneratorService {
 
     if (existingWasteGenerator) {
       throw new ConflictException(
-        `A PWaste Generator already exists for User with ID ${user.id}`,
+        `A Waste Generator already exists for User with ID ${user.id}`,
       );
     }
 
     return this.prisma.wasteGenerator.create({
       data: {
-        phone: createWasteGenerator.phone,
-        walletAddress: createWasteGenerator.walletAddress,
-        organizationName: createWasteGenerator.organizationName,
+        phone: createWasteGeneratorDto.phone,
+        walletAddress: createWasteGeneratorDto.walletAddress,
+        organizationName: createWasteGeneratorDto.organizationName,
         user: { connect: { id: user.id } },
       },
     });
@@ -82,6 +86,14 @@ export class WasteGeneratorService {
     id: number,
     updateWasteGeneratorDto: UpdateWasteGeneratorDto,
   ): Promise<WasteGenerator> {
+    const wasteGenerator = await this.prisma.wasteGenerator.findUnique({
+      where: { id },
+    });
+
+    if (!wasteGenerator) {
+      throw new NotFoundException(`Partner with ID ${id} not found.`);
+    }
+
     return this.prisma.wasteGenerator.update({
       where: { id },
       data: updateWasteGeneratorDto,
@@ -89,6 +101,14 @@ export class WasteGeneratorService {
   }
 
   async deleteWasteGenerator(id: number): Promise<WasteGenerator> {
+    const wasteGenerator = await this.prisma.wasteGenerator.findUnique({
+      where: { id },
+    });
+
+    if (!wasteGenerator) {
+      throw new NotFoundException(`Waste generator with ID ${id} not found.`);
+    }
+
     return this.prisma.wasteGenerator.delete({
       where: { id },
     });

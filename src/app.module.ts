@@ -5,7 +5,8 @@ import { CalculatorModule } from './modules/calculator/calculator.module';
 import { HealthModule } from './modules/health/health.module';
 import { MailModule } from './modules/mail/mail.module';
 import { PartnerModule } from './modules/partner/partner.module';
-import { WasteGeneratorsModule } from './modules/waste-generator/waste-generator.module';
+import { RecyclerModule } from './modules/recycler/recycler.module';
+import { WasteGeneratorModule } from './modules/waste-generator/waste-generator.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { WasteGeneratorsModule } from './modules/waste-generator/waste-generator
     CalculatorModule,
     MailModule,
     PartnerModule,
-    WasteGeneratorsModule,
+    WasteGeneratorModule,
+    RecyclerModule,
     HealthModule,
   ],
   controllers: [],

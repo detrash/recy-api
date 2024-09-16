@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Partner, User } from '@prisma/client';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
@@ -87,6 +91,14 @@ export class PartnerService {
   }
 
   async deletePartner(id: number): Promise<Partner> {
+    const partner = await this.prisma.partner.findUnique({
+      where: { id },
+    });
+
+    if (!partner) {
+      throw new NotFoundException(`Partner with ID ${id} not found.`);
+    }
+
     return this.prisma.partner.delete({
       where: { id },
     });
