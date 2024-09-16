@@ -7,12 +7,16 @@ import { Recycler, User } from '@prisma/client';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 
+import { UserService } from '../user/user.service';
 import { CreateRecyclerDto } from './dtos/create-recycler.dto';
 import { UpdateRecyclerDto } from './dtos/update-recycler.dto';
 
 @Injectable()
 export class RecyclerService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
+  ) {}
 
   async createRecycler(
     createRecyclerDto: CreateRecyclerDto,
@@ -23,25 +27,18 @@ export class RecyclerService {
     let user: User;
 
     try {
-      user = await this.prisma.user.findUnique({
-        where: { email: email },
-      });
-
-      if (!user) {
-        user = await this.prisma.user.create({
-          data: {
-            name: name,
-            email: email,
-            phone: phone,
-            walletAddress: walletAddress,
-          },
-        });
-      }
+      user = await this.userService.findUserByEmail(email);
     } catch (error) {
-      if (error.code === 'P2002') {
-        throw new ConflictException(`User with email ${email} already exists.`);
+      if (error instanceof NotFoundException) {
+        user = await this.userService.createUser({
+          email,
+          name,
+          phone,
+          walletAddress,
+        });
+      } else {
+        throw error;
       }
-      throw error;
     }
     const existingRecycler = await this.prisma.recycler.findUnique({
       where: { userId: user.id },

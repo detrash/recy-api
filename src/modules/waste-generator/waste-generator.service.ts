@@ -7,12 +7,16 @@ import { User, WasteGenerator } from '@prisma/client';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 
+import { UserService } from '../user/user.service';
 import { CreateWasteGeneratorDto } from './dtos/create-waste-generator.dto';
 import { UpdateWasteGeneratorDto } from './dtos/update-waste-generator.dto';
 
 @Injectable()
 export class WasteGeneratorService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
+  ) {}
 
   async createWasteGenerator(
     createWasteGeneratorDto: CreateWasteGeneratorDto,
@@ -21,28 +25,21 @@ export class WasteGeneratorService {
       createWasteGeneratorDto;
 
     let user: User;
-
     try {
-      user = await this.prisma.user.findUnique({
-        where: { email: email },
-      });
-
-      if (!user) {
-        user = await this.prisma.user.create({
-          data: {
-            name: name,
-            email: email,
-            phone: phone,
-            walletAddress: walletAddress,
-          },
-        });
-      }
+      user = await this.userService.findUserByEmail(email);
     } catch (error) {
-      if (error.code === 'P2002') {
-        throw new ConflictException(`User with email ${email} already exists.`);
+      if (error instanceof NotFoundException) {
+        user = await this.userService.createUser({
+          email,
+          name,
+          phone,
+          walletAddress,
+        });
+      } else {
+        throw error;
       }
-      throw error;
     }
+
     const existingWasteGenerator = await this.prisma.wasteGenerator.findUnique({
       where: { userId: user.id },
     });
@@ -55,9 +52,9 @@ export class WasteGeneratorService {
 
     return this.prisma.wasteGenerator.create({
       data: {
-        phone: phone,
-        walletAddress: walletAddress,
-        organizationName: organizationName,
+        phone,
+        walletAddress,
+        organizationName,
         user: { connect: { id: user.id } },
       },
     });
@@ -80,7 +77,7 @@ export class WasteGeneratorService {
     });
 
     if (!wasteGenerator) {
-      throw new NotFoundException(`Waste generator with ID ${id} not found.`);
+      throw new NotFoundException(`Waste Generator with ID ${id} not found.`);
     }
 
     return this.prisma.wasteGenerator.update({
@@ -95,7 +92,7 @@ export class WasteGeneratorService {
     });
 
     if (!wasteGenerator) {
-      throw new NotFoundException(`Waste generator with ID ${id} not found.`);
+      throw new NotFoundException(`Waste Generator with ID ${id} not found.`);
     }
 
     return this.prisma.wasteGenerator.delete({

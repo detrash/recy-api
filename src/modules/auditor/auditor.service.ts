@@ -7,55 +7,52 @@ import { Auditor, User } from '@prisma/client';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 
+import { UserService } from '../user/user.service';
 import { CreateAuditorDto } from './dtos/create-auditor.dto';
 import { UpdateAuditorDto } from './dtos/update-auditor.dto';
 
 @Injectable()
 export class AuditorService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
+  ) {}
 
   async createAuditor(createAuditorDto: CreateAuditorDto): Promise<Auditor> {
     const { email, name, organizationName, phone, walletAddress } =
       createAuditorDto;
 
     let user: User;
-
     try {
-      user = await this.prisma.user.findUnique({
-        where: { email: email },
-      });
-
-      if (!user) {
-        user = await this.prisma.user.create({
-          data: {
-            name: name,
-            email: email,
-            phone: phone,
-            walletAddress: walletAddress,
-          },
-        });
-      }
+      user = await this.userService.findUserByEmail(email);
     } catch (error) {
-      if (error.code === 'P2002') {
-        throw new ConflictException(`User with email ${email} already exists.`);
+      if (error instanceof NotFoundException) {
+        user = await this.userService.createUser({
+          email,
+          name,
+          phone,
+          walletAddress,
+        });
+      } else {
+        throw error;
       }
-      throw error;
     }
+
     const existingAuditor = await this.prisma.auditor.findUnique({
       where: { userId: user.id },
     });
 
     if (existingAuditor) {
       throw new ConflictException(
-        `A Auditor already exists for User with ID ${user.id}`,
+        `An Auditor already exists for User with ID ${user.id}`,
       );
     }
 
     return this.prisma.auditor.create({
       data: {
-        phone: phone,
-        walletAddress: walletAddress,
-        organizationName: organizationName,
+        phone,
+        walletAddress,
+        organizationName,
         user: { connect: { id: user.id } },
       },
     });
@@ -80,11 +77,11 @@ export class AuditorService {
   }
 
   async deleteAuditor(id: number): Promise<Auditor> {
-    const Auditor = await this.prisma.auditor.findUnique({
+    const auditor = await this.prisma.auditor.findUnique({
       where: { id },
     });
 
-    if (!Auditor) {
+    if (!auditor) {
       throw new NotFoundException(`Auditor with ID ${id} not found.`);
     }
 

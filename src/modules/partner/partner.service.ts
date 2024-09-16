@@ -7,41 +7,38 @@ import { Partner, User } from '@prisma/client';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 
+import { UserService } from '../user/user.service';
 import { CreatePartnerDto } from './dtos/create-partner.dto';
 import { UpdatePartnerDto } from './dtos/update-partner.dto';
 
 @Injectable()
 export class PartnerService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
+  ) {}
 
   async createPartner(createPartnerDto: CreatePartnerDto): Promise<Partner> {
     const { email, name, organizationName, phone, walletAddress } =
       createPartnerDto;
 
     let user: User;
-
     try {
-      user = await this.prisma.user.findUnique({
-        where: { email: email },
-      });
-
-      if (!user) {
-        user = await this.prisma.user.create({
-          data: {
-            name: name,
-            email: email,
-            phone: phone,
-            walletAddress: walletAddress,
-          },
-        });
-      }
+      user = await this.userService.findUserByEmail(email);
     } catch (error) {
-      if (error.code === 'P2002') {
-        throw new ConflictException(`User with email ${email} already exists.`);
+      if (error instanceof NotFoundException) {
+        user = await this.userService.createUser({
+          email,
+          name,
+          phone,
+          walletAddress,
+        });
+      } else {
+        throw error;
       }
-      throw error;
     }
-    const existingPartner = await this.prisma.partner.findFirst({
+
+    const existingPartner = await this.prisma.partner.findUnique({
       where: { userId: user.id },
     });
 
@@ -53,9 +50,9 @@ export class PartnerService {
 
     return this.prisma.partner.create({
       data: {
-        phone: phone,
-        walletAddress: walletAddress,
-        organizationName: organizationName,
+        phone,
+        walletAddress,
+        organizationName,
         user: { connect: { id: user.id } },
       },
     });
@@ -66,13 +63,21 @@ export class PartnerService {
   }
 
   async findPartnerById(id: number): Promise<Partner | null> {
-    return this.prisma.partner.findFirst({ where: { id } });
+    return this.prisma.partner.findUnique({ where: { id } });
   }
 
   async updatePartner(
     id: number,
     updatePartnerDto: UpdatePartnerDto,
   ): Promise<Partner> {
+    const partner = await this.prisma.partner.findUnique({
+      where: { id },
+    });
+
+    if (!partner) {
+      throw new NotFoundException(`Partner with ID ${id} not found.`);
+    }
+
     return this.prisma.partner.update({
       where: { id },
       data: updatePartnerDto,
