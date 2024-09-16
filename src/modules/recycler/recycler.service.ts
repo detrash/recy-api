@@ -55,7 +55,7 @@ export class RecyclerService {
       }
       throw error;
     }
-    const existingRecycler = await this.prisma.recycler.findUnique({
+    const existingRecycler = await this.prisma.recycler.findFirst({
       where: { userId: user.id },
     });
 

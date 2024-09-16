@@ -3,20 +3,20 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Partner, User } from '@prisma/client';
+import { Auditor, User } from '@prisma/client';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 
-import { CreatePartnerDto } from './dtos/create-partner.dto';
-import { UpdatePartnerDto } from './dtos/update-partner.dto';
+import { CreateAuditorDto } from './dtos/create-auditor.dto';
+import { UpdateAuditorDto } from './dtos/update-auditor.dto';
 
 @Injectable()
-export class PartnerService {
+export class AuditorService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createPartner(createPartnerDto: CreatePartnerDto): Promise<Partner> {
+  async createAuditor(createAuditorDto: CreateAuditorDto): Promise<Auditor> {
     const { email, name, organizationName, phone, walletAddress } =
-      createPartnerDto;
+      createAuditorDto;
 
     if (!organizationName) {
       throw new ConflictException('Organization Name is required');
@@ -53,17 +53,17 @@ export class PartnerService {
       }
       throw error;
     }
-    const existingPartner = await this.prisma.partner.findFirst({
+    const existingAuditor = await this.prisma.auditor.findFirst({
       where: { userId: user.id },
     });
 
-    if (existingPartner) {
+    if (existingAuditor) {
       throw new ConflictException(
-        `A Partner already exists for User with ID ${user.id}`,
+        `A Auditor already exists for User with ID ${user.id}`,
       );
     }
 
-    return this.prisma.partner.create({
+    return this.prisma.auditor.create({
       data: {
         phone: phone,
         walletAddress: walletAddress,
@@ -73,34 +73,34 @@ export class PartnerService {
     });
   }
 
-  async findAllPartners(): Promise<Partner[]> {
-    return this.prisma.partner.findMany();
+  async findAllAuditors(): Promise<Auditor[]> {
+    return this.prisma.auditor.findMany();
   }
 
-  async findPartnerById(id: number): Promise<Partner | null> {
-    return this.prisma.partner.findFirst({ where: { id } });
+  async findAuditorById(id: number): Promise<Auditor | null> {
+    return this.prisma.auditor.findUnique({ where: { id } });
   }
 
-  async updatePartner(
+  async updateAuditor(
     id: number,
-    updatePartnerDto: UpdatePartnerDto,
-  ): Promise<Partner> {
-    return this.prisma.partner.update({
+    updateAuditorDto: UpdateAuditorDto,
+  ): Promise<Auditor> {
+    return this.prisma.auditor.update({
       where: { id },
-      data: updatePartnerDto,
+      data: updateAuditorDto,
     });
   }
 
-  async deletePartner(id: number): Promise<Partner> {
-    const partner = await this.prisma.partner.findUnique({
+  async deleteAuditor(id: number): Promise<Auditor> {
+    const Auditor = await this.prisma.auditor.findUnique({
       where: { id },
     });
 
-    if (!partner) {
-      throw new NotFoundException(`Partner with ID ${id} not found.`);
+    if (!Auditor) {
+      throw new NotFoundException(`Auditor with ID ${id} not found.`);
     }
 
-    return this.prisma.partner.delete({
+    return this.prisma.auditor.delete({
       where: { id },
     });
   }

@@ -20,50 +20,47 @@ model User {
   walletAddress   String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @default(now()) @updatedAt
-  recyclers       Recycler[]
-  partners        Partner[]
-  wasteGenerators WasteGenerator[]
-  recyclingReports RecyclingReport[]
-  auditors        Auditor[]
+  recyclers       Recycler[]        @relation("UserRecycler")
+  partners        Partner[]         @relation("UserPartner")
+  wasteGenerators WasteGenerator[]  @relation("UserWasteGenerator")
+  recyclingReports RecyclingReport[] @relation("UserRecyclingReport")
+  auditors        Auditor[]         @relation("UserAuditor")
 }
 
 model Recycler {
   id                BigInt    @id @default(autoincrement())
-  userId            BigInt @unique
+  userId            BigInt
   organizationName  String?
   phone             String?
   walletAddress     String?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @default(now()) @updatedAt
 
-  user              User      @relation(fields: [userId], references: [id])
-  @@index([userId]) 
+  user              User      @relation("UserRecycler", fields: [userId], references: [id])
 }
 
 model Partner {
   id                BigInt    @id @default(autoincrement())
-  userId            BigInt @unique
+  userId            BigInt
   organizationName  String?
   phone             String?
   walletAddress     String?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @default(now()) @updatedAt
 
-  user              User      @relation(fields: [userId], references: [id])
-  @@index([userId]) 
+  user              User      @relation("UserPartner", fields: [userId], references: [id])
 }
 
 model WasteGenerator {
   id                BigInt    @id @default(autoincrement())
-  userId            BigInt @unique
+  userId            BigInt
   organizationName  String?
   phone             String?
   walletAddress     String?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @default(now()) @updatedAt
 
-  user              User      @relation(fields: [userId], references: [id])
-  @@index([userId]) 
+  user              User      @relation("UserWasteGenerator", fields: [userId], references: [id])
 }
 
 model RecyclingReport {
@@ -71,8 +68,6 @@ model RecyclingReport {
   submittedBy     BigInt
   reportDate      DateTime  @default(now())
   audited         Boolean   @default(false)
-  name            String
-  email           String
   phone           String?
   materials       Json
   walletAddress   String?
@@ -80,18 +75,21 @@ model RecyclingReport {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @default(now()) @updatedAt
 
-  user            User      @relation(fields: [submittedBy], references: [id])
-  audits          Audit[]
+  user            User      @relation("UserRecyclingReport", fields: [submittedBy], references: [id])
+  audits          Audit[]   @relation("ReportAudits")
 }
 
 model Auditor {
-  id        BigInt    @id @default(autoincrement())
-  userId    BigInt
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
+  id              BigInt    @id @default(autoincrement())
+  userId          BigInt
+  organizationName  String?
+  phone           String?
+  walletAddress   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
 
-  user     User      @relation(fields: [userId], references: [id])
-  audits   Audit[]
+  user            User      @relation("UserAuditor", fields: [userId], references: [id])
+  audits          Audit[]   @relation("AuditorAudits")
 }
 
 model Audit {
@@ -103,6 +101,6 @@ model Audit {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @default(now()) @updatedAt
 
-  recyclingReport RecyclingReport @relation(fields: [reportId], references: [id])
-  auditor         Auditor         @relation(fields: [auditorId], references: [id])
+  recyclingReport RecyclingReport @relation("ReportAudits", fields: [reportId], references: [id])
+  auditor         Auditor         @relation("AuditorAudits", fields: [auditorId], references: [id])
 }
