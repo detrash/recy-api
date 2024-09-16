@@ -44,7 +44,7 @@ export class WasteGeneratorController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Retrieve a Waste Generator by ID' })
+  @ApiOperation({ summary: 'Retrieve a waste generator by ID' })
   @ApiParam({
     name: 'id',
     type: 'number',
@@ -52,9 +52,9 @@ export class WasteGeneratorController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Retrieve a Waste Generator by ID',
+    description: 'Retrieve a waste generator by ID',
   })
-  @ApiResponse({ status: 404, description: 'Waste Generator not found' })
+  @ApiResponse({ status: 404, description: 'Waste generator not found' })
   async findOne(@Param('id') id: number): Promise<WasteGenerator | null> {
     return this.wasteGenerator.findWasteGeneratorById(id);
   }
@@ -72,7 +72,7 @@ export class WasteGeneratorController {
     type: UpdateWasteGeneratorDto,
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 404, description: 'Waste Generator not found' })
+  @ApiResponse({ status: 404, description: 'Waste generator not found' })
   async update(
     @Param('id') id: number,
     @Body() UpdateWasteGeneratorDto: UpdateWasteGeneratorDto,
