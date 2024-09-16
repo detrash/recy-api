@@ -7,6 +7,7 @@ import { HealthModule } from './modules/health/health.module';
 import { MailModule } from './modules/mail/mail.module';
 import { PartnerModule } from './modules/partner/partner.module';
 import { RecyclerModule } from './modules/recycler/recycler.module';
+import { RecyclingReportModule } from './modules/recycling-report';
 import { WasteGeneratorModule } from './modules/waste-generator/waste-generator.module';
 
 @Module({
@@ -17,6 +18,7 @@ import { WasteGeneratorModule } from './modules/waste-generator/waste-generator.
     PartnerModule,
     WasteGeneratorModule,
     RecyclerModule,
+    RecyclingReportModule,
     AuditorModule,
     HealthModule,
   ],

@@ -12,6 +12,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ResidueType {
+  GLASS
+  METAL
+  ORGANIC
+  PAPER
+  PLASTIC
+  TEXTILE
+  LANDFILL_WASTE
+}
+
 model User {
   id              BigInt            @id @default(autoincrement())
   name            String
