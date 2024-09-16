@@ -20,18 +20,6 @@ export class RecyclerService {
     const { email, name, organizationName, phone, walletAddress } =
       createRecyclerDto;
 
-    if (!organizationName) {
-      throw new ConflictException('Organization Name is required');
-    }
-
-    if (!name) {
-      throw new ConflictException('Name is required');
-    }
-
-    if (!email) {
-      throw new ConflictException('Email is required');
-    }
-
     let user: User;
 
     try {
@@ -55,7 +43,7 @@ export class RecyclerService {
       }
       throw error;
     }
-    const existingRecycler = await this.prisma.recycler.findFirst({
+    const existingRecycler = await this.prisma.recycler.findUnique({
       where: { userId: user.id },
     });
 

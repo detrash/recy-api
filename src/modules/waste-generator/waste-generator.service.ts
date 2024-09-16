@@ -20,18 +20,6 @@ export class WasteGeneratorService {
     const { email, name, organizationName, phone, walletAddress } =
       createWasteGeneratorDto;
 
-    if (!organizationName) {
-      throw new ConflictException('Organization Name is required');
-    }
-
-    if (!name) {
-      throw new ConflictException('Name is required');
-    }
-
-    if (!email) {
-      throw new ConflictException('Email is required');
-    }
-
     let user: User;
 
     try {
@@ -55,7 +43,7 @@ export class WasteGeneratorService {
       }
       throw error;
     }
-    const existingWasteGenerator = await this.prisma.wasteGenerator.findFirst({
+    const existingWasteGenerator = await this.prisma.wasteGenerator.findUnique({
       where: { userId: user.id },
     });
 

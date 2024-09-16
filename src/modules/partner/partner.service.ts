@@ -18,18 +18,6 @@ export class PartnerService {
     const { email, name, organizationName, phone, walletAddress } =
       createPartnerDto;
 
-    if (!organizationName) {
-      throw new ConflictException('Organization Name is required');
-    }
-
-    if (!name) {
-      throw new ConflictException('Name is required');
-    }
-
-    if (!email) {
-      throw new ConflictException('Email is required');
-    }
-
     let user: User;
 
     try {

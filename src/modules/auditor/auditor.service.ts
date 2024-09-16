@@ -18,18 +18,6 @@ export class AuditorService {
     const { email, name, organizationName, phone, walletAddress } =
       createAuditorDto;
 
-    if (!organizationName) {
-      throw new ConflictException('Organization Name is required');
-    }
-
-    if (!name) {
-      throw new ConflictException('Name is required');
-    }
-
-    if (!email) {
-      throw new ConflictException('Email is required');
-    }
-
     let user: User;
 
     try {
@@ -53,7 +41,7 @@ export class AuditorService {
       }
       throw error;
     }
-    const existingAuditor = await this.prisma.auditor.findFirst({
+    const existingAuditor = await this.prisma.auditor.findUnique({
       where: { userId: user.id },
     });
 
