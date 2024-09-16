@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class UpdatePartnerDto {
+export class UpdateWasteGeneratorDto {
   @IsOptional()
   @IsString()
   organizationName?: string;

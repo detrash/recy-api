@@ -5,6 +5,7 @@ import { CalculatorModule } from './modules/calculator/calculator.module';
 import { HealthModule } from './modules/health/health.module';
 import { MailModule } from './modules/mail/mail.module';
 import { PartnerModule } from './modules/partner/partner.module';
+import { WasteGeneratorsModule } from './modules/waste-generator/waste-generator.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { PartnerModule } from './modules/partner/partner.module';
     CalculatorModule,
     MailModule,
     PartnerModule,
+    WasteGeneratorsModule,
     HealthModule,
   ],
   controllers: [],

@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreatePartnerDto {
+export class CreateWasteGeneratorDto {
   @IsString()
   @IsNotEmpty()
   name: string;
