@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Audit } from '@prisma/client';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
@@ -11,7 +15,7 @@ export class AuditService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createAudit(createAuditDto: CreateAuditDto): Promise<Audit> {
-    const { reportId, auditorId, comments } = createAuditDto;
+    const { reportId, auditorId, audited, comments } = createAuditDto;
 
     const recyclingReport = await this.prisma.recyclingReport.findUnique({
       where: { id: reportId },
@@ -31,9 +35,24 @@ export class AuditService {
       throw new NotFoundException(`Auditor with ID ${auditorId} not found.`);
     }
 
+    const existingAudit = await this.prisma.audit.findFirst({
+      where: {
+        reportId: reportId,
+        auditorId: auditorId,
+      },
+    });
+
+    if (existingAudit) {
+      throw new ConflictException(
+        `An audit for report ID ${reportId} with auditor ID ${auditorId} already exists.`,
+      );
+    }
+
+    // Create the new audit
     return this.prisma.audit.create({
       data: {
         reportId,
+        audited,
         auditorId,
         comments,
       },

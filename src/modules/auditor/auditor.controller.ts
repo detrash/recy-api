@@ -17,28 +17,28 @@ import { UpdateAuditorDto } from './dtos/update-auditor.dto';
 @ApiTags('auditor')
 @Controller({ path: 'auditor', version: '1' })
 export class AuditorController {
-  constructor(private readonly partnerService: AuditorService) {}
+  constructor(private readonly auditorService: AuditorService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new partner' })
+  @ApiOperation({ summary: 'Create a new auditor' })
   @ApiResponse({
     status: 201,
-    description: 'The partner has been successfully created.',
+    description: 'The auditor has been successfully created.',
     type: CreateAuditorDto,
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   async create(@Body() createAuditorDto: CreateAuditorDto): Promise<Auditor> {
-    return this.partnerService.createAuditor(createAuditorDto);
+    return this.auditorService.createAuditor(createAuditorDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Retrieve all auditor' })
+  @ApiOperation({ summary: 'Retrieve all auditors' })
   @ApiResponse({
     status: 200,
     description: 'Retrieve all auditor',
   })
   async findAll(): Promise<Auditor[]> {
-    return this.partnerService.findAllAuditors();
+    return this.auditorService.findAllAuditors();
   }
 
   @Get(':id')
@@ -54,7 +54,7 @@ export class AuditorController {
   })
   @ApiResponse({ status: 404, description: 'Auditor not found' })
   async findOne(@Param('id') id: number): Promise<Auditor | null> {
-    return this.partnerService.findAuditorById(id);
+    return this.auditorService.findAuditorById(id);
   }
 
   @Put(':id')
@@ -75,7 +75,7 @@ export class AuditorController {
     @Param('id') id: number,
     @Body() updateAuditorDto: UpdateAuditorDto,
   ): Promise<Auditor> {
-    return this.partnerService.updateAuditor(id, updateAuditorDto);
+    return this.auditorService.updateAuditor(id, updateAuditorDto);
   }
 
   @Delete(':id')
@@ -91,6 +91,6 @@ export class AuditorController {
   })
   @ApiResponse({ status: 404, description: 'Auditor not found' })
   async remove(@Param('id') id: number): Promise<Auditor> {
-    return this.partnerService.deleteAuditor(id);
+    return this.auditorService.deleteAuditor(id);
   }
 }

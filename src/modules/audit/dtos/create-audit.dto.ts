@@ -1,13 +1,17 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateAuditDto {
   @IsNotEmpty()
   @IsNumber()
-  reportId: bigint;
+  reportId: number;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  audited: boolean;
 
   @IsNotEmpty()
   @IsNumber()
-  auditorId: bigint;
+  auditorId: number;
 
   @IsString()
   comments?: string;

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
+import { AuditModule } from './modules/audit/audit.module';
 import { AuditorModule } from './modules/auditor/auditor.module';
 import { CalculatorModule } from './modules/calculator/calculator.module';
 import { HealthModule } from './modules/health/health.module';
@@ -20,6 +21,7 @@ import { WasteGeneratorModule } from './modules/waste-generator/waste-generator.
     RecyclerModule,
     RecyclingReportModule,
     AuditorModule,
+    AuditModule,
     HealthModule,
   ],
   controllers: [],

@@ -28,7 +28,6 @@ export class RecyclingReportService {
     const {
       submittedBy,
       reportDate,
-      audited,
       phone,
       materials,
       walletAddress,
@@ -44,7 +43,7 @@ export class RecyclingReportService {
       data: {
         submittedBy: BigInt(submittedBy),
         reportDate,
-        audited,
+        audited: false,
         phone,
         materials: jsonMaterials,
         walletAddress,

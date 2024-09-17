@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -20,10 +19,6 @@ export class CreateRecyclingReportDto {
   @IsNotEmpty()
   @Type(() => Date)
   reportDate: Date;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  audited: boolean;
 
   @IsOptional()
   @IsString()
