@@ -49,7 +49,7 @@ export function PaginationQuery<T>(superClass: Constructor<T>) {
     @DataType(() => Number)
     @ApiPropertyOptional({ default: 1, description: 'Page number' })
     @Min(1)
-    readonly page: number = 1;
+    readonly page?: number = 1;
 
     @IsNumber()
     @IsOptional()
@@ -60,7 +60,7 @@ export function PaginationQuery<T>(superClass: Constructor<T>) {
     })
     @Min(5)
     @Max(100)
-    readonly limit: number = 20;
+    readonly limit?: number = 20;
 
     @IsOptional()
     @ApiPropertyOptional({
@@ -70,7 +70,7 @@ export function PaginationQuery<T>(superClass: Constructor<T>) {
       default: 'createdAt',
       description: 'Sort by field',
     })
-    readonly sortBy: string = 'createdAt';
+    readonly sortBy?: string = 'createdAt';
 
     @IsOptional()
     @ApiPropertyOptional({
@@ -78,7 +78,7 @@ export function PaginationQuery<T>(superClass: Constructor<T>) {
       default: 'asc',
       description: 'Sort order',
     })
-    readonly orderBy: string = 'asc';
+    readonly orderBy?: string = 'asc';
   }
 
   return Class as Constructor<T & Class>;

@@ -21,13 +21,6 @@ export class UsersService {
 
     const user = await this.prisma.user.create({
       data: createUserDto,
-      include: {
-        auditors: true,
-        partners: true,
-        recyclers: true,
-        recyclingReports: true,
-        wasteGenerators: true,
-      },
     });
 
     return user;
@@ -44,57 +37,43 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id },
       data: updateUserDto,
-      include: {
-        auditors: true,
-        partners: true,
-        recyclers: true,
-        recyclingReports: true,
-        wasteGenerators: true,
-      },
     });
   }
 
-  async findUserById(id: bigint) {
+  async findUserById(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      include: {
-        auditors: true,
-        partners: true,
-        recyclers: true,
-        recyclingReports: true,
-        wasteGenerators: true,
-      },
     });
 
     if (!user) throw new NotFoundException('User not found.');
 
-    return user;
+    return { ...user, id: Number(user.id) };
   }
 
-  async findAll(queryParams: FindUserDto) {
-    const { page, limit, ...filters } = queryParams;
+  async findAll(args: FindUserDto) {
+    const { page, limit, orderBy, sortBy, ...filters } = args;
 
     const users = await this.prisma.user.findMany({
       where: filters,
-      skip: (page - 1) * limit,
       take: limit,
-      include: {
-        auditors: true,
-        partners: true,
-        recyclers: true,
-        recyclingReports: true,
-        wasteGenerators: true,
+      skip: (page - 1) * limit,
+      orderBy: {
+        [sortBy]: orderBy,
       },
     });
 
-    const total = await this.prisma.user.count({ where: filters });
+    const total = await this.prisma.user.count({
+      where: filters,
+    });
 
     return {
       data: users,
       pagination: {
+        page,
+        limit,
         totalPages: Math.ceil(total / limit),
-        totalItems: total,
       },
     };
   }
+
 }

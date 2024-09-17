@@ -1,18 +1,19 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 @ObjectType()
 export class User {
-  @ApiProperty({ example: '1' })
+  @ApiProperty({ example: 1 })
   @Field()
-  id: bigint;
+  id: number;
 
   @ApiProperty({ example: 'Jhon Doe' })
   @Field()
   name: string;
 
   @ApiProperty({ example: 'jhon@example.com' })
+  @IsEmail()
   @Field()
   email: string;
 

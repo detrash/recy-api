@@ -23,7 +23,7 @@ export class UsersController {
     description: 'Returns user',
   })
   @ApiParam({
-    type: 'string',
+    type: 'number',
     name: 'id',
     example: '1',
   })
@@ -31,7 +31,7 @@ export class UsersController {
     description: 'Returns user',
     type: User,
   })
-  findUserById(@Param('id') id: bigint) {
+  findUserById(@Param('id') id: number) {
     return this.usersService.findUserById(id);
   }
 

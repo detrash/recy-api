@@ -6,6 +6,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ example: 1 })
-  id?: bigint;
+  id?: number;
 
 }
