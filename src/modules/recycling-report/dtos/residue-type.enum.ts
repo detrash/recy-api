@@ -1,0 +1,9 @@
+export enum ResidueType {
+  GLASS = 'GLASS',
+  METAL = 'METAL',
+  ORGANIC = 'ORGANIC',
+  PAPER = 'PAPER',
+  PLASTIC = 'PLASTIC',
+  TEXTILE = 'TEXTILE',
+  LANDFILL_WASTE = 'LANDFILL_WASTE',
+}

@@ -1,0 +1,2 @@
+-- CreateEnum
+CREATE TYPE "ResidueType" AS ENUM ('GLASS', 'METAL', 'ORGANIC', 'PAPER', 'PLASTIC', 'TEXTILE', 'LANDFILL_WASTE');
