@@ -2,6 +2,7 @@ import {
   Controller,
   ParseFilePipe,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -27,7 +28,14 @@ export class UploadController {
       }),
     )
     file: Express.Multer.File,
+    @Query('bucket') bucketName: string,
   ) {
-    await this.uploadService.upload(file.originalname, file.buffer);
+    const options = {
+      fileName: file.originalname,
+      file: file.buffer,
+      bucketName: bucketName || process.env.AWS_S3_BUCKET_NAME,
+    };
+
+    await this.uploadService.upload(options);
   }
 }

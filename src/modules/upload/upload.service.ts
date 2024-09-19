@@ -10,10 +10,10 @@ export class UploadService {
 
   constructor(private readonly configService: ConfigService) {}
 
-  async upload(fileName: string, file: Buffer) {
+  async upload({ fileName, file, bucketName }: UploadFileDto) {
     await this.s3Client.send(
       new PutObjectCommand({
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Bucket: bucketName,
         Key: fileName,
         Body: file,
       }),
