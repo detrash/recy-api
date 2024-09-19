@@ -20,7 +20,7 @@ enum ResidueType {
 }
 
 model User {
-  id            BigInt   @id @default(autoincrement())
+  id            String   @id @default(uuid()) 
   name          String
   email         String   @unique
   phone         String?
@@ -34,23 +34,23 @@ model User {
 }
 
 model Role {
-  id    BigInt     @id @default(autoincrement())
+  id    String     @id @default(uuid())
   name  String     @unique
   users UserRole[]
 }
 
 model UserRole {
-  id     BigInt @id @default(autoincrement())
-  userId BigInt
-  roleId BigInt
+  id     String @id @default(uuid())
+  userId String
+  roleId String
 
   user User @relation("UserRoles", fields: [userId], references: [id])
   role Role @relation(fields: [roleId], references: [id])
 }
 
 model RecyclingReport {
-  id            BigInt   @id @default(autoincrement())
-  submittedBy   BigInt
+  id            String   @id @default(uuid())
+  submittedBy   String
   reportDate    DateTime @default(now())
   audited       Boolean  @default(false)
   phone         String?
@@ -65,9 +65,9 @@ model RecyclingReport {
 }
 
 model Audit {
-  id        BigInt   @id @default(autoincrement())
-  reportId  BigInt
-  auditorId BigInt
+  id        String   @id @default(uuid())
+  reportId  String
+  auditorId String
   audited   Boolean  @default(false)
   comments  String?
   createdAt DateTime @default(now())

@@ -14,7 +14,7 @@ import { ResidueType } from './residue-type.enum';
 export class CreateRecyclingReportDto {
   @IsNotEmpty()
   @IsNumber()
-  submittedBy: number | bigint;
+  submittedBy: string;
 
   @IsNotEmpty()
   @Type(() => Date)

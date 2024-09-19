@@ -14,8 +14,8 @@ import { CreateRecyclingReportDto } from './dtos/create-recycling-report.dto';
 import { UpdateRecyclingReportDto } from './dtos/update-recycling-report.dto';
 import { RecyclingReportService } from './recycling-report.service';
 
-@ApiTags('recycling-report')
-@Controller({ path: 'recycling-report', version: '1' })
+@ApiTags('recycling-reports')
+@Controller({ path: 'recycling-reports', version: '1' })
 export class RecyclingReportController {
   constructor(
     private readonly recyclingReportService: RecyclingReportService,
@@ -60,7 +60,7 @@ export class RecyclingReportController {
     description: 'The recycling report with the specified ID was not found.',
   })
   async findRecyclingReportById(
-    @Param('id') id: bigint,
+    @Param('id') id: string,
   ): Promise<RecyclingReport> {
     return this.recyclingReportService.findRecyclingReportById(id);
   }
@@ -80,7 +80,7 @@ export class RecyclingReportController {
     description: 'The recycling report with the specified ID was not found.',
   })
   async updateRecyclingReport(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateRecyclingReportDto: UpdateRecyclingReportDto,
   ): Promise<RecyclingReport> {
     return this.recyclingReportService.updateRecyclingReport(
@@ -100,7 +100,7 @@ export class RecyclingReportController {
     description: 'The recycling report with the specified ID was not found.',
   })
   async deleteRecyclingReport(
-    @Param('id') id: number,
+    @Param('id') id: string,
   ): Promise<RecyclingReport> {
     return this.recyclingReportService.deleteRecyclingReport(id);
   }

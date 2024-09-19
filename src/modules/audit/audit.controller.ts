@@ -14,8 +14,8 @@ import { AuditService } from './audit.service';
 import { CreateAuditDto } from './dtos/create-audit.dto';
 import { UpdateAuditDto } from './dtos/update-audit.dto';
 
-@ApiTags('audit')
-@Controller({ path: 'audit', version: '1' })
+@ApiTags('audits')
+@Controller({ path: 'audits', version: '1' })
 export class AuditController {
   constructor(private readonly auditService: AuditService) {}
 
