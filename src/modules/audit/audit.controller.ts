@@ -48,7 +48,7 @@ export class AuditController {
     description: 'The audit with the specified ID.',
   })
   @ApiResponse({ status: 404, description: 'Audit not found.' })
-  async findOne(@Param('id') id: number): Promise<Audit | null> {
+  async findOne(@Param('id') id: string): Promise<Audit | null> {
     return this.auditService.findAuditById(id);
   }
 
@@ -61,7 +61,7 @@ export class AuditController {
   })
   @ApiResponse({ status: 404, description: 'Audit not found.' })
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateAuditDto: UpdateAuditDto,
   ): Promise<Audit> {
     return this.auditService.updateAudit(id, updateAuditDto);
@@ -75,7 +75,7 @@ export class AuditController {
     description: 'The audit has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Audit not found.' })
-  async remove(@Param('id') id: number): Promise<Audit> {
+  async remove(@Param('id') id: string): Promise<Audit> {
     return this.auditService.deleteAudit(id);
   }
 }

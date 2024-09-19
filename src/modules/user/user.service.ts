@@ -152,7 +152,6 @@ export class UserService {
       throw new NotFoundException(`User with ID ${id} not found.`);
     }
 
-    // Delete the user
     return this.prisma.user.delete({
       where: { id },
       include: { userRoles: { include: { role: true } } },
