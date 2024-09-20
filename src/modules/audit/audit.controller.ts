@@ -40,6 +40,11 @@ export class AuditController {
     return this.auditService.findAllAudits();
   }
 
+  @Get('owner')
+  async owner() {
+    return this.auditService.owner();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Retrieve a specific audit by ID' })
   @ApiParam({ name: 'id', type: 'number', description: 'The ID of the audit' })

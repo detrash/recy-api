@@ -4,12 +4,16 @@ import { ulid } from 'ulid';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 
+import { Web3Service } from '../web3/web3.service';
 import { CreateAuditDto } from './dtos/create-audit.dto';
 import { UpdateAuditDto } from './dtos/update-audit.dto';
 
 @Injectable()
 export class AuditService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly web3Service: Web3Service,
+  ) {}
 
   async createAudit(createAuditDto: CreateAuditDto): Promise<Audit> {
     const { reportId, audited, auditorId, comments } = createAuditDto;
@@ -81,5 +85,9 @@ export class AuditService {
     return this.prisma.audit.delete({
       where: { id },
     });
+  }
+
+  async owner() {
+    return this.web3Service.owner();
   }
 }

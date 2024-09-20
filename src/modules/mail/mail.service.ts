@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Resend } from 'resend';
 
-import { Mail } from './interfaces/mail.interface';
+import { MailDto } from './dtos/mail.dto';
 
 @Injectable()
 export class MailService {
@@ -11,7 +11,7 @@ export class MailService {
     this.resend = new Resend(process.env.RESEND_API_KEY);
   }
 
-  async sendEmail(mail: Mail) {
+  async sendEmail(mail: MailDto) {
     return await this.resend.emails.send(mail);
   }
 }
