@@ -1,13 +1,12 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CalculatorSupportEmail } from 'emails';
+import CalculatorSupportEmail from 'emails';
 
-import { Mail } from '@/modules/mail/interfaces/mail.interface';
 import { MailService } from '@/modules/mail/mail.service';
 
+import { MailDto } from '../mail/dtos/mail.dto';
 import { CalculatorService } from './calculator.service';
 import { ResultDto, SupportDto } from './dtos';
-
 @ApiTags('calculator')
 @Controller({ path: 'calculator', version: '1' })
 export class CalculatorController {
@@ -28,7 +27,7 @@ export class CalculatorController {
   async contact(@Body() supportDto: SupportDto) {
     await this.calculatorService.saveContactInfo(supportDto);
 
-    const mail: Mail = {
+    const mail: MailDto = {
       to: supportDto.email,
       from: 'no-reply@app.recy.life',
       subject: 'Contact Information',

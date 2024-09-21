@@ -1,4 +1,4 @@
-export interface Mail {
+export class MailDto {
   from: string;
   to: string;
   subject: string;
