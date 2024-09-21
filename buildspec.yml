@@ -1,15 +1,5 @@
 version: 0.2
 
-#env:
-#variables:
-# key: "value"
-# key: "value"
-#parameter-store:
-# key: "value"
-# key: "value"
-#secrets-manager:
-# key: secret-id:json-key:version-stage:version-id
-# key: secret-id:json-key:version-stage:version-id
 phases:
   install:
     runtime-versions:
@@ -24,25 +14,6 @@ phases:
   build:
     commands:
       - npm run build
-  #post_build:
-  #commands:
-  # - command
-  # - command
-#reports:
-#report-name-or-arn:
-#files:
-# - location
-# - location
-#base-directory: location
-#discard-paths: yes
-#file-format: JunitXml | CucumberJson
 artifacts:
   files:
     - '**/*'
-    # - location
-  #name: $(date +%Y-%m-%d)
-  #discard-paths: yes
-  #base-directory: location
-#cache:
-#paths:
-# - paths
