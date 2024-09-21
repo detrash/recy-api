@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Web3 from 'web3';
 
-import certificateABI from './abi/certificate.json';
+import certificateABI from './abi/detrash-certificate.json';
 
 @Injectable()
 export class Web3Service {
