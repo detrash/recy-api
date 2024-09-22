@@ -1,21 +1,31 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
       nodejs: 20
     commands:
-      - echo "Install dependencies"
-      - npm install
+      - echo "Installing dependencies..."
+      - npm ci
+      
   pre_build:
     commands:
-      - echo "Running PRISMA database scripts"
+      - echo "Running PRISMA database migrations..."
       - npx prisma migrate deploy
+
   build:
     commands:
+      - echo "Building the project..."
       - npm run build
+
   post_build:
     commands:
-      - echo "Build completed on `date`
+      - echo "Copying necessary files for deployment..."
+      - mkdir -p dist/node_modules
+      - cp -R node_modules dist/node_modules 
+
 artifacts:
   files:
     - '**/*'
+    - '!node_modules/**'
+    - 'dist/**'         
