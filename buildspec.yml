@@ -15,7 +15,7 @@ phases:
       - npm run build
   post_build:
     commands:
-      - echo "Build completed on `date`
+        - cp -R node_modules/dist/node_modules
 artifacts:
   files:
     - '**/*'
