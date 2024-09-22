@@ -1,16 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import {
+  BadRequestException,
   INestApplication,
   VersioningType,
-  BadRequestException,
 } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Audit } from '@prisma/client';
 import request from 'supertest';
+
+import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
+
 import { AuditController } from './audit.controller';
 import { AuditService } from './audit.service';
-import { Audit } from '@prisma/client';
 import { CreateAuditDto } from './dtos/create-audit.dto';
 import { UpdateAuditDto } from './dtos/update-audit.dto';
-import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
 describe('AuditController (e2e)', () => {
   let app: INestApplication;
@@ -243,7 +245,10 @@ describe('AuditController (e2e)', () => {
         createdAt: updatedAudit.createdAt.toISOString(),
         updatedAt: updatedAudit.updatedAt.toISOString(),
       });
-      expect(service.updateAudit).toHaveBeenCalledWith('audit123', updateAuditDto);
+      expect(service.updateAudit).toHaveBeenCalledWith(
+        'audit123',
+        updateAuditDto,
+      );
     });
 
     it('should throw BadRequestException when validation fails', async () => {

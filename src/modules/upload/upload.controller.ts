@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
-import multer from 'multer';
 
 import { UploadService } from './upload.service';
 
@@ -28,7 +27,7 @@ export class UploadController {
         ],
       }),
     )
-    file: multer.File,
+    file: Express.Multer.File,
     @Query('bucket') bucketName: string,
   ) {
     const options = {

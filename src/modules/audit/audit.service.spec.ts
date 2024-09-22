@@ -1,13 +1,19 @@
+import {
+  BadRequestException,
+  HttpException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuditService } from './audit.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateAuditDto, CreateAuditSchema } from './dtos/create-audit.dto';
-import { BadRequestException, HttpException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { ulid } from 'ulid';
-import { Audit, Prisma, RecyclingReport } from '@prisma/client';
-import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
-import { Web3Service } from '../web3/web3.service';
+import { Audit, RecyclingReport } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+import { ulid } from 'ulid';
+
+import { PrismaService } from '../prisma/prisma.service';
+import { Web3Service } from '../web3/web3.service';
+import { AuditService } from './audit.service';
+import { CreateAuditDto, CreateAuditSchema } from './dtos/create-audit.dto';
 import { UpdateAuditDto } from './dtos/update-audit.dto';
 
 describe('AuditService', () => {
@@ -151,7 +157,10 @@ describe('AuditService', () => {
     });
 
     it('should generate a ULID for the audit ID', async () => {
-      const ulidSpy = jest.spyOn(require('ulid'), 'ulid').mockReturnValue('unique-ulid');
+      const ulidSpy = jest
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        .spyOn(require('ulid'), 'ulid')
+        .mockReturnValue('unique-ulid');
 
       prisma.recyclingReport.findUnique.mockResolvedValue(recyclingReport);
       prisma.audit.create.mockResolvedValue({
@@ -212,7 +221,9 @@ describe('AuditService', () => {
       prisma.audit.create.mockRejectedValue(prismaError);
 
       await expect(service.createAudit(createAuditDto)).rejects.toThrow(
-        new BadRequestException('Foreign key constraint failed on the field: Audit_reportId_fkey'),
+        new BadRequestException(
+          'Foreign key constraint failed on the field: Audit_reportId_fkey',
+        ),
       );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
@@ -247,7 +258,9 @@ describe('AuditService', () => {
       prisma.audit.create.mockRejectedValue(prismaError);
 
       await expect(service.createAudit(createAuditDto)).rejects.toThrow(
-        new BadRequestException('Unique constraint failed on the field: auditorId,reportId'),
+        new BadRequestException(
+          'Unique constraint failed on the field: auditorId,reportId',
+        ),
       );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
@@ -273,7 +286,9 @@ describe('AuditService', () => {
       prisma.recyclingReport.findUnique.mockResolvedValue(recyclingReport);
       prisma.audit.create.mockRejectedValue(httpException);
 
-      await expect(service.createAudit(createAuditDto)).rejects.toThrow(httpException);
+      await expect(service.createAudit(createAuditDto)).rejects.toThrow(
+        httpException,
+      );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
         where: { id: 'report123' },
@@ -371,7 +386,9 @@ describe('AuditService', () => {
       prisma.audit.create.mockRejectedValue(prismaError);
 
       await expect(service.createAudit(createAuditDto)).rejects.toThrow(
-        new BadRequestException('Foreign key constraint failed on the field: undefined'),
+        new BadRequestException(
+          'Foreign key constraint failed on the field: undefined',
+        ),
       );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
@@ -406,7 +423,9 @@ describe('AuditService', () => {
       prisma.audit.create.mockRejectedValue(prismaError);
 
       await expect(service.createAudit(createAuditDto)).rejects.toThrow(
-        new BadRequestException('Unique constraint failed on the field: undefined'),
+        new BadRequestException(
+          'Unique constraint failed on the field: undefined',
+        ),
       );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
@@ -427,13 +446,17 @@ describe('AuditService', () => {
     });
 
     it('should re-throw BadRequestException if thrown during update', async () => {
-      const badRequestException = new BadRequestException('Bad Request during update');
+      const badRequestException = new BadRequestException(
+        'Bad Request during update',
+      );
 
       prisma.recyclingReport.findUnique.mockResolvedValue(recyclingReport);
       prisma.audit.create.mockResolvedValue(createdAudit);
       prisma.recyclingReport.update.mockRejectedValue(badRequestException);
 
-      await expect(service.createAudit(createAuditDto)).rejects.toThrow(badRequestException);
+      await expect(service.createAudit(createAuditDto)).rejects.toThrow(
+        badRequestException,
+      );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
         where: { id: 'report123' },
@@ -503,7 +526,9 @@ describe('AuditService', () => {
       prisma.audit.create.mockRejectedValue(prismaError);
 
       await expect(service.createAudit(createAuditDto)).rejects.toThrow(
-        new BadRequestException('Unique constraint failed on the field: undefined'),
+        new BadRequestException(
+          'Unique constraint failed on the field: undefined',
+        ),
       );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
@@ -573,7 +598,9 @@ describe('AuditService', () => {
       prisma.audit.create.mockRejectedValue(prismaError);
 
       await expect(service.createAudit(createAuditDto)).rejects.toThrow(
-        new BadRequestException('Unique constraint failed on the field: auditorId'),
+        new BadRequestException(
+          'Unique constraint failed on the field: auditorId',
+        ),
       );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
@@ -610,7 +637,9 @@ describe('AuditService', () => {
       prisma.audit.create.mockRejectedValue(prismaError);
 
       await expect(service.createAudit(createAuditDto)).rejects.toThrow(
-        new BadRequestException('Foreign key constraint failed on the field: Audit_reportId_fkey'),
+        new BadRequestException(
+          'Foreign key constraint failed on the field: Audit_reportId_fkey',
+        ),
       );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
@@ -645,7 +674,9 @@ describe('AuditService', () => {
       prisma.audit.create.mockRejectedValue(prismaError);
 
       await expect(service.createAudit(createAuditDto)).rejects.toThrow(
-        new BadRequestException('Foreign key constraint failed on the field: undefined'),
+        new BadRequestException(
+          'Foreign key constraint failed on the field: undefined',
+        ),
       );
 
       expect(prisma.recyclingReport.findUnique).toHaveBeenCalledWith({
@@ -664,7 +695,7 @@ describe('AuditService', () => {
 
       expect(prisma.recyclingReport.update).not.toHaveBeenCalled();
     });
-  })
+  });
 
   describe('createAuditSchema', () => {
     it('should pass when valid data is provided', () => {
@@ -686,7 +717,9 @@ describe('AuditService', () => {
         comments: 'This comment is valid.',
       };
 
-      expect(() => CreateAuditSchema.parse(invalidData)).toThrow('reportId cannot be empty');
+      expect(() => CreateAuditSchema.parse(invalidData)).toThrow(
+        'reportId cannot be empty',
+      );
     });
 
     it('should fail if auditorId is empty', () => {
@@ -697,7 +730,9 @@ describe('AuditService', () => {
         comments: 'This comment is valid.',
       };
 
-      expect(() => CreateAuditSchema.parse(invalidData)).toThrow('reportId cannot be empty');
+      expect(() => CreateAuditSchema.parse(invalidData)).toThrow(
+        'reportId cannot be empty',
+      );
     });
 
     it('should pass when comments are not provided', () => {
@@ -707,7 +742,9 @@ describe('AuditService', () => {
         auditorId: 'auditor456',
       };
 
-      expect(() => CreateAuditSchema.parse(validDataWithoutComments)).not.toThrow();
+      expect(() =>
+        CreateAuditSchema.parse(validDataWithoutComments),
+      ).not.toThrow();
     });
 
     it('should fail if audited is not a boolean', () => {
@@ -720,7 +757,6 @@ describe('AuditService', () => {
 
       expect(() => CreateAuditSchema.parse(invalidData)).toThrow();
     });
-
   });
 
   describe('findAll', () => {
@@ -790,7 +826,9 @@ describe('AuditService', () => {
 
       const result = await service.findAuditById('audit123');
 
-      expect(prisma.audit.findUnique).toHaveBeenCalledWith({ where: { id: 'audit123' } });
+      expect(prisma.audit.findUnique).toHaveBeenCalledWith({
+        where: { id: 'audit123' },
+      });
 
       expect(result).toEqual(audit);
     });
@@ -800,7 +838,9 @@ describe('AuditService', () => {
 
       const result = await service.findAuditById('nonexistentId');
 
-      expect(prisma.audit.findUnique).toHaveBeenCalledWith({ where: { id: 'nonexistentId' } });
+      expect(prisma.audit.findUnique).toHaveBeenCalledWith({
+        where: { id: 'nonexistentId' },
+      });
 
       expect(result).toBeNull();
     });
@@ -808,14 +848,17 @@ describe('AuditService', () => {
     it('should throw an error if findUnique throws an error', async () => {
       prisma.audit.findUnique.mockRejectedValue(new Error('Database error'));
 
-      await expect(service.findAuditById('audit123')).rejects.toThrow('Database error');
+      await expect(service.findAuditById('audit123')).rejects.toThrow(
+        'Database error',
+      );
 
-      expect(prisma.audit.findUnique).toHaveBeenCalledWith({ where: { id: 'audit123' } });
+      expect(prisma.audit.findUnique).toHaveBeenCalledWith({
+        where: { id: 'audit123' },
+      });
     });
   });
 
   describe('update', () => {
-
     it('should successfully update an existing audit', async () => {
       const existingAudit: Audit = {
         id: 'audit123',
@@ -843,7 +886,9 @@ describe('AuditService', () => {
 
       const result = await service.updateAudit('audit123', updateAuditDto);
 
-      expect(prisma.audit.findUnique).toHaveBeenCalledWith({ where: { id: 'audit123' } });
+      expect(prisma.audit.findUnique).toHaveBeenCalledWith({
+        where: { id: 'audit123' },
+      });
 
       expect(prisma.audit.update).toHaveBeenCalledWith({
         where: { id: 'audit123' },
@@ -861,11 +906,15 @@ describe('AuditService', () => {
         comments: 'Updated comment',
       };
 
-      await expect(service.updateAudit('nonexistentId', updateAuditDto)).rejects.toThrow(
+      await expect(
+        service.updateAudit('nonexistentId', updateAuditDto),
+      ).rejects.toThrow(
         new NotFoundException('Audit with ID nonexistentId not found.'),
       );
 
-      expect(prisma.audit.findUnique).toHaveBeenCalledWith({ where: { id: 'nonexistentId' } });
+      expect(prisma.audit.findUnique).toHaveBeenCalledWith({
+        where: { id: 'nonexistentId' },
+      });
 
       expect(prisma.audit.update).not.toHaveBeenCalled();
     });
@@ -890,9 +939,13 @@ describe('AuditService', () => {
 
       prisma.audit.update.mockRejectedValue(new Error('Database update error'));
 
-      await expect(service.updateAudit('audit123', updateAuditDto)).rejects.toThrow('Database update error');
+      await expect(
+        service.updateAudit('audit123', updateAuditDto),
+      ).rejects.toThrow('Database update error');
 
-      expect(prisma.audit.findUnique).toHaveBeenCalledWith({ where: { id: 'audit123' } });
+      expect(prisma.audit.findUnique).toHaveBeenCalledWith({
+        where: { id: 'audit123' },
+      });
 
       expect(prisma.audit.update).toHaveBeenCalledWith({
         where: { id: 'audit123' },
@@ -918,9 +971,13 @@ describe('AuditService', () => {
 
       const result = await service.deleteAudit('audit123');
 
-      expect(prisma.audit.findUnique).toHaveBeenCalledWith({ where: { id: 'audit123' } });
+      expect(prisma.audit.findUnique).toHaveBeenCalledWith({
+        where: { id: 'audit123' },
+      });
 
-      expect(prisma.audit.delete).toHaveBeenCalledWith({ where: { id: 'audit123' } });
+      expect(prisma.audit.delete).toHaveBeenCalledWith({
+        where: { id: 'audit123' },
+      });
 
       expect(result).toEqual(audit);
     });
@@ -932,7 +989,9 @@ describe('AuditService', () => {
         new NotFoundException('Audit with ID nonexistentId not found.'),
       );
 
-      expect(prisma.audit.findUnique).toHaveBeenCalledWith({ where: { id: 'nonexistentId' } });
+      expect(prisma.audit.findUnique).toHaveBeenCalledWith({
+        where: { id: 'nonexistentId' },
+      });
 
       expect(prisma.audit.delete).not.toHaveBeenCalled();
     });
@@ -950,16 +1009,22 @@ describe('AuditService', () => {
 
       prisma.audit.findUnique.mockResolvedValue(audit);
 
-      prisma.audit.delete.mockRejectedValue(new Error('Database deletion error'));
+      prisma.audit.delete.mockRejectedValue(
+        new Error('Database deletion error'),
+      );
 
-      await expect(service.deleteAudit('audit123')).rejects.toThrow('Database deletion error');
+      await expect(service.deleteAudit('audit123')).rejects.toThrow(
+        'Database deletion error',
+      );
 
-      expect(prisma.audit.findUnique).toHaveBeenCalledWith({ where: { id: 'audit123' } });
+      expect(prisma.audit.findUnique).toHaveBeenCalledWith({
+        where: { id: 'audit123' },
+      });
 
-      expect(prisma.audit.delete).toHaveBeenCalledWith({ where: { id: 'audit123' } });
+      expect(prisma.audit.delete).toHaveBeenCalledWith({
+        where: { id: 'audit123' },
+      });
     });
-
-
   });
   describe('owner', () => {
     it('should return an empty array when no owner is found', async () => {
@@ -988,6 +1053,4 @@ describe('AuditService', () => {
       expect(web3Service.owner).toHaveBeenCalled();
     });
   });
-
-
 });
