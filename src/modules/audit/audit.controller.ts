@@ -3,21 +3,24 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
+  UsePipes,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Audit } from '@prisma/client';
 
 import { AuditService } from './audit.service';
-import { CreateAuditDto } from './dtos/create-audit.dto';
-import { UpdateAuditDto } from './dtos/update-audit.dto';
+import { CreateAuditDto, CreateAuditSchema } from './dtos/create-audit.dto';
+import { UpdateAuditDto, UpdateAuditSchema } from './dtos/update-audit.dto';
+import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
 @ApiTags('audits')
 @Controller({ path: 'audits', version: '1' })
 export class AuditController {
-  constructor(private readonly auditService: AuditService) {}
+  constructor(private readonly auditService: AuditService) { }
 
   @Post()
   @ApiOperation({ summary: 'Create an audit' })
@@ -26,6 +29,7 @@ export class AuditController {
     description: 'The audit has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
+  @UsePipes(new ZodValidationPipe(CreateAuditSchema))
   async create(@Body() createAuditDto: CreateAuditDto): Promise<Audit> {
     return this.auditService.createAudit(createAuditDto);
   }
@@ -47,19 +51,23 @@ export class AuditController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Retrieve a specific audit by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'The ID of the audit' })
+  @ApiParam({ name: 'id', type: 'string', description: 'The ID of the audit' })
   @ApiResponse({
     status: 200,
     description: 'The audit with the specified ID.',
   })
   @ApiResponse({ status: 404, description: 'Audit not found.' })
-  async findOne(@Param('id') id: string): Promise<Audit | null> {
-    return this.auditService.findAuditById(id);
+  async findOne(@Param('id') id: string): Promise<Audit> {
+    const audit = await this.auditService.findAuditById(id);
+    if (!audit) {
+      throw new NotFoundException(`Audit with ID ${id} not found.`);
+    }
+    return audit;
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a specific audit by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'The ID of the audit' })
+  @ApiParam({ name: 'id', type: 'string', description: 'The ID of the audit' })
   @ApiResponse({
     status: 200,
     description: 'The audit has been successfully updated.',
@@ -67,14 +75,13 @@ export class AuditController {
   @ApiResponse({ status: 404, description: 'Audit not found.' })
   async update(
     @Param('id') id: string,
-    @Body() updateAuditDto: UpdateAuditDto,
+    @Body(new ZodValidationPipe(UpdateAuditSchema)) updateAuditDto: UpdateAuditDto,
   ): Promise<Audit> {
     return this.auditService.updateAudit(id, updateAuditDto);
   }
-
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a specific audit by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'The ID of the audit' })
+  @ApiParam({ name: 'id', type: 'string', description: 'The ID of the audit' }) // Corrected type
   @ApiResponse({
     status: 200,
     description: 'The audit has been successfully deleted.',
@@ -83,4 +90,5 @@ export class AuditController {
   async remove(@Param('id') id: string): Promise<Audit> {
     return this.auditService.deleteAudit(id);
   }
+
 }

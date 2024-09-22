@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Audit } from '@prisma/client';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Audit, Prisma } from '@prisma/client';
 import { ulid } from 'ulid';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
@@ -13,42 +13,65 @@ export class AuditService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly web3Service: Web3Service,
-  ) {}
+  ) { }
 
   async createAudit(createAuditDto: CreateAuditDto): Promise<Audit> {
     const { reportId, audited, auditorId, comments } = createAuditDto;
 
-    const recyclingReport = await this.prisma.recyclingReport.findUnique({
-      where: { id: reportId },
-    });
+    try {
+      const recyclingReport = await this.prisma.recyclingReport.findUnique({
+        where: { id: reportId },
+      });
 
-    if (!recyclingReport) {
-      throw new NotFoundException(
-        `RecyclingReport with ID ${reportId} not found.`,
-      );
+      if (!recyclingReport) {
+        throw new NotFoundException(
+          `RecyclingReport with ID ${reportId} not found.`,
+        );
+      }
+
+      // Gera um ULID para o ID da auditoria
+      const auditId = ulid();
+
+      const audit = await this.prisma.audit.create({
+        data: {
+          id: auditId,
+          reportId: reportId,
+          audited,
+          auditorId: auditorId,
+          comments,
+        },
+      });
+
+      await this.prisma.recyclingReport.update({
+        where: { id: reportId },
+        data: {
+          audited,
+        },
+      });
+
+      return audit;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2003') {
+          throw new BadRequestException(
+            `Foreign key constraint failed on the field: ${error.meta?.field_name}`,
+          );
+        }
+
+        if (error.code === 'P2002') {
+          throw new BadRequestException(
+            `Unique constraint failed on the field: ${error.meta?.target}`,
+          );
+        }
+
+      }
+
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('An unexpected error occurred.');
     }
-
-    // Gera um ULID para o ID da auditoria
-    const auditId = ulid();
-
-    const audit = await this.prisma.audit.create({
-      data: {
-        id: auditId,
-        reportId: reportId,
-        audited,
-        auditorId: auditorId,
-        comments,
-      },
-    });
-
-    await this.prisma.recyclingReport.update({
-      where: { id: reportId },
-      data: {
-        audited,
-      },
-    });
-
-    return audit;
   }
 
   async findAllAudits(): Promise<Audit[]> {

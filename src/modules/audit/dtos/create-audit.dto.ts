@@ -1,18 +1,10 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { z } from 'zod';
 
-export class CreateAuditDto {
-  @IsNotEmpty()
-  @IsString()
-  reportId: string;
+export const CreateAuditSchema = z.object({
+  reportId: z.string().min(1, { message: 'reportId cannot be empty' }),
+  audited: z.boolean(),
+  auditorId: z.string().min(1, { message: 'reportId cannot be empty' }),
+  comments: z.string().optional(),
+});
 
-  @IsNotEmpty()
-  @IsBoolean()
-  audited: boolean;
-
-  @IsNotEmpty()
-  @IsString()
-  auditorId: string;
-
-  @IsString()
-  comments?: string;
-}
+export type CreateAuditDto = z.infer<typeof CreateAuditSchema>;
