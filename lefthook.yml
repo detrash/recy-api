@@ -11,6 +11,8 @@ pre-commit:
       run: npx prettier --write {staged_files} && git add {staged_files}
 pre-push:
   commands:
+    api-knip:
+      run: npm run knip
     api-test:
       run: npm run test
     api-build:
