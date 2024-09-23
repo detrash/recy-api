@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import CalculatorSupportEmail from 'emails';
 
+import CalculatorSupportEmail from '@/emails';
 import { MailService } from '@/modules/mail/mail.service';
 
 import { MailDto } from '../mail/dtos/mail.dto';
