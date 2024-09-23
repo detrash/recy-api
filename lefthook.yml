@@ -9,6 +9,8 @@ pre-commit:
     api-format:
       glob: 'src/**/*.{ts,tsx,js,jsx,css,json}'
       run: npx prettier --write {staged_files} && git add {staged_files}
+    api-detect-deadcode:
+      run: npx knip --exclude enumMembers --config knip.ts
 pre-push:
   commands:
     api-knip:

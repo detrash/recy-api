@@ -39,7 +39,7 @@ export class CreateRecyclingReportDto {
   evidenceUrl: string;
 }
 
-export class MaterialDto {
+class MaterialDto {
   @IsNotEmpty()
   @IsEnum(ResidueType)
   materialType: ResidueType;

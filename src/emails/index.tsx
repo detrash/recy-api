@@ -16,7 +16,7 @@ interface CalculatorSupportEmailProps {
   wasteFootPrint: number;
 }
 
-export const CalculatorSupportEmail = ({
+const CalculatorSupportEmail = ({
   companyType,
   employeesQuantity,
   wasteFootPrint,
