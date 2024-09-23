@@ -1,13 +1,7 @@
-import {
-  BadRequestException,
-  INestApplication,
-  VersioningType,
-} from '@nestjs/common';
+import { INestApplication, VersioningType } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Audit } from '@prisma/client';
 import request from 'supertest';
-
-import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
 import { AuditController } from './audit.controller';
 import { AuditService } from './audit.service';

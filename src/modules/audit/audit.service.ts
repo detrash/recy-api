@@ -1,4 +1,10 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Audit, Prisma } from '@prisma/client';
 import { ulid } from 'ulid';
 
@@ -13,7 +19,7 @@ export class AuditService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly web3Service: Web3Service,
-  ) { }
+  ) {}
 
   async createAudit(createAuditDto: CreateAuditDto): Promise<Audit> {
     const { reportId, audited, auditorId, comments } = createAuditDto;
@@ -63,7 +69,6 @@ export class AuditService {
             `Unique constraint failed on the field: ${error.meta?.target}`,
           );
         }
-
       }
 
       if (error instanceof HttpException) {

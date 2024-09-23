@@ -12,15 +12,16 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Audit } from '@prisma/client';
 
+import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
+
 import { AuditService } from './audit.service';
 import { CreateAuditDto, CreateAuditSchema } from './dtos/create-audit.dto';
 import { UpdateAuditDto, UpdateAuditSchema } from './dtos/update-audit.dto';
-import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
 @ApiTags('audits')
 @Controller({ path: 'audits', version: '1' })
 export class AuditController {
-  constructor(private readonly auditService: AuditService) { }
+  constructor(private readonly auditService: AuditService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create an audit' })
@@ -75,7 +76,8 @@ export class AuditController {
   @ApiResponse({ status: 404, description: 'Audit not found.' })
   async update(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(UpdateAuditSchema)) updateAuditDto: UpdateAuditDto,
+    @Body(new ZodValidationPipe(UpdateAuditSchema))
+    updateAuditDto: UpdateAuditDto,
   ): Promise<Audit> {
     return this.auditService.updateAudit(id, updateAuditDto);
   }
@@ -90,5 +92,4 @@ export class AuditController {
   async remove(@Param('id') id: string): Promise<Audit> {
     return this.auditService.deleteAudit(id);
   }
-
 }

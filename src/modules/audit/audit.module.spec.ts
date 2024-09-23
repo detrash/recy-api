@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuditModule } from './audit.module';
-import { AuditService } from './audit.service';
-import { AuditController } from './audit.controller';
+
 import { PrismaService } from '@/modules/prisma/prisma.service';
+
 import { Web3Module } from '../web3/web3.module';
 import { Web3Service } from '../web3/web3.service';
+import { AuditController } from './audit.controller';
+import { AuditModule } from './audit.module';
+import { AuditService } from './audit.service';
 
 const mockWeb3Service = {
   balance: jest.fn(),
@@ -24,10 +26,7 @@ describe('AuditModule', () => {
 
   beforeAll(async () => {
     module = await Test.createTestingModule({
-      imports: [
-        AuditModule,
-        Web3Module,
-      ],
+      imports: [AuditModule, Web3Module],
     })
       .overrideProvider(Web3Service)
       .useValue(mockWeb3Service)

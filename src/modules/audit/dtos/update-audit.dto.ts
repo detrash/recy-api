@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { CreateAuditSchema } from './create-audit.dto';
 
 export const UpdateAuditSchema = z.object({
   audited: z.boolean().optional(),
