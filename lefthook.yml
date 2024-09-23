@@ -13,8 +13,6 @@ pre-commit:
       run: npx knip --exclude enumMembers --config knip.ts
 pre-push:
   commands:
-    api-knip:
-      run: npm run knip
     api-test:
       run: npm run test
     api-build:
