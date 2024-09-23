@@ -12,6 +12,6 @@ pre-commit:
 pre-push:
   commands:
     api-test:
-      run: npm test
+      run: npm run test
     api-build:
       run: npm run build
