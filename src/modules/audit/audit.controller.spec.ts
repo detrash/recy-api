@@ -215,9 +215,9 @@ describe('AuditController (e2e)', () => {
       const updatedAudit: Audit = {
         id: existingAudit.id,
         reportId: existingAudit.reportId,
-        audited: updateAuditDto.audited,
+        audited: updateAuditDto.audited!,
         auditorId: existingAudit.auditorId,
-        comments: updateAuditDto.comments,
+        comments: updateAuditDto.comments!,
         createdAt: existingAudit.createdAt,
         updatedAt: new Date(),
       };
@@ -229,7 +229,7 @@ describe('AuditController (e2e)', () => {
         .send(updateAuditDto)
         .expect(async (res) => {
           if (res.status !== 200) {
-            console.log('PUT /v1/audits/audit123 response:', res.body);
+            console.log('PUT/v1/audits/audit123 response:', res.body);
           }
         });
 

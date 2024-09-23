@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const UpdateAuditSchema = z.object({
-  audited: z.boolean().optional(),
-  comments: z.string().optional().nullable(),
+  audited: z.boolean(),
+  comments: z.string(),
 });
 
 export type UpdateAuditDto = z.infer<typeof UpdateAuditSchema>;
