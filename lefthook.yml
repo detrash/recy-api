@@ -9,7 +9,7 @@ pre-commit:
     api-format:
       glob: 'src/**/*.{ts,tsx,js,jsx,css,json}'
       run: npx prettier --write {staged_files} && git add {staged_files}
-pre-build:
+pre-push:
   commands:
     api-test:
       run: npm test
