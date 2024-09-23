@@ -9,6 +9,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 
+import { UploadFileDto } from './dtos/upload-file.dto';
 import { UploadService } from './upload.service';
 
 @ApiTags('upload')
@@ -30,7 +31,7 @@ export class UploadController {
     file: Express.Multer.File,
     @Query('bucket') bucketName: string,
   ) {
-    const options = {
+    const options: UploadFileDto = {
       fileName: file.originalname,
       file: file.buffer,
       bucketName: bucketName || process.env.AWS_S3_BUCKET_NAME,
