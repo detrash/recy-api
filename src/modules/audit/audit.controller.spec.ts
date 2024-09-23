@@ -215,9 +215,9 @@ describe('AuditController (e2e)', () => {
       const updatedAudit: Audit = {
         id: existingAudit.id,
         reportId: existingAudit.reportId,
-        audited: updateAuditDto.audited!,
+        audited: updateAuditDto.audited,
         auditorId: existingAudit.auditorId,
-        comments: updateAuditDto.comments!,
+        comments: updateAuditDto.comments,
         createdAt: existingAudit.createdAt,
         updatedAt: new Date(),
       };
