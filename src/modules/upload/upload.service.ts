@@ -6,11 +6,13 @@ import { UploadFileDto } from './dtos/upload-file.dto';
 
 @Injectable()
 export class UploadService {
-  private readonly s3Client = new S3Client({
-    region: this.configService.getOrThrow('AWS_S3_REGION'),
-  });
+  private s3Client: S3Client;
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {
+    this.s3Client = new S3Client({
+      region: this.configService.getOrThrow('AWS_S3_REGION'),
+    });
+  }
 
   async upload({ fileName, file, bucketName }: UploadFileDto) {
     await this.s3Client.send(
