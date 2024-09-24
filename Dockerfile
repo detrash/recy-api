@@ -15,11 +15,11 @@ RUN npm install
 # Copy the rest of your application code to the container
 COPY . .
 
-# Build the NestJS application
-RUN npm run build
-
 # Generate Prisma Client code
 RUN npx prisma generate
+
+# Build the NestJS application
+RUN npm run build
 
 # Expose the port that your NestJS app runs on
 EXPOSE 80
