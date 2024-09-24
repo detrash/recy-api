@@ -9,7 +9,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm cache clean --force
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of your application code to the container
 COPY . .
@@ -18,8 +19,11 @@ COPY . .
 RUN npm run prebuild
 RUN npm run build
 
-# Expose the port that your NestJS app runs on
-EXPOSE 3000
+# Generate Prisma Client code
+RUN npx prisma generate
 
-# Define the command to run your app
-CMD ["node", "dist/main"]
+# Expose the port that your NestJS app runs on
+EXPOSE 3333
+
+# Command to run the app
+CMD [  "npm", "run", "start:migrate:prod" ]
