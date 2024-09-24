@@ -8,18 +8,17 @@ WORKDIR /app
 # Leverage Docker cache to save time on dependency installation
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies 
+RUN npm install --production
 
 # Copy the rest of your application code to the container
 COPY . .
 
-# Build the NestJS application
-RUN npm run prebuild
-RUN npm run build
-
 # Generate Prisma Client code
 RUN npx prisma generate
+
+# Build the NestJS application
+RUN npm run build
 
 # Expose the port that your NestJS app runs on
 EXPOSE 3333
