@@ -29,6 +29,7 @@
     "detect-deadcode": "knip"
   },
   "dependencies": {
+    "@nestjs/cli": "^10.4.2",
     "@aws-sdk/client-s3": "^3.525.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
@@ -55,7 +56,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.4.2",
     "@nestjs/schematics": "^10.1.2",
     "@nestjs/testing": "^10.3.10",
     "@types/jest": "^29.5.12",
