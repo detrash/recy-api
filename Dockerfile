@@ -14,6 +14,9 @@ RUN npm install --production
 # Copy the rest of your application code to the container
 COPY . .
 
+# Copy the .env and .env.development files
+COPY .env .env.development ./
+
 # Generate Prisma Client code
 RUN npx prisma generate
 
@@ -21,7 +24,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Expose the port that your NestJS app runs on
-EXPOSE 3333
+EXPOSE 80
 
 # Command to run the app
 CMD [  "npm", "run", "start:migrate:prod" ]
