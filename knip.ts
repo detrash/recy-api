@@ -5,4 +5,4 @@ module.exports = {
   typescript: {
     config: ['tsconfig.json'],
   },
-}
+};

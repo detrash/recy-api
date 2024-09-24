@@ -10,7 +10,7 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm cache clean --force
-RUN npm install --legacy-peer-deps
+RUN npm ci --only=production 
 
 # Copy the rest of your application code to the container
 COPY . .
@@ -21,9 +21,6 @@ RUN npx prisma generate
 # Build the NestJS application
 RUN npm run prebuild
 RUN npm run build
-
-# Generate Prisma Client code
-RUN npx prisma generate
 
 # Expose the port that your NestJS app runs on
 EXPOSE 3333
