@@ -23,7 +23,7 @@ RUN npm run prebuild
 RUN npm run build
 
 # Expose the port that your NestJS app runs on
-EXPOSE 3333
+EXPOSE 80
 
 # Command to run the app
 CMD [  "npm", "run", "start:migrate:prod" ]
