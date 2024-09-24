@@ -14,9 +14,6 @@ RUN npm install --production
 # Copy the rest of your application code to the container
 COPY . .
 
-# Copy the .env and .env.development files
-COPY .env .env.development ./
-
 # Generate Prisma Client code
 RUN npx prisma generate
 
