@@ -10,7 +10,7 @@ COPY package*.json ./
 
 # Install dependencies 
 RUN npm cache clean --force
-RUN npm install
+RUN npm ci
 
 # Copy the rest of your application code to the container
 COPY . .
@@ -26,7 +26,7 @@ EXPOSE 80
 
 # Define a health check for the application
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost/ || exit 1
+  CMD curl -f http://localhost/health || exit 1
 
 # Command to run the app
 CMD [ "npm", "run", "start:migrate:prod" ]
