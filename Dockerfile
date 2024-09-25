@@ -24,5 +24,9 @@ RUN npm run build
 # Expose the port that your NestJS app runs on
 EXPOSE 80
 
+# Define a health check for the application
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost/ || exit 1
+
 # Command to run the app
-CMD [  "npm", "run", "start:migrate:prod" ]
+CMD [ "npm", "run", "start:migrate:prod" ]
