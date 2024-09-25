@@ -1,0 +1,29 @@
+# YAML configuration file for Docker Compose
+
+# Define services
+services:
+  # Database service using PostgreSQL image
+  database:
+    image: postgres:latest  # Use the latest PostgreSQL image from Docker Hub
+    container_name: recy-database  # Define the name of the container
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}  # Define the name of the database
+      POSTGRES_USER: ${POSTGRES_USER}  # Define the username for accessing the database
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # Define the password for the user
+      POSTGRES_HOST: recy-db-staging.cor51ojule9a.us-east-1.rds.amazonaws.com  # O host do banco de dados
+      POSTGRES_PORT: 5432  # A porta do banco de dados
+    ports:
+      - '5432:5432'  # Forward the container's port 5432 to the host machine's port 5432 for accessing PostgreSQL
+    env_file:
+      - .env  # Load environment variables from the .env file in the current directory
+
+  # Backend service
+  backend:
+    build: .  # Build the Docker image using the Dockerfile in the current directory
+    container_name: recy-backend  # Define the name of the container
+    ports:
+      - '80:80'  # Forward the container's port 3333 to the host machine's port 3333 for accessing the backend service
+    depends_on:
+      - database  # Ensure that the backend service starts after the database service is up and running
+    env_file:
+      - .env  # Load environment variables from the .env file in the current directory
