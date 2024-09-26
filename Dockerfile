@@ -4,6 +4,9 @@ FROM node:20-alpine3.19 AS builder
 # Set the working directory
 WORKDIR /app
 
+# Install curl
+RUN apk add --no-cache curl
+
 # Copy package.json and package-lock.json before other files
 # Leverage Docker cache to save time on dependency installation
 COPY package*.json ./
@@ -22,7 +25,9 @@ RUN npx prisma generate
 RUN npm run build
 
 # Expose the port that your NestJS app runs on
-EXPOSE 3333
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost:80/health || exit 1
 
 # Command to run the app
 CMD [ "npm", "run", "start:migrate:prod" ]
