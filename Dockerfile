@@ -22,10 +22,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Expose the port that your NestJS app runs on
-EXPOSE 80
-
-HEALTHCHECK --timeout=3s \
-  CMD /app/healthcheck || exit 1
+EXPOSE 3333
 
 # Command to run the app
 CMD [ "npm", "run", "start:migrate:prod" ]
