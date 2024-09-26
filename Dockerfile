@@ -5,7 +5,7 @@ FROM node:20-alpine3.19 AS builder
 WORKDIR /app
 
 # Install curl
-RUN apk add --no-cache curl
+RUN apk --update --no-cache add curl
 
 # Copy package.json and package-lock.json before other files
 # Leverage Docker cache to save time on dependency installation
@@ -26,8 +26,6 @@ RUN npm run build
 
 # Expose the port that your NestJS app runs on
 EXPOSE 80
-
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost:80/health || exit 1
 
 # Command to run the app
 CMD [ "npm", "run", "start:migrate:prod" ]

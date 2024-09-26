@@ -23,6 +23,12 @@ services:
     container_name: recy-backend  # Define the name of the container
     ports:
       - '80:80'  # Forward the container's port 3333 to the host machine's port 3333 for accessing the backend service
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:80/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
     depends_on:
       - database  # Ensure that the backend service starts after the database service is up and running
     env_file:
