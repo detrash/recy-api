@@ -1,19 +1,21 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
-export class SupportDto {
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
+export const SupportDtoSchema = z.object({
+  email: z.string({
+    message: 'email must be a string and should not be empty',
+  }),
+  companyType: z.string({
+    message: 'companyType must be a string and should not be empty',
+  }),
+  employeesQuantity: z
+    .number({ message: 'wasteFootprint must be a number' })
+    .min(1, { message: 'wasteFootprint cannot be empty' }),
+  wasteFootPrint: z
+    .number({ message: 'wasteFootprint must be a number' })
+    .min(1, { message: 'wasteFootprint cannot be empty' }),
+});
 
-  @IsString()
-  @IsNotEmpty()
-  companyType: string;
+export type SupportDto = z.infer<typeof SupportDtoSchema>;
 
-  @IsNumber()
-  @IsNotEmpty()
-  employeesQuantity: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  wasteFootPrint: number;
-}
+export class SupportSwaggerDto extends createZodDto(SupportDtoSchema) {}

@@ -1,12 +1,26 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import CalculatorSupportEmail from '@/emails';
 import { MailService } from '@/modules/mail/mail.service';
+import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
 import { MailDto } from '../mail/dtos/mail.dto';
 import { CalculatorService } from './calculator.service';
-import { ResultDto, SupportDto } from './dtos';
+import {
+  ResultDto,
+  ResultDtoSchema,
+  ResultSwaggerDto,
+  SupportDto,
+  SupportDtoSchema,
+  SupportSwaggerDto,
+} from './dtos';
 @ApiTags('calculator')
 @Controller({ path: 'calculator', version: '1' })
 export class CalculatorController {
@@ -20,10 +34,11 @@ export class CalculatorController {
     summary: 'Request support',
     description: 'Returns contact information',
   })
-  @ApiBody({ type: SupportDto })
+  @ApiBody({ type: SupportSwaggerDto })
   @ApiOkResponse({
     description: 'Returns created email response',
   })
+  @UsePipes(new ZodValidationPipe(SupportDtoSchema))
   async contact(@Body() supportDto: SupportDto) {
     await this.calculatorService.saveContactInfo(supportDto);
 
@@ -56,7 +71,13 @@ export class CalculatorController {
     summary: 'Save result',
     description: 'Save result of the calculator',
   })
-  @ApiBody({ type: ResultDto })
+  @ApiBody({ type: ResultSwaggerDto })
+  @ApiResponse({
+    status: 201,
+    description: 'The audit has been successfully created.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @UsePipes(new ZodValidationPipe(ResultDtoSchema))
   async result(@Body() resultDto: ResultDto) {
     await this.calculatorService.saveResultInfo(resultDto);
 
