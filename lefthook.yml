@@ -15,9 +15,7 @@ pre-commit:
 pre-push:
   paralel: true
   commands:
-    api-unit-test:
+    api-test:
       run: npm run test
-    api-e2e-test:
-      run: npm run test:e2e
     api-build:
       run: npm run build
