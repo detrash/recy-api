@@ -23,7 +23,9 @@
     "jsx": "react",
     "outDir": "./dist",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"],
+      "@/modules/*": ["./src/modules/*"],
+      "@/utils/*": ["./src/shared/*"]
     },
     "removeComments": true,
     "resolveJsonModule": true,
@@ -35,6 +37,6 @@
     "strictNullChecks": true,
     "target": "es2020"
   },
-  "include": ["src/**/*", "test/**/*", "database/**/*"]
+  "include": ["src/**/*", "test/**/*", "database/**/*", "jest.config.ts"]
 }
 
