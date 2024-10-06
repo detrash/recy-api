@@ -15,6 +15,6 @@ pre-commit:
 pre-push:
   commands:
     api-test:
-      run: npm run test
+      run: npm run test && npm run test:e2e
     api-build:
       run: npm run build
