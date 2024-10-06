@@ -13,6 +13,7 @@ pre-commit:
     # api-detect-deadcode:
     #   run: npx knip --exclude enumMembers --config knip.ts
 pre-push:
+  paralel: true
   commands:
     api-unit-test:
       run: npm run test
