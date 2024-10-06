@@ -14,7 +14,9 @@ pre-commit:
     #   run: npx knip --exclude enumMembers --config knip.ts
 pre-push:
   commands:
-    api-test:
-      run: npm run test && npm run test:e2e
+    api-unit-test:
+      run: npm run test
+    api-e2e-test:
+      run: npm run test:e2e
     api-build:
       run: npm run build
