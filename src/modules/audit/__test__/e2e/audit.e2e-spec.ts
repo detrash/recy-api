@@ -3,12 +3,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Audit } from '@prisma/client';
 import request from 'supertest';
 
-import { AuditController } from './audit.controller';
-import { AuditService } from './audit.service';
-import { CreateAuditDto } from './dtos/create-audit.dto';
-import { UpdateAuditDto } from './dtos/update-audit.dto';
+import { AuditController } from '../../audit.controller';
+import { AuditService } from '../../audit.service';
+import { CreateAuditDto } from '../../dtos/create-audit.dto';
+import { UpdateAuditDto } from '../../dtos/update-audit.dto';
 
-describe('AuditController (e2e)', () => {
+describe('Audit (e2e)', () => {
   let app: INestApplication;
   let service: AuditService;
 

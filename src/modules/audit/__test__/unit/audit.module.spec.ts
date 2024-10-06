@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 
-import { Web3Module } from '../web3/web3.module';
-import { Web3Service } from '../web3/web3.service';
-import { AuditController } from './audit.controller';
-import { AuditModule } from './audit.module';
-import { AuditService } from './audit.service';
+import { Web3Module } from '../../../web3/web3.module';
+import { Web3Service } from '../../../web3/web3.service';
+import { AuditService } from '../..//audit.service';
+import { AuditController } from '../../audit.controller';
+import { AuditModule } from '../../audit.module';
 
 const mockWeb3Service = {
   balance: jest.fn(),

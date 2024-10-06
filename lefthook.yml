@@ -1,19 +1,20 @@
-# pre-commit:
-#   paralel: true
-#   commands:
-#     lint-commit:
-#       run: npx commitlint --from HEAD~1 --to HEAD
-#     api-lint:
-#       glob: 'src/**/*.{ts,tsx,js,jsx}'
-#       run: npx eslint {staged_files} --fix && git add {staged_files}
-#     api-format:
-#       glob: 'src/**/*.{ts,tsx,js,jsx,css,json}'
-#       run: npx prettier --write {staged_files} && git add {staged_files}
-#     api-detect-deadcode:
-#       run: npx knip --exclude enumMembers --config knip.ts
-# pre-push:
-#   commands:
-#     api-test:
-#       run: npm run test
-#     api-build:
-#       run: npm run build
+pre-commit:
+  paralel: true
+  commands:
+    lint-commit:
+      run: npx commitlint --from HEAD~1 --to HEAD
+    api-lint:
+      glob: 'src/**/*.{ts,tsx,js,jsx}'
+      run: npx eslint {staged_files} --fix && git add {staged_files}
+    api-format:
+      glob: 'src/**/*.{ts,tsx,js,jsx,css,json}'
+      run: npx prettier --write {staged_files} && git add {staged_files}
+    # TODO: config knip
+    # api-detect-deadcode:
+    #   run: npx knip --exclude enumMembers --config knip.ts
+pre-push:
+  commands:
+    api-test:
+      run: npm run test
+    api-build:
+      run: npm run build

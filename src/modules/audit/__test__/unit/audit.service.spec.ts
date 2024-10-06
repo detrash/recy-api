@@ -10,11 +10,11 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { ulid } from 'ulid';
 
-import { PrismaService } from '../prisma/prisma.service';
-import { Web3Service } from '../web3/web3.service';
-import { AuditService } from './audit.service';
-import { CreateAuditDto, CreateAuditSchema } from './dtos/create-audit.dto';
-import { UpdateAuditDto } from './dtos/update-audit.dto';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { Web3Service } from '../../../web3/web3.service';
+import { AuditService } from '../../audit.service';
+import { CreateAuditDto, CreateAuditSchema } from '../../dtos/create-audit.dto';
+import { UpdateAuditDto } from '../../dtos/update-audit.dto';
 
 describe('AuditService', () => {
   let service: AuditService;
