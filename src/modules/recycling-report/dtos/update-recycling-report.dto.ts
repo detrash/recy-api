@@ -1,7 +1,10 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { z } from 'zod';
 
-import { CreateRecyclingReportDto } from './create-recycling-report.dto';
+import { CreateRecyclingReportSchema } from './create-recycling-report.dto';
 
-export class UpdateRecyclingReportDto extends PartialType(
-  CreateRecyclingReportDto,
-) {}
+export const UpdateRecyclingReportSchema =
+  CreateRecyclingReportSchema.partial();
+
+export type UpdateRecyclingReportDto = z.infer<
+  typeof UpdateRecyclingReportSchema
+>;
