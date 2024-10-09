@@ -7,14 +7,11 @@ import {
   SwaggerCustomOptions,
   SwaggerModule,
 } from '@nestjs/swagger';
-import { patchNestJsSwagger } from 'nestjs-zod';
 
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  patchNestJsSwagger();
 
   app.enableVersioning({
     type: VersioningType.URI,

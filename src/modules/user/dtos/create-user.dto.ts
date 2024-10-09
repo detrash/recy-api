@@ -1,4 +1,3 @@
-import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 export const CreateUserSchema = z.object({
@@ -14,5 +13,3 @@ export const CreateUserSchema = z.object({
 });
 
 export type CreateUserDto = z.infer<typeof CreateUserSchema>;
-
-export class CreateUserSwaggerDto extends createZodDto(CreateUserSchema) {}

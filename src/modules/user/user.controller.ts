@@ -10,27 +10,13 @@ import {
   Query,
   UsePipes,
 } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
-import {
-  CreateUserDto,
-  CreateUserSchema,
-  CreateUserSwaggerDto,
-} from './dtos/create-user.dto';
-import {
-  UpdateUserDto,
-  UpdateUserSchema,
-  UpdateUserSwaggerDto,
-} from './dtos/update-user.dto';
+import { CreateUserDto, CreateUserSchema } from './dtos/create-user.dto';
+import { UpdateUserDto, UpdateUserSchema } from './dtos/update-user.dto';
 import { UserService } from './user.service';
 
 @ApiTags('users')
@@ -43,7 +29,6 @@ export class UserController {
     status: 201,
     description: 'The user has been successfully created.',
   })
-  @ApiBody({ type: CreateUserSwaggerDto })
   @ApiResponse({ status: 409, description: 'User already exists.' })
   @UsePipes(new ZodValidationPipe(CreateUserSchema))
   async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
@@ -77,7 +62,6 @@ export class UserController {
     status: 200,
     description: 'The user has been successfully updated.',
   })
-  @ApiBody({ type: UpdateUserSwaggerDto })
   @ApiResponse({ status: 404, description: 'User not found' })
   @UsePipes(new ZodValidationPipe(UpdateUserSchema))
   async updateUser(

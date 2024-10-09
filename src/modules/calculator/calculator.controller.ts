@@ -1,6 +1,5 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import {
-  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiResponse,
@@ -16,10 +15,8 @@ import { CalculatorService } from './calculator.service';
 import {
   ResultDto,
   ResultDtoSchema,
-  ResultSwaggerDto,
   SupportDto,
   SupportDtoSchema,
-  SupportSwaggerDto,
 } from './dtos';
 @ApiTags('calculator')
 @Controller({ path: 'calculator', version: '1' })
@@ -34,7 +31,6 @@ export class CalculatorController {
     summary: 'Request support',
     description: 'Returns contact information',
   })
-  @ApiBody({ type: SupportSwaggerDto })
   @ApiOkResponse({
     description: 'Returns created email response',
   })
@@ -71,7 +67,6 @@ export class CalculatorController {
     summary: 'Save result',
     description: 'Save result of the calculator',
   })
-  @ApiBody({ type: ResultSwaggerDto })
   @ApiResponse({
     status: 201,
     description: 'The audit has been successfully created.',
