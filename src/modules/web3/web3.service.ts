@@ -42,6 +42,7 @@ export class Web3Service {
     return tx.transactionHash;
   }
 
+  // Polygon
   async owner() {
     const contract = new this.web3.eth.Contract(
       certificateABI,

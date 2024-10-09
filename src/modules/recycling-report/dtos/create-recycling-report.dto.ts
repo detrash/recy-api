@@ -13,7 +13,7 @@ import { ResidueType } from './residue-type.enum';
 
 export class CreateRecyclingReportDto {
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   submittedBy: string;
 
   @IsNotEmpty()
