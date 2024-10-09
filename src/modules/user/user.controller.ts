@@ -8,12 +8,15 @@ import {
   Patch,
   Post,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
-import { CreateUserDto } from './dtos/create-user.dto';
-import { UpdateUserDto } from './dtos/update-user.dto';
+import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
+
+import { CreateUserDto, CreateUserSchema } from './dtos/create-user.dto';
+import { UpdateUserDto, UpdateUserSchema } from './dtos/update-user.dto';
 import { UserService } from './user.service';
 
 @ApiTags('users')
@@ -27,6 +30,7 @@ export class UserController {
     description: 'The user has been successfully created.',
   })
   @ApiResponse({ status: 409, description: 'User already exists.' })
+  @UsePipes(new ZodValidationPipe(CreateUserSchema))
   async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.userService.createUser(createUserDto);
   }
@@ -59,6 +63,7 @@ export class UserController {
     description: 'The user has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'User not found' })
+  @UsePipes(new ZodValidationPipe(UpdateUserSchema))
   async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
