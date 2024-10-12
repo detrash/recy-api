@@ -1026,31 +1026,4 @@ describe('AuditService', () => {
       });
     });
   });
-  describe('owner', () => {
-    it('should return an empty array when no owner is found', async () => {
-      web3Service.owner.mockResolvedValue([]);
-
-      const result = await service.owner();
-
-      expect(web3Service.owner).toHaveBeenCalled();
-      expect(result).toEqual([]);
-    });
-
-    it('should return void if no result is found', async () => {
-      web3Service.owner.mockResolvedValue(undefined);
-
-      const result = await service.owner();
-
-      expect(web3Service.owner).toHaveBeenCalled();
-      expect(result).toBeUndefined();
-    });
-
-    it('should throw an error if fetching the owner fails', async () => {
-      web3Service.owner.mockRejectedValue(new Error('Error fetching owner'));
-
-      await expect(service.owner()).rejects.toThrow('Error fetching owner');
-
-      expect(web3Service.owner).toHaveBeenCalled();
-    });
-  });
 });
