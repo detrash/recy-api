@@ -18,6 +18,30 @@ export class Web3Service {
     return this.web3.utils.fromWei(balance, 'wei');
   }
 
+  async transfer(toWallet: string, value: number) {
+    const nonce = await this.web3.eth.getTransactionCount(
+      this.config.wallet,
+      'latest',
+    );
+
+    const transaction = {
+      to: toWallet,
+      value,
+      gas: 21000,
+      nonce,
+    };
+
+    const signedTx = await this.web3.eth.accounts.signTransaction(
+      transaction,
+      this.config.privateKey,
+    );
+
+    const tx = await this.web3.eth.sendSignedTransaction(
+      signedTx.rawTransaction,
+    );
+
+    return tx.transactionHash;
+  }
   // Polygon Mint
   async mintNFT(data: MintNftDto) {
     const { recipient, tokenURI } = data;

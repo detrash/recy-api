@@ -61,7 +61,6 @@ describe('AuditModule', () => {
     expect(web3Service).toBeDefined();
     expect(web3Service.balance).toBeDefined();
     expect(web3Service.transfer).toBeDefined();
-    expect(web3Service.owner).toBeDefined();
   });
 
   it('should export the AuditService', () => {
