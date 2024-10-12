@@ -16,7 +16,7 @@ export const CreateRecyclingReportSchema = z.object({
   phone: z
     .string()
     .regex(
-      /^(\+55\d{2}(9\d{8}|\d{8}))$/,
+      /^\+55\s?\d{2}\s?(9\d{4}\s?\d{4}|\d{4}\s?\d{4})$/,
       'Invalid Brazilian phone number format',
     )
     .or(z.literal(''))
@@ -24,7 +24,7 @@ export const CreateRecyclingReportSchema = z.object({
   materials: z
     .array(MaterialSchema)
     .min(1, 'At least one material must be submitted'),
-  walletaddress: z
+  walletAddress: z
     .string()
     .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid EVM wallet address format')
     .or(z.literal(''))
@@ -55,12 +55,6 @@ export class CreateRecyclingReportSwaggerDto {
   })
   reportDate: Date;
 
-  @ApiPropertyOptional({
-    description: "User's phone number",
-    example: '+1 234 567 8901',
-  })
-  phone?: string;
-
   @ApiProperty({
     description: 'Recycled materials with type and weight in kilograms',
     example: [
@@ -71,8 +65,14 @@ export class CreateRecyclingReportSwaggerDto {
   materials: { materialType: ResidueType; weightKg: number }[];
 
   @ApiPropertyOptional({
+    description: "User's phone number",
+    example: '+55 11 912345678',
+  })
+  phone?: string;
+
+  @ApiPropertyOptional({
     description: 'Wallet address for recycling credits',
-    example: '0xABC123...',
+    example: '0x1234567890abcdef1234567890abcdef12345678',
   })
   walletAddress?: string;
 
