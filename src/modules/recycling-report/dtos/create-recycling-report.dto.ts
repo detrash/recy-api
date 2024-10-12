@@ -5,18 +5,37 @@ import { ResidueType } from './residue-type.enum';
 
 const MaterialSchema = z.object({
   materialType: z.nativeEnum(ResidueType),
-  weightKg: z.number().nonnegative(),
+  weightKg: z.number().nonnegative().min(0.01, 'Weight must be greater than 0'),
 });
 
 export const CreateRecyclingReportSchema = z.object({
-  submittedBy: z.string().min(1),
+  submittedBy: z.string().min(1, 'Submitter name cannot be empty'),
   reportDate: z.preprocess((arg) => {
     if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
-  }, z.date()),
-  phone: z.string().optional(),
-  materials: z.array(MaterialSchema),
-  walletAddress: z.string().optional(),
-  evidenceUrl: z.string().url(),
+  }, z.date().max(new Date(), 'Report date cannot be in the future')),
+  phone: z
+    .string()
+    .regex(
+      /^(\+55\d{2}(9\d{8}|\d{8}))$/,
+      'Invalid Brazilian phone number format',
+    )
+    .or(z.literal(''))
+    .optional(),
+  materials: z
+    .array(MaterialSchema)
+    .min(1, 'At least one material must be submitted'),
+  walletaddress: z
+    .string()
+    .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid EVM wallet address format')
+    .or(z.literal(''))
+    .optional(),
+  evidenceUrl: z
+    .string()
+    .url('Invalid URL format')
+    .refine(
+      (url) => url.startsWith('https://'),
+      'Evidence URL must start with https',
+    ),
 });
 
 export type CreateRecyclingReportDto = z.infer<
