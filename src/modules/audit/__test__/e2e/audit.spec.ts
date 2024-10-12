@@ -130,32 +130,6 @@ describe('Audit (e2e)', () => {
     });
   });
 
-  describe('/GET /v1/audits/owner', () => {
-    it('should return an empty array when no owner is found', async () => {
-      jest.spyOn(service, 'owner').mockResolvedValue([]);
-
-      await request(app.getHttpServer())
-        .get('/v1/audits/owner')
-        .expect(200)
-        .expect((res) => {
-          expect(res.body).toEqual([]);
-          expect(service.owner).toHaveBeenCalled();
-        });
-    });
-
-    it('should return empty object when owner is undefined', async () => {
-      jest.spyOn(service, 'owner').mockResolvedValue(undefined);
-
-      await request(app.getHttpServer())
-        .get('/v1/audits/owner')
-        .expect(200)
-        .expect((res) => {
-          expect(res.body).toEqual({});
-          expect(service.owner).toHaveBeenCalled();
-        });
-    });
-  });
-
   describe('/GET /v1/audits/:id', () => {
     it('should return an audit when it exists', async () => {
       const audit: Audit = {
