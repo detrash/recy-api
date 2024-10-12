@@ -12,6 +12,7 @@ import { PrismaService } from '@/modules/prisma/prisma.service';
 
 import { Web3Service } from '../web3/web3.service';
 import { CreateAuditDto } from './dtos/create-audit.dto';
+import { MintNftDto } from './dtos/mint-nft';
 import { UpdateAuditDto } from './dtos/update-audit.dto';
 
 @Injectable()
@@ -115,7 +116,7 @@ export class AuditService {
     });
   }
 
-  async owner() {
-    return this.web3Service.owner();
+  async mintNFT(data: MintNftDto) {
+    return this.web3Service.mintNFT(data);
   }
 }

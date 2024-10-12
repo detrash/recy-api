@@ -16,6 +16,7 @@ import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
 import { AuditService } from './audit.service';
 import { CreateAuditDto, CreateAuditSchema } from './dtos/create-audit.dto';
+import { MintNftDto, MintNftSchema } from './dtos/mint-nft';
 import { UpdateAuditDto, UpdateAuditSchema } from './dtos/update-audit.dto';
 
 @ApiTags('audits')
@@ -43,11 +44,6 @@ export class AuditController {
   })
   async findAll(): Promise<Audit[]> {
     return this.auditService.findAllAudits();
-  }
-
-  @Get('owner')
-  async owner() {
-    return this.auditService.owner();
   }
 
   @Get(':id')
@@ -91,5 +87,13 @@ export class AuditController {
   @ApiResponse({ status: 404, description: 'Audit not found.' })
   async remove(@Param('id') id: string): Promise<Audit> {
     return this.auditService.deleteAudit(id);
+  }
+
+  @Post('mint')
+  async mint(
+    @Body(new ZodValidationPipe(MintNftSchema))
+    mintNftDto: MintNftDto,
+  ) {
+    return this.auditService.mintNFT(mintNftDto);
   }
 }
