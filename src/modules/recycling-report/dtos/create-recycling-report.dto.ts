@@ -1,50 +1,65 @@
-import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { z } from 'zod';
 
 import { ResidueType } from './residue-type.enum';
 
-export class CreateRecyclingReportDto {
-  @IsNotEmpty()
-  @IsString()
+const MaterialSchema = z.object({
+  materialType: z.nativeEnum(ResidueType),
+  weightKg: z.number().nonnegative(),
+});
+
+export const CreateRecyclingReportSchema = z.object({
+  submittedBy: z.string().min(1),
+  reportDate: z.preprocess((arg) => {
+    if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
+  }, z.date()),
+  phone: z.string().optional(),
+  materials: z.array(MaterialSchema),
+  walletAddress: z.string().optional(),
+  evidenceUrl: z.string().url(),
+});
+
+export type CreateRecyclingReportDto = z.infer<
+  typeof CreateRecyclingReportSchema
+>;
+
+export class CreateRecyclingReportSwaggerDto {
+  @ApiProperty({
+    description: 'ID of the user submitting the report',
+    example: '1',
+  })
   submittedBy: string;
 
-  @IsNotEmpty()
-  @Type(() => Date)
+  @ApiProperty({
+    description: 'Date when the report was submitted',
+    example: '2024-01-01T00:00:00.000Z',
+  })
   reportDate: Date;
 
-  @IsOptional()
-  @IsString()
+  @ApiPropertyOptional({
+    description: "User's phone number",
+    example: '+1 234 567 8901',
+  })
   phone?: string;
 
-  @IsNotEmpty()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => MaterialDto)
-  materials: MaterialDto[];
+  @ApiProperty({
+    description: 'Recycled materials with type and weight in kilograms',
+    example: [
+      { materialType: ResidueType.PLASTIC, weightKg: 12.5 },
+      { materialType: ResidueType.METAL, weightKg: 7.3 },
+    ],
+  })
+  materials: { materialType: ResidueType; weightKg: number }[];
 
-  @IsOptional()
-  @IsString()
+  @ApiPropertyOptional({
+    description: 'Wallet address for recycling credits',
+    example: '0xABC123...',
+  })
   walletAddress?: string;
 
-  @IsNotEmpty()
-  @IsString()
+  @ApiProperty({
+    description: 'URL for report evidence',
+    example: 'https://example.com/evidence.jpg',
+  })
   evidenceUrl: string;
-}
-
-class MaterialDto {
-  @IsNotEmpty()
-  @IsEnum(ResidueType)
-  materialType: ResidueType;
-
-  @IsNotEmpty()
-  @IsNumber()
-  weightKg: number;
 }

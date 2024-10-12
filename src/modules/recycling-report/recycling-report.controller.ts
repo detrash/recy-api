@@ -7,10 +7,14 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RecyclingReport } from '@prisma/client';
 
-import { CreateRecyclingReportDto } from './dtos/create-recycling-report.dto';
+import {
+  CreateRecyclingReportDto,
+  CreateRecyclingReportSchema,
+  CreateRecyclingReportSwaggerDto,
+} from './dtos/create-recycling-report.dto';
 import { UpdateRecyclingReportDto } from './dtos/update-recycling-report.dto';
 import { RecyclingReportService } from './recycling-report.service';
 
@@ -31,12 +35,14 @@ export class RecyclingReportController {
     status: 400,
     description: 'Bad request. Validation errors or other issues.',
   })
+  @ApiBody({ type: CreateRecyclingReportSwaggerDto })
   async createRecyclingReport(
     @Body() createRecyclingReportDto: CreateRecyclingReportDto,
   ): Promise<RecyclingReport> {
-    return this.recyclingReportService.createRecyclingReport(
-      createRecyclingReportDto,
-    );
+    const parsedData: CreateRecyclingReportDto =
+      CreateRecyclingReportSchema.parse(createRecyclingReportDto);
+
+    return this.recyclingReportService.createRecyclingReport(parsedData);
   }
 
   @Get()
