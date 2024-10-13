@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const CreateUserSchema = z.object({
   email: z
-    .string({ message: 'wasteFootprint must be a string' })
+    .string({ message: 'email must be a string' })
     .email('Please make sure that this is e-mail is valid'),
   name: z.string({ message: 'name must be a string' }),
   phone: z.string({ message: 'phone must be a string' }).optional(),
