@@ -7,7 +7,9 @@ export const CreateUserSchema = z.object({
   name: z.string({ message: 'name must be a string' }),
   phone: z.string({ message: 'phone must be a string' }).optional(),
   walletAddress: z
-    .string({ message: 'walletAddress must be a string' })
+    .string()
+    .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid EVM wallet address format')
+    .or(z.literal(''))
     .optional(),
   roleIds: z.array(z.string(), {
     message: 'Role IDs must be an array of strings',
