@@ -35,6 +35,10 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.3.10",
     "@nestjs/swagger": "^7.4.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.51.0",
+    "@opentelemetry/exporter-jaeger": "^1.26.0",
+    "@opentelemetry/exporter-prometheus": "^0.53.0",
+    "@opentelemetry/sdk-node": "^0.53.0",
     "@prisma/client": "^5.17.0",
     "apollo-server-express": "^3.10.0",
     "class-transformer": "^0.5.1",
@@ -42,6 +46,7 @@
     "express-jwt": "^7.7.5",
     "graphql": "^16.5.0",
     "jwks-rsa": "^2.1.4",
+    "nestjs-otel": "^6.1.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
