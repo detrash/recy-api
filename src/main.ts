@@ -7,8 +7,11 @@ import {
 } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import otelSDK from './instrumentation';
 
 async function bootstrap() {
+  await otelSDK.start();
+  console.log('Started OTEL SDK');
   const app = await NestFactory.create(AppModule);
 
   app.enableVersioning({

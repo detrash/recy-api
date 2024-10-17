@@ -40,3 +40,8 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 ./src/schema.gql
+
+#monitoring
+/data/tempo-data/
+/data/loki-data/
+/data/logs/
