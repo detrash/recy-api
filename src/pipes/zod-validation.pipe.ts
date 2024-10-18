@@ -11,6 +11,9 @@ export class ZodValidationPipe implements ValidatorConstraintInterface {
 
   defaultMessage(args: ValidationArguments) {
     const schema = args.constraints[0] as ZodSchema;
+     if (!(schema instanceof ZodSchema)) {
+    return 'Invalid schema provided to ZodValidationPipe';
+  }
     const result = schema.safeParse(args.value);
     if (!result.success) {
       return result.error.errors[0].message;
