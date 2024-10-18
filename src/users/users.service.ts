@@ -12,6 +12,8 @@ import { UpdateUserInput } from '@/graphql/inputs/update-user-input';
 
 import { CreateUserDto } from './dtos';
 import { FindUserDto } from './dtos/find-user.dto';
+import { userSchema } from '../schema/validation.schemas';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -29,6 +31,12 @@ export class UsersService {
   }
 
   async createUser({ authUserId, ...userInfo }: CreateUserDto) {
+    const validationResult = userSchema.safeParse({ authUserId, ...userInfo });
+    
+    if (!validationResult.success) {
+      throw new BadRequestException(validationResult.error.errors);
+    }
+
     const userExists = await this.prisma.user.findUnique({
       where: {
         authUserId,
@@ -38,12 +46,14 @@ export class UsersService {
     if (userExists) {
       throw new BadRequestException(MessagesHelper.USER_EXISTS);
     }
+    
+    const prismaUserData: Prisma.UserCreateInput = {
+      authUserId,
+      ...userInfo,
+    };
 
     const user = await this.prisma.user.create({
-      data: {
-        authUserId,
-        ...userInfo,
-      },
+     data:prismaUserData,
     });
 
     return user;
@@ -53,16 +63,21 @@ export class UsersService {
     const currentUser = await this.findUserByAuthUserId(authUserId);
 
     if (profileType) {
+      const validationResult = userSchema.shape.profileType.safeParse(profileType);
+      
+      if (!validationResult.success) {
+        throw new BadRequestException(validationResult.error.errors);
+      }
+
       return this.prisma.user.update({
         where: {
           authUserId,
         },
         data: {
-          profileType,
+          profileType: validationResult.data,
         },
       });
     }
-
     return currentUser;
   }
 
@@ -111,15 +126,21 @@ export class UsersService {
   }
 
   async findUserByAuthUserId(authUserId: string) {
+    const validationResult = userSchema.shape.authUserId.safeParse(authUserId);
+    
+    if (!validationResult.success) {
+      throw new BadRequestException(validationResult.error.errors);
+    }
+
     const user = await this.prisma.user.findUnique({
       where: {
-        authUserId,
+        authUserId: validationResult.data,
       },
     });
 
     if (!user) throw new NotFoundException(MessagesHelper.USER_NOT_FOUND);
 
-    await this.updateLastLogin(authUserId);
+    await this.updateLastLogin(validationResult.data);
     return user;
   }
 

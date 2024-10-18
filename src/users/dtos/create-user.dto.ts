@@ -1,13 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
-
+import { IsNotEmpty, IsString,Validate } from 'class-validator';
+import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
 import { ProfileType } from './user.dto';
-
+import { userSchema } from '../../schema/validation.schemas';
 @InputType()
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
+  @Validate(ZodValidationPipe, [userSchema.shape.authUserId])
   @ApiProperty({
     example: 'google-oauth2|104364323610927340190',
   })
@@ -16,6 +17,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
+  @Validate(ZodValidationPipe, [userSchema.shape.name])
   @ApiProperty({
     example: 'Jhon Doe',
   })
@@ -24,6 +26,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
+  @Validate(ZodValidationPipe, [userSchema.shape.email])
   @ApiProperty({
     example: 'jhon@example.com',
   })
@@ -32,6 +35,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
+  @Validate(ZodValidationPipe, [userSchema.shape.phoneNumber])
   @ApiProperty({
     example: '2223334444',
   })
@@ -40,6 +44,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
+  @Validate(ZodValidationPipe, [userSchema.shape.profileType])
   @Field(() => ProfileType)
   profileType: ProfileType;
 }
