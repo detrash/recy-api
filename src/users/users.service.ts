@@ -34,7 +34,14 @@ export class UsersService {
     const validationResult = userSchema.safeParse({ authUserId, ...userInfo });
     
     if (!validationResult.success) {
-      throw new BadRequestException(validationResult.error.errors);
+      const errors = validationResult.error.errors.map((error) => ({
++    field: error.path.join('.'),
++    message: error.message,
++    }));
++    throw new BadRequestException({
++    message: 'Validation failed',
++    errors,
++  });
     }
 
     const userExists = await this.prisma.user.findUnique({
