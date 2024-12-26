@@ -24,6 +24,7 @@ import { UploadModule } from './shared/modules/upload/upload.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env'],
     }),
     Web3Module,
     UploadModule,
