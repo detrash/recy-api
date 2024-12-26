@@ -45,7 +45,7 @@ import { RecyclingReportService } from './recycling-report.service';
 export class RecyclingReportController {
   constructor(
     private readonly recyclingReportService: RecyclingReportService,
-  ) { }
+  ) {}
 
   @UseGuards(PermissionsGuard(RecyclingReportPermissions))
   @UseGuards(AuthorizationGuard)
