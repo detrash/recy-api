@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -65,6 +66,16 @@ export class RecyclingReportController {
     @Body() createRecyclingReportDto: CreateRecyclingReportDto,
     @UploadedFile() residueEvidenceFile: Express.Multer.File,
   ): Promise<RecyclingReport> {
+    if (typeof createRecyclingReportDto.materials === 'string') {
+      try {
+        createRecyclingReportDto.materials = JSON.parse(
+          createRecyclingReportDto.materials,
+        );
+      } catch (e) {
+        throw new BadRequestException('Invalid JSON format for materials');
+      }
+    }
+
     const mergedData = {
       ...createRecyclingReportDto,
       residueEvidenceFile: residueEvidenceFile?.buffer,

@@ -25,6 +25,7 @@ import { CaptchaModule } from './modules/cloudflare/captcha/captcha.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env'],
     }),
     CaptchaModule,
     Web3Module,
