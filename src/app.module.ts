@@ -27,7 +27,6 @@ import { UploadModule } from './shared/modules/upload/upload.module';
       isGlobal: true,
       envFilePath: ['.env'],
     }),
-    CaptchaModule,
     Web3Module,
     UploadModule,
     LoggerModule,

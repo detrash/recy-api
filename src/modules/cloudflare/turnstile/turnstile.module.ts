@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { CaptchaService } from './captcha.service';
 import { TurnstileService } from '../turnstile/turnstile.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TokenResponse } from './types';
@@ -14,14 +13,14 @@ import { TokenResponse } from './types';
           secretKey: config.get<string>('CAPTCHA_SECRET_KEY'),
           host: config.get<string>('CAPTCHA_HOST_VERIFICATION'),
           tokenResponse: (request: TokenResponse) => {
-            return request.body.token;
+            return request.headers['x-recaptcha-token'];
           },
         };
       },
       inject: [ConfigService],
     },
-    CaptchaService,
     TurnstileService,
   ],
+  exports: [TurnstileService, 'TurnstileServiceOptions'],
 })
-export class CaptchaModule {}
+export class TurnstileModule {}
