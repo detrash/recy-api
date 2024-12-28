@@ -13,6 +13,7 @@ import {
   PaginatedResult,
   PaginationParams,
 } from '@/shared/utils/pagination.util';
+import { getTotalResidueKgsReported } from '@/shared/utils/recycling-report';
 
 import { UploadService } from '../../shared/modules/upload/upload.service';
 import { AuditService } from '../audits/audit.service';
@@ -20,6 +21,7 @@ import { UserService } from '../users/user.service';
 import { CreateRecyclingReportDto } from './dtos/create-recycling-report.dto';
 import { UpdateRecyclingReportDto } from './dtos/update-recycling-report.dto';
 import { RecyclingReportQueryParams } from './interface/recycling-report.types';
+import { Materials } from './types';
 
 @Injectable()
 export class RecyclingReportService {
@@ -59,8 +61,6 @@ export class RecyclingReportService {
       residueEvidenceFileUrl = await this.uploadService.upload(options);
     }
 
-    // Create the recycling report in the database
-    // TODO: need to create value with total amount per materials
     const createdReport = await this.prisma.recyclingReport.create({
       data: {
         id: reportId,
@@ -142,7 +142,15 @@ export class RecyclingReportService {
 
     const updatedReport = await this.prisma.recyclingReport.update({
       where: { id },
-      data: updateRecyclingReportDto,
+      data: {
+        ...updateRecyclingReportDto,
+        // Prisma use Json
+        materials: JSON.parse(
+          JSON.stringify(updateRecyclingReportDto.materials),
+        ),
+        submittedBy:
+          updateRecyclingReportDto.submittedBy || existingReport.submittedBy,
+      },
     });
 
     return updatedReport;

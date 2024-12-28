@@ -9,18 +9,18 @@ import { ulid } from 'ulid';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { paginate, PaginatedResult } from '@/shared/utils/pagination.util';
+import {
+  calculateTotalMaterials,
+  getTotalResidueKgsReported,
+} from '@/shared/utils/recycling-report';
 
 import { ResidueType } from '../recycling-reports/dtos/residue-type.enum';
+import { Material, Materials } from '../recycling-reports/types';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { ValidateUserDto } from './dtos/validate-user.dto';
 import { UserQueryParams } from './interface/user.types';
 import { ValidateUserResponse } from './types';
-
-interface Material {
-  materialType: ResidueType;
-  weightKg: number;
-}
 
 @Injectable()
 export class UserService {
@@ -277,59 +277,6 @@ export class UserService {
       },
     });
 
-    // Function to calculate total weights for different types of materials
-    const formattedMaterialTotals = (
-      materials: { materialType: ResidueType; weightKg: number }[],
-    ) => {
-      const materialTotals = materials.reduce(
-        (acc, { materialType, weightKg }) => {
-          if (!acc[materialType]) acc[materialType] = 0;
-          acc[materialType]! += weightKg;
-          return acc;
-        },
-        {} as { [key in ResidueType]?: number },
-      );
-
-      // Return totals, rounding each value to 2 decimal places
-      return Object.fromEntries(
-        Object.entries(materialTotals).map(([key, value]) => [
-          key as ResidueType,
-          parseFloat(value!.toFixed(2)),
-        ]),
-      );
-    };
-
-    // Function to calculate total weight of reported residues
-    const getTotalResidueKgsReported = (reports: any[]) => {
-      let totalKg = 0;
-      const residueMaterialWeights: { [key in ResidueType]: number } = {
-        [ResidueType.GLASS]: 0,
-        [ResidueType.METAL]: 0,
-        [ResidueType.ORGANIC]: 0,
-        [ResidueType.PAPER]: 0,
-        [ResidueType.PLASTIC]: 0,
-        [ResidueType.TEXTILE]: 0,
-        [ResidueType.LANDFILL_WASTE]: 0,
-      };
-
-      // Sum the weights of materials in each report
-      reports.forEach((report) => {
-        const materialTotals = formattedMaterialTotals(report.materials);
-        totalKg += Object.values(materialTotals).reduce(
-          (sum, weight) => sum + (weight || 0),
-          0,
-        );
-        for (const residueType of Object.keys(
-          residueMaterialWeights,
-        ) as ResidueType[]) {
-          residueMaterialWeights[residueType] +=
-            materialTotals[residueType] || 0;
-        }
-      });
-
-      return { totalKg, residueMaterialWeights };
-    };
-
     // Get the current month and the last month
     const currentMonth = new Date();
     const firstDayOfCurrentMonth = new Date(
@@ -349,13 +296,13 @@ export class UserService {
     ); // last day of the previous month
 
     // Filter reports for the current month
-    const currentMonthReports = allReports.filter((report) => {
+    const currentMonthReports = allReports?.filter((report) => {
       const reportDate = new Date(report.reportDate);
       return reportDate >= firstDayOfCurrentMonth;
     });
 
     // Filter reports for the last month
-    const lastMonthReports = allReports.filter((report) => {
+    const lastMonthReports = allReports?.filter((report) => {
       const reportDate = new Date(report.reportDate);
       return (
         reportDate >= firstDayOfLastMonth && reportDate <= lastDayOfLastMonth
@@ -363,22 +310,31 @@ export class UserService {
     });
 
     // Calculate total residue for all reports (no filtering by month)
-    const {
-      totalKg: totalResidueKgAllReports,
-      residueMaterialWeights: residueMaterialWeightsAllReports,
-    } = getTotalResidueKgsReported(allReports);
+    const { totalKg: totalResidueKgAllReports } = getTotalResidueKgsReported(
+      allReports
+        ?.filter((item) => item.materials)
+        .map((item) => item.materials as Material), // Assert that item.materials is of type Material
+    );
 
     // Calculate total residue for the current month
     const {
       totalKg: totalKgCurrentMonth,
-      residueMaterialWeights: residueMaterialWeightsCurrentMonth,
-    } = getTotalResidueKgsReported(currentMonthReports);
+      // residueMaterialWeights: residueMaterialWeightsCurrentMonth,
+    } = getTotalResidueKgsReported(
+      currentMonthReports
+        .filter((item) => item.materials)
+        .map((item) => item.materials as Material), // Assert that item.materials is of type Material
+    );
 
     // Calculate total residue for the last month
     const {
       totalKg: totalKgLastMonth,
-      residueMaterialWeights: residueMaterialWeightsLastMonth,
-    } = getTotalResidueKgsReported(lastMonthReports);
+      // residueMaterialWeights: residueMaterialWeightsLastMonth,
+    } = getTotalResidueKgsReported(
+      lastMonthReports
+        .filter((item) => item.materials)
+        .map((item) => item.materials as Material), // Assert that item.materials is of type Material
+    );
 
     // Function to calculate the percentage change between current and previous values
     const calculateMonthlyChange = (current: number, previous: number) => {
@@ -447,12 +403,29 @@ export class UserService {
       });
     }
 
+    // The following code ensures we only work with valid `materials` data from the `allReports` array.
+    //
+    // 1. `map()` extracts the `materials` property from each report in `allReports`. However, some reports may
+    //    not have the `materials` property, or it could be `undefined`.
+    // 2. `filter()` then removes any `null`, `undefined`, or non-object values from the array, ensuring that we only
+    //    keep valid `material` objects. This step is crucial to avoid errors when later accessing properties of these
+    //    objects or performing operations on them. We also check `typeof material === 'object'` to ensure the value
+    //    is indeed an object, not a primitive value like a string or number.
+    // 3. Finally, we use a type assertion (`as Materials`) to tell TypeScript that the filtered array is guaranteed to
+    //    be of type `Materials` (an array of valid `Material` objects). This helps TypeScript understand the shape of
+    //    the data and prevents type errors later in the code.
+    const validMaterials = allReports
+      .map((item) => item.materials)
+      .filter(
+        (material) => material && typeof material === 'object',
+      ) as Materials;
+
     // Return the statistics for the user
     return {
       totalReports: totalReports,
       lastsReports: allReports.slice(0, 5),
       totalResidueKg: totalResidueKgAllReports,
-      residueMaterialWeights: residueMaterialWeightsAllReports,
+      materials: calculateTotalMaterials(validMaterials),
       monthlyChanges: {
         residueKgs: {
           percentageChange: percentageChangeResidueKgsMonthly,

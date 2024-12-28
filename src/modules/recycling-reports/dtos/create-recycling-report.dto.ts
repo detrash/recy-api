@@ -3,12 +3,14 @@ import { z } from 'zod';
 
 import { ResidueType } from './residue-type.enum';
 
-const MaterialSchema = z.object({
-  materialType: z.nativeEnum(ResidueType),
-  weightKg: z
-    .number()
-    .positive('Weight must be a positive number greater than 0'),
-});
+export const MaterialSchema = z
+  .record(
+    z.nativeEnum(ResidueType),
+    z.number().positive('Weight must be a positive number greater than 0'),
+  )
+  .refine((materials) => Object.keys(materials).length > 0, {
+    message: 'Materials cannot be empty',
+  });
 
 export const CreateRecyclingReportSchema = z
   .object({
@@ -26,9 +28,10 @@ export const CreateRecyclingReportSchema = z
         'Report date cannot be in the future',
       ),
     phone: z.string().optional(),
-    materials: z
-      .array(MaterialSchema)
-      .nonempty('Materials array cannot be empty'),
+    materials: MaterialSchema.refine(
+      (materials) => Object.values(materials).every((weight) => weight > 0),
+      'All material weights must be positive',
+    ),
     walletAddress: z
       .string()
       .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid EVM wallet address format')
@@ -55,6 +58,7 @@ export const CreateRecyclingReportSchema = z
 export type CreateRecyclingReportDto = z.infer<
   typeof CreateRecyclingReportSchema
 >;
+
 export class CreateRecyclingReportSwaggerDto {
   @ApiProperty()
   submittedBy: string;
@@ -66,10 +70,12 @@ export class CreateRecyclingReportSwaggerDto {
   phone?: string;
 
   @ApiProperty({
-    type: () => Array,
-    description: 'List of materials with their type and weight',
+    type: Object,
+    description:
+      'Object with residue types as keys and corresponding weight in kg as values',
+    additionalProperties: { type: 'number' },
   })
-  materials: { materialType: ResidueType; weightKg: number }[];
+  materials: Record<ResidueType, number>;
 
   @ApiProperty({ required: false, type: String })
   walletAddress?: string;

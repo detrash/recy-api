@@ -7,12 +7,12 @@ import { existsSync } from 'fs';
 import path from 'path';
 
 import { UploadService } from '@/shared/modules/upload/upload.service';
-import { formattedMaterialTotals } from '@/shared/utils/recycling-report';
 
 import { PrismaService } from '../prisma/prisma.service';
 import { Metadata } from '../recycling-reports/types';
 import { JOBS, REPORT_QUEUE } from './bullmq.constants';
 
+// TODO: type correctly and moving to monorepo to a separate app called works
 @Processor(REPORT_QUEUE)
 export class BullMQProcessor extends WorkerHost {
   constructor(
@@ -136,8 +136,6 @@ export class BullMQProcessor extends WorkerHost {
     const capitalize = (word: string): string =>
       word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 
-    const formattedTotals = await formattedMaterialTotals(materials);
-
     // Prepare metadata for the report
     const jsonMetadata: Metadata = {
       attributes: [
@@ -153,7 +151,7 @@ export class BullMQProcessor extends WorkerHost {
           trait_type: 'Audit',
           value: 'Verified',
         },
-        ...Object.entries(formattedTotals).map(([key, totalWeight]) => ({
+        ...Object.entries(materials).map(([key, totalWeight]) => ({
           trait_type: capitalize(key),
           value: `${totalWeight} kg`,
         })),

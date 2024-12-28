@@ -174,4 +174,22 @@ export class RecyclingReportController {
   ): Promise<RecyclingReport> {
     return this.recyclingReportService.deleteRecyclingReport(id);
   }
+
+  @UseGuards(PermissionsGuard(RecyclingReportPermissions))
+  @UseGuards(AuthorizationGuard)
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Retrieve all recycling reports by user ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of recycling reports for the specified user.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found or no reports found for the specified user.',
+  })
+  async findRecyclingReportsByUser(
+    @Param('userId') userId: string,
+  ): Promise<RecyclingReport[]> {
+    return this.recyclingReportService.findRecyclingReportsByUser(userId);
+  }
 }

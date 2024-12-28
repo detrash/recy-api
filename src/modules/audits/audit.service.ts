@@ -19,7 +19,7 @@ export class AuditService {
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
     @InjectQueue(REPORT_QUEUE) readonly bullMQQueue: Queue,
-  ) { }
+  ) {}
 
   private async processAfterAuditValidated(auditId: string) {
     try {
