@@ -1,19 +1,10 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { RecyclingReport } from '@prisma/client';
 import { ulid } from 'ulid';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
-import {
-  paginate,
-  PaginatedResult,
-  PaginationParams,
-} from '@/shared/utils/pagination.util';
-import { getTotalResidueKgsReported } from '@/shared/utils/recycling-report';
+import { AuditStatusConstants } from '@/shared/constants';
+import { paginate, PaginatedResult } from '@/shared/utils/pagination.util';
 
 import { UploadService } from '../../shared/modules/upload/upload.service';
 import { AuditService } from '../audits/audit.service';
@@ -21,7 +12,6 @@ import { UserService } from '../users/user.service';
 import { CreateRecyclingReportDto } from './dtos/create-recycling-report.dto';
 import { UpdateRecyclingReportDto } from './dtos/update-recycling-report.dto';
 import { RecyclingReportQueryParams } from './interface/recycling-report.types';
-import { Materials } from './types';
 
 @Injectable()
 export class RecyclingReportService {
@@ -66,7 +56,6 @@ export class RecyclingReportService {
         id: reportId,
         submittedBy,
         reportDate,
-        audited: false,
         phone,
         materials,
         walletAddress,
@@ -78,7 +67,7 @@ export class RecyclingReportService {
     // Log the creation of the audit entry for tracking
     await this.auditService.createAudit({
       reportId,
-      audited: false,
+      status: AuditStatusConstants.PENDING,
       auditorId: null,
       comments: '',
     });

@@ -271,7 +271,6 @@ export class UserService {
         id: true,
         reportDate: true,
         materials: true,
-        audited: true,
         residueEvidence: true,
         metadata: true,
       },

@@ -17,6 +17,14 @@ enum ResidueType {
   LANDFILL_WASTE
 }
 
+enum AuditStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+  FAILED
+}
+
 model User {
   id            String   @id @default(uuid()) 
   name          String
@@ -55,7 +63,6 @@ model RecyclingReport {
   id            String   @id @default(uuid())
   submittedBy   String
   reportDate    DateTime @default(now())
-  audited       Boolean  @default(false)
   phone         String?
   materials     Json
   walletAddress String?
@@ -72,7 +79,7 @@ model Audit {
   id        String   @id @default(uuid())
   reportId  String
   auditorId String?
-  audited   Boolean  @default(false)
+  status      AuditStatus  @default(PENDING)
   comments  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

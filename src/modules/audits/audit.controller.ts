@@ -27,7 +27,7 @@ import { AuditQueryParams } from './interface/audit.types';
 @ApiTags('audits')
 @Controller({ path: 'audits', version: '1' })
 export class AuditController {
-  constructor(private readonly auditService: AuditService) { }
+  constructor(private readonly auditService: AuditService) {}
 
   @UseGuards(PermissionsGuard(AuditPermissions))
   @UseGuards(AuthorizationGuard)

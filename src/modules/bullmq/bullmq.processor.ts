@@ -200,7 +200,6 @@ export class BullMQProcessor extends WorkerHost {
       },
       data: {
         ...report,
-        audited: true,
         metadata: metadataWithReportEvidence,
       },
     });

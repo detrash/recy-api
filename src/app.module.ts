@@ -11,7 +11,6 @@ import { AuditModule } from './modules/audits/audit.module';
 import { REPORT_QUEUE } from './modules/bullmq/bullmq.constants';
 import { BullMQEventsListener } from './modules/bullmq/bullmq.eventsListener';
 import { BullMQProcessor } from './modules/bullmq/bullmq.processor';
-import { CaptchaModule } from './modules/cloudflare/captcha/captcha.module';
 import { FootprintModule } from './modules/footprint';
 import { HealthModule } from './modules/health/health.module';
 import { PrismaService } from './modules/prisma/prisma.service';

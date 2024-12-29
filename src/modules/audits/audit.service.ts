@@ -5,6 +5,7 @@ import { Queue } from 'bullmq';
 import { ulid } from 'ulid';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
+import { AuditStatusConstants } from '@/shared/constants';
 import { paginate, PaginatedResult } from '@/shared/utils/pagination.util';
 
 import { JOBS, REPORT_QUEUE } from '../bullmq/bullmq.constants';
@@ -27,7 +28,7 @@ export class AuditService {
         where: { id: auditId },
       });
 
-      if (!audit || !audit.audited) {
+      if (!audit || audit.status !== AuditStatusConstants.APPROVED) {
         throw new NotFoundException(
           `Audit with ID ${auditId} not found or not audited.`,
         );
@@ -78,7 +79,7 @@ export class AuditService {
   }
 
   async createAudit(createAuditDto: CreateAuditDto): Promise<Audit> {
-    const { reportId, audited, auditorId, comments } = createAuditDto;
+    const { reportId, auditorId, comments, status } = createAuditDto;
 
     try {
       const recyclingReport = await this.prisma.recyclingReport.findUnique({
@@ -98,16 +99,9 @@ export class AuditService {
         data: {
           id: auditId,
           reportId: reportId,
-          audited,
+          status,
           auditorId: auditorId,
           comments,
-        },
-      });
-
-      await this.prisma.recyclingReport.update({
-        where: { id: reportId },
-        data: {
-          audited,
         },
       });
 
@@ -167,7 +161,10 @@ export class AuditService {
       data: updateAuditDto,
     });
 
-    if (updatedAudit.audited && !existingAudit.audited) {
+    if (
+      updatedAudit.status === AuditStatusConstants.APPROVED &&
+      existingAudit.status !== AuditStatusConstants.APPROVED
+    ) {
       await this.processAfterAuditValidated(updatedAudit.id);
     }
 
