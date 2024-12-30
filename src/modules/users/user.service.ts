@@ -14,7 +14,6 @@ import {
   getTotalResidueKgsReported,
 } from '@/shared/utils/recycling-report';
 
-import { ResidueType } from '../recycling-reports/dtos/residue-type.enum';
 import { Material, Materials } from '../recycling-reports/types';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -109,6 +108,8 @@ export class UserService {
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     this.checkUserExists(id);
+
+    console.log('id', id);
 
     const { roleIds, ...updateData } = updateUserDto;
 
@@ -215,19 +216,27 @@ export class UserService {
   ): Promise<ValidateUserResponse> {
     const { authId, email, name, picture, authProvider } = validateUserDto;
 
-    // Check if a user exists with the same email
+    // Verificar se o usuário já existe pelo email
     const existingUserByEmail = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     });
 
-    // If user exists by email but has different authId/authProvider, update the user
+    // Se o usuário existe, mas o authId ou authProvider são diferentes, atualize os dados
     if (existingUserByEmail) {
-      if (
-        existingUserByEmail.authId !== authId ||
-        existingUserByEmail.authProvider !== authProvider
-      ) {
+      const {
+        authId: existingAuthId,
+        authProvider: existingAuthProvider,
+        picture: existingPicture,
+      } = existingUserByEmail;
+
+      // Verificar se algum valor mudou
+      const isUpdated =
+        existingAuthId !== authId ||
+        existingAuthProvider !== authProvider ||
+        existingPicture !== picture;
+
+      if (isUpdated) {
+        // Atualizar o usuário se necessário
         const updatedUser = await this.prisma.user.update({
           where: { email },
           data: {
@@ -236,14 +245,16 @@ export class UserService {
             picture,
           },
         });
+
+        // Retornar o usuário atualizado sem adicionar a role 'new'
         return { userExists: true, user: updatedUser };
       }
 
-      // If the email matches and authId/authProvider are the same, return the existing user
+      // Caso não haja alteração, retornar o usuário existente
       return { userExists: true, user: existingUserByEmail };
     }
 
-    // If no user exists with the same email, create a new user
+    // Se não existir o usuário, cria um novo
     const newUser = await this.prisma.user.create({
       data: {
         email,
@@ -251,6 +262,23 @@ export class UserService {
         authId,
         authProvider,
         picture,
+      },
+    });
+
+    // Obter ou criar a role 'new' (somente para usuários novos)
+    const newRole = await this.prisma.role.upsert({
+      where: { name: 'new' },
+      update: {},
+      create: {
+        name: 'new',
+      },
+    });
+
+    // Associa a role 'new' ao novo usuário
+    await this.prisma.userRole.create({
+      data: {
+        userId: newUser.id,
+        roleId: newRole.id,
       },
     });
 

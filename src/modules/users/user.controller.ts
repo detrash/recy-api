@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
   UsePipes,
@@ -91,17 +92,16 @@ export class UserController {
   }
 
   @UseGuards(AuthorizationGuard)
-  @Patch(':id')
+  @Put(':id')
   @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
   @ApiResponse({
     status: 200,
     description: 'The user has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  @UsePipes(new ZodValidationPipe(UpdateUserSchema))
   async updateUser(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body(new ZodValidationPipe(UpdateUserSchema)) updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return this.userService.updateUser(id, updateUserDto);
   }

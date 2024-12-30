@@ -9,6 +9,7 @@ async function main() {
     { id: '3', name: 'wasteGenerator' },
     { id: '4', name: 'partner' },
     { id: '5', name: 'auditor' },
+    { id: '6', name: 'new' },
   ];
 
   for (const role of roles) {
