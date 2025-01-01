@@ -9,8 +9,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 
-import { AuthorizationGuard } from '../../../modules/authorization/authorization.guard';
-import { PermissionsGuard } from '../../../modules/authorization/permission.guard';
+import { AuthorizationGuard } from '../../../modules/auth0/authorization.guard';
+import { PermissionsGuard } from '../../../modules/auth0/permission.guard';
 import { UploadFileDto } from './dtos/upload-file.dto';
 import { UploadPermissions } from './upload.permissions';
 import { UploadService } from './upload.service';

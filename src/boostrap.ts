@@ -1,11 +1,8 @@
 import './tracing';
 
-import { checkbox } from '@inquirer/prompts';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import chalk from 'chalk';
-import console from 'console';
-import { sign } from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
@@ -18,6 +15,8 @@ export async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
+
+  app.use(cookieParser());
 
   const logger = app.get(Logger);
 

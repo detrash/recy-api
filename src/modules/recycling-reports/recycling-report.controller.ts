@@ -28,8 +28,8 @@ import {
   PaginationParams,
 } from '@/shared/utils/pagination.util';
 
-import { AuthorizationGuard } from '../authorization/authorization.guard';
-import { PermissionsGuard } from '../authorization/permission.guard';
+import { AuthorizationGuard } from '../auth0/authorization.guard';
+import { PermissionsGuard } from '../auth0/permission.guard';
 import {
   CreateRecyclingReportDto,
   CreateRecyclingReportSchema,
@@ -37,7 +37,10 @@ import {
 } from './dtos/create-recycling-report.dto';
 import { UpdateRecyclingReportDto } from './dtos/update-recycling-report.dto';
 import { RecyclingReportQueryParams } from './interface/recycling-report.types';
-import { RecyclingReportPermissions } from './recycling-report.permissions';
+import {
+  RecyclingReportPermissions,
+  RecyclingReportPermissionsAdmin,
+} from './recycling-report.permissions';
 import { RecyclingReportService } from './recycling-report.service';
 
 @ApiTags('recycling-reports')
@@ -131,7 +134,7 @@ export class RecyclingReportController {
     return this.recyclingReportService.findRecyclingReportById(id);
   }
 
-  @UseGuards(PermissionsGuard(RecyclingReportPermissions))
+  @UseGuards(PermissionsGuard(RecyclingReportPermissionsAdmin))
   @UseGuards(AuthorizationGuard)
   @Put(':id')
   @ApiOperation({ summary: 'Update a recycling report by ID' })
@@ -157,7 +160,7 @@ export class RecyclingReportController {
     );
   }
 
-  @UseGuards(PermissionsGuard(RecyclingReportPermissions))
+  @UseGuards(PermissionsGuard(RecyclingReportPermissionsAdmin))
   @UseGuards(AuthorizationGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a recycling report by ID' })

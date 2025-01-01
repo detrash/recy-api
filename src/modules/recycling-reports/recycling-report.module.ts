@@ -5,6 +5,7 @@ import { PrismaService } from '@/modules/prisma/prisma.service';
 import { UploadService } from '../../shared/modules/upload/upload.service';
 import { AuditModule } from '../audits/audit.module';
 import { AuditService } from '../audits/audit.service';
+import { Auth0Module } from '../auth0/auth0.module';
 import { UserService } from '../users/user.service';
 import { RecyclingReportController } from './recycling-report.controller';
 import { RecyclingReportService } from './recycling-report.service';
@@ -19,6 +20,6 @@ import { RecyclingReportService } from './recycling-report.service';
     UserService,
   ],
   exports: [RecyclingReportService],
-  imports: [AuditModule],
+  imports: [AuditModule, Auth0Module],
 })
 export class RecyclingReportModule {}

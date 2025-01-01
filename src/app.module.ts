@@ -8,6 +8,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { DatadogTraceModule } from 'nestjs-ddtrace';
 
 import { AuditModule } from './modules/audits/audit.module';
+import { Auth0Module } from './modules/auth0/auth0.module';
 import { REPORT_QUEUE } from './modules/bullmq/bullmq.constants';
 import { BullMQEventsListener } from './modules/bullmq/bullmq.eventsListener';
 import { BullMQProcessor } from './modules/bullmq/bullmq.processor';
@@ -15,6 +16,7 @@ import { FootprintModule } from './modules/footprint';
 import { HealthModule } from './modules/health/health.module';
 import { PrismaService } from './modules/prisma/prisma.service';
 import { RecyclingReportModule } from './modules/recycling-reports';
+import { RoleModule } from './modules/roles';
 import { UserModule } from './modules/users/user.module';
 import { Web3Module } from './modules/web3/web3.module';
 import { LoggerModule } from './shared/modules/logger/logger.module';
@@ -26,6 +28,8 @@ import { UploadModule } from './shared/modules/upload/upload.module';
       isGlobal: true,
       envFilePath: ['.env'],
     }),
+    Auth0Module,
+    RoleModule,
     Web3Module,
     UploadModule,
     LoggerModule,

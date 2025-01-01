@@ -11,7 +11,7 @@ import { MailService } from '@/shared/modules/mail/mail.service';
 import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
 import { MailDto } from '../../shared/modules/mail/dtos/mail.dto';
-import { AuthorizationGuard } from '../authorization/authorization.guard';
+import { AuthorizationGuard } from '../auth0/authorization.guard';
 import {
   ResultDto,
   ResultDtoSchema,

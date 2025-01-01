@@ -16,8 +16,8 @@ import { Audit } from '@prisma/client';
 import { PaginatedResult } from '@/shared/utils/pagination.util';
 import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
-import { AuthorizationGuard } from '../authorization/authorization.guard';
-import { PermissionsGuard } from '../authorization/permission.guard';
+import { AuthorizationGuard } from '../auth0/authorization.guard';
+import { PermissionsGuard } from '../auth0/permission.guard';
 import { AuditPermissions } from './audit.permissions';
 import { AuditService } from './audit.service';
 import { CreateAuditDto, CreateAuditSchema } from './dtos/create-audit.dto';

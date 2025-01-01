@@ -14,6 +14,7 @@ export enum UserRole {
   PARTNER = 'partner',
   RECYCLER = 'recycler',
   WASTE_GENERATOR = 'waste-generator',
+  // NEW_USER = 'new-user',
 }
 
 /**

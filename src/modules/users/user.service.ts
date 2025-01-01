@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
@@ -13,7 +14,9 @@ import {
   calculateTotalMaterials,
   getTotalResidueKgsReported,
 } from '@/shared/utils/recycling-report';
+import { Role, Roles } from '@/utils/enums/roles.enum';
 
+import { Auth0Service } from '../auth0/auth0.service';
 import { Material, Materials } from '../recycling-reports/types';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -23,7 +26,10 @@ import { ValidateUserResponse } from './types';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly auth0Service: Auth0Service,
+  ) {}
 
   async checkUserExists(userId: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
@@ -41,6 +47,7 @@ export class UserService {
     const { email, name, phone, walletAddress, roleIds, authId, authProvider } =
       createUserDto;
 
+    // Check if the user already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -49,25 +56,38 @@ export class UserService {
       throw new ConflictException(`User with email ${email} already exists.`);
     }
 
-    // Fetch roles by roleIds to check for "admin" role and other validations
+    // Fetch roles by the provided role IDs
     const roles = await this.prisma.role.findMany({
-      where: { id: { in: roleIds } },
+      where: {
+        id: { in: roleIds }, // Fetching roles by the provided IDs
+      },
     });
 
+    // Check if any role IDs are invalid (i.e., don't exist in the database)
+    const invalidRoleIds = roleIds.filter(
+      (roleId) => !roles.some((role) => role.id === roleId),
+    );
+
+    if (invalidRoleIds.length > 0) {
+      throw new ForbiddenException(
+        `One or more Role IDs are invalid: ${invalidRoleIds.join(', ')}`,
+      );
+    }
+
     // Check if the "admin" role is being assigned
-    const hasAdminRole = roles.some((role) => role.name === 'admin');
+    const hasAdminRole = roles.some((role) => role.name === Roles.ADMIN);
     if (hasAdminRole) {
       throw new ForbiddenException(
         'You are not allowed to assign the "admin" role.',
       );
     }
 
-    // Check for "Waste Generator" or "Partner" roles and "Auditor" role restrictions
+    // Check for restrictions between "Waste Generator" or "Partner" roles and "Auditor"
     const hasWasteGeneratorRole = roles.some(
-      (role) => role.name === 'Waste Generator',
+      (role) => role.name === Roles.WASTE_GENERATOR,
     );
-    const hasPartnerRole = roles.some((role) => role.name === 'Partner');
-    const hasAuditorRole = roles.some((role) => role.name === 'Auditor');
+    const hasPartnerRole = roles.some((role) => role.name === Roles.PARTNER);
+    const hasAuditorRole = roles.some((role) => role.name === Roles.AUDITOR);
 
     if ((hasWasteGeneratorRole || hasPartnerRole) && !hasAuditorRole) {
       throw new ForbiddenException(
@@ -81,7 +101,7 @@ export class UserService {
       );
     }
 
-    // Generate ULID for the new user ID
+    // Generate a ULID for the new user ID
     const userId = ulid();
 
     // Proceed with user creation if all validations pass
@@ -95,72 +115,159 @@ export class UserService {
         authId,
         walletAddress,
         userRoles: {
-          create: roleIds.map((roleId) => ({
-            role: { connect: { id: roleId } },
+          create: roles.map((role) => ({
+            role: { connect: { id: role.id } }, // Connect roles by their ID
           })),
         },
       },
       include: { userRoles: { include: { role: true } } },
     });
+
+    // Extract role names from the userRoles relation
+    const roleNames = user.userRoles.map((userRole) => userRole.role.name);
+
+    if (authId) {
+      await this.auth0Service.updateRole(authId, roleNames as Role[]);
+
+      await this.auth0Service.updateMetadata(authId, {
+        id: userId,
+        walletAddress,
+      });
+    }
 
     return user;
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    this.checkUserExists(id);
+    try {
+      const existingUser = await this.prisma.user.findUnique({
+        where: { id },
+        include: { userRoles: { include: { role: true } } },
+      });
 
-    console.log('id', id);
+      if (!existingUser) {
+        throw new ConflictException(`User to be updated doesn't exist.`);
+      }
 
-    const { roleIds, ...updateData } = updateUserDto;
+      const { roleIds, ...updateData } = updateUserDto;
 
-    // Fetch roles by roleIds to check for "admin" role and other validations
-    const roles = await this.prisma.role.findMany({
-      where: { id: { in: roleIds } },
-    });
+      if (roleIds?.length) {
+        const roles = await this.prisma.role.findMany({
+          where: {
+            id: { in: roleIds },
+          },
+        });
 
-    // Check if the "admin" role is being assigned
-    const hasAdminRole = roles.some((role) => role.name === 'admin');
-    if (hasAdminRole) {
-      throw new ForbiddenException(
-        'You are not allowed to assign the "admin" role.',
+        // Add role validation logic here
+        const hasAdminRole = roles.some((role) => role.name === Roles.ADMIN);
+        if (hasAdminRole) {
+          throw new ForbiddenException(
+            'You are not allowed to assign the "admin" role.',
+          );
+        }
+
+        const hasWasteGeneratorRole = roles.some(
+          (role) => role.name === Roles.WASTE_GENERATOR,
+        );
+        const hasPartnerRole = roles.some(
+          (role) => role.name === Roles.PARTNER,
+        );
+        const hasAuditorRole = roles.some(
+          (role) => role.name === Roles.AUDITOR,
+        );
+
+        if ((hasWasteGeneratorRole || hasPartnerRole) && !hasAuditorRole) {
+          throw new ForbiddenException(
+            'Waste Generators or Partners can only be assigned the "Auditor" role in addition to their main role.',
+          );
+        }
+
+        if (hasAuditorRole && !(hasWasteGeneratorRole || hasPartnerRole)) {
+          throw new ForbiddenException(
+            'Only Waste Generators or Partners can be assigned the "Auditor" role.',
+          );
+        }
+
+        const currentRoles = existingUser.userRoles.map(
+          (userRole) => userRole.role.id,
+        );
+
+        // Filter roles to add
+        const rolesToAdd = roles.filter(
+          (role) => !currentRoles.includes(role.id),
+        );
+
+        // Filter roles to remove, ensuring "new-user" is removed if other roles are selected
+        const rolesToRemove = existingUser.userRoles.filter(
+          (userRole) =>
+            !roleIds.includes(userRole.role.id) ||
+            (userRole.role.name === Roles.NEW_USER && roleIds.length > 1),
+        );
+
+        const hasNewUserRole = existingUser.userRoles.some(
+          (item) => item.role.name === Roles.NEW_USER,
+        );
+
+        if (hasNewUserRole && (updateData.authId || existingUser.authId))
+          this.auth0Service.deleteRole(
+            updateData.authId || existingUser.authId || '',
+            Roles.NEW_USER,
+          );
+
+        // Remove old roles and assign new ones in the database
+        await this.prisma.user.update({
+          where: { id },
+          data: {
+            userRoles: {
+              deleteMany: {
+                id: { in: rolesToRemove.map((userRole) => userRole.id) },
+              },
+              create: rolesToAdd.map((role) => ({
+                role: { connect: { id: role.id } },
+              })),
+            },
+          },
+        });
+      }
+
+      // Update user data
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data: updateData,
+        include: { userRoles: { include: { role: true } } },
+      });
+
+      if (updatedUser.authId) {
+        if (roleIds?.length) {
+          const roleNames = updatedUser.userRoles.map(
+            (userRole) => userRole.role.name,
+          );
+
+          // Update roles in Auth0
+          await this.auth0Service.updateRole(
+            updatedUser.authId,
+            roleNames as Role[],
+          );
+        }
+
+        await this.auth0Service.updateMetadata(String(updatedUser.authId), {
+          id: updatedUser.id,
+          walletAddress: updatedUser.walletAddress,
+        });
+      }
+
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user:', error);
+
+      if (error instanceof ForbiddenException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'An error occurred while updating the user.',
       );
     }
-
-    // Check for "Waste Generator" or "Partner" roles and "Auditor" role restrictions
-    const hasWasteGeneratorRole = roles.some(
-      (role) => role.name === 'Waste Generator',
-    );
-    const hasPartnerRole = roles.some((role) => role.name === 'Partner');
-    const hasAuditorRole = roles.some((role) => role.name === 'Auditor');
-
-    if ((hasWasteGeneratorRole || hasPartnerRole) && !hasAuditorRole) {
-      throw new ForbiddenException(
-        'Waste Generators or Partners can only be assigned the "Auditor" role in addition to their main role.',
-      );
-    }
-
-    if (hasAuditorRole && !(hasWasteGeneratorRole || hasPartnerRole)) {
-      throw new ForbiddenException(
-        'Only Waste Generators or Partners can be assigned the "Auditor" role.',
-      );
-    }
-
-    // Proceed with user update if all validations pass
-    const updatedUser = await this.prisma.user.update({
-      where: { id },
-      data: {
-        ...updateData,
-        userRoles: {
-          deleteMany: {},
-          create: roleIds?.map((roleId) => ({
-            role: { connect: { id: roleId } },
-          })),
-        },
-      },
-      include: { userRoles: { include: { role: true } } },
-    });
-
-    return updatedUser;
   }
 
   async deleteUser(id: string): Promise<User> {
@@ -216,45 +323,70 @@ export class UserService {
   ): Promise<ValidateUserResponse> {
     const { authId, email, name, picture, authProvider } = validateUserDto;
 
-    // Verificar se o usuário já existe pelo email
+    // Check if the user already exists by email, including the 'userRoles' relation
     const existingUserByEmail = await this.prisma.user.findUnique({
       where: { email },
+      include: {
+        userRoles: {
+          include: {
+            role: true,
+          },
+        },
+      },
     });
 
-    // Se o usuário existe, mas o authId ou authProvider são diferentes, atualize os dados
+    // If the user exists but the authId or authProvider are different, update the data
     if (existingUserByEmail) {
       const {
         authId: existingAuthId,
         authProvider: existingAuthProvider,
         picture: existingPicture,
+        userRoles, // Agora 'userRoles' está disponível
       } = existingUserByEmail;
 
-      // Verificar se algum valor mudou
+      await this.auth0Service.updateMetadata(authId, {
+        id: existingUserByEmail.id,
+        walletAddress: existingUserByEmail.walletAddress,
+      });
+
+      // Check if any value has changed
       const isUpdated =
         existingAuthId !== authId ||
         existingAuthProvider !== authProvider ||
         existingPicture !== picture;
 
       if (isUpdated) {
-        // Atualizar o usuário se necessário
-        const updatedUser = await this.prisma.user.update({
-          where: { email },
-          data: {
-            authId,
-            authProvider,
-            picture,
-          },
+        // Update the user if necessary
+        const updatedUser = await this.updateUser(existingUserByEmail.id, {
+          authId,
+          authProvider,
+          picture,
         });
 
-        // Retornar o usuário atualizado sem adicionar a role 'new'
+        // Extract role names from the userRoles relation
+        const roleNames = userRoles.map((userRole) => userRole.role.name);
+
+        // Update roles in Auth0 with role names
+        await this.auth0Service.updateRole(authId, roleNames as Role[]);
+
+        // Return the updated user without adding the 'new' role
         return { userExists: true, user: updatedUser };
       }
 
-      // Caso não haja alteração, retornar o usuário existente
+      // If there are no changes, return the existing user
       return { userExists: true, user: existingUserByEmail };
     }
 
-    // Se não existir o usuário, cria um novo
+    // If the user does not exist, create a new one
+    // Fetch the 'NEW_USER' role ID from the database
+    const newUserRole = await this.prisma.role.findUnique({
+      where: { name: Roles.NEW_USER },
+    });
+
+    if (!newUserRole) {
+      throw new Error(`Role '${Roles.NEW_USER}' does not exist.`);
+    }
+
     const newUser = await this.prisma.user.create({
       data: {
         email,
@@ -262,25 +394,33 @@ export class UserService {
         authId,
         authProvider,
         picture,
+        userRoles: {
+          create: {
+            roleId: newUserRole.id,
+          },
+        },
+      },
+      include: {
+        userRoles: {
+          include: {
+            role: true,
+          },
+        },
       },
     });
 
-    // Obter ou criar a role 'new' (somente para usuários novos)
-    const newRole = await this.prisma.role.upsert({
-      where: { name: 'new' },
-      update: {},
-      create: {
-        name: 'new',
-      },
+    // Extract role names from the new user's roles
+    const newUserRoleNames = newUser.userRoles.map(
+      (userRole) => userRole.role.name,
+    );
+
+    // Update metadata and assign the role names in Auth0
+    await this.auth0Service.updateMetadata(authId, {
+      id: newUser.id,
+      walletAddress: newUser.walletAddress,
     });
 
-    // Associa a role 'new' ao novo usuário
-    await this.prisma.userRole.create({
-      data: {
-        userId: newUser.id,
-        roleId: newRole.id,
-      },
-    });
+    await this.auth0Service.updateRole(authId, newUserRoleNames as Role[]);
 
     return { userExists: false, user: newUser };
   }
@@ -430,17 +570,6 @@ export class UserService {
       });
     }
 
-    // The following code ensures we only work with valid `materials` data from the `allReports` array.
-    //
-    // 1. `map()` extracts the `materials` property from each report in `allReports`. However, some reports may
-    //    not have the `materials` property, or it could be `undefined`.
-    // 2. `filter()` then removes any `null`, `undefined`, or non-object values from the array, ensuring that we only
-    //    keep valid `material` objects. This step is crucial to avoid errors when later accessing properties of these
-    //    objects or performing operations on them. We also check `typeof material === 'object'` to ensure the value
-    //    is indeed an object, not a primitive value like a string or number.
-    // 3. Finally, we use a type assertion (`as Materials`) to tell TypeScript that the filtered array is guaranteed to
-    //    be of type `Materials` (an array of valid `Material` objects). This helps TypeScript understand the shape of
-    //    the data and prevents type errors later in the code.
     const validMaterials = allReports
       .map((item) => item.materials)
       .filter(

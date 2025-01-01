@@ -5,13 +5,14 @@ import {
   Get,
   NotFoundException,
   Param,
-  Patch,
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   ApiOperation,
   ApiParam,
@@ -20,11 +21,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
+import { Response } from 'express';
 
 import { PaginatedResult } from '@/shared/utils/pagination.util';
 import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
-import { AuthorizationGuard } from '../authorization/authorization.guard';
+import { AuthorizationGuard } from '../auth0/authorization.guard';
 import { CreateUserDto, CreateUserSchema } from './dtos/create-user.dto';
 import { UpdateUserDto, UpdateUserSchema } from './dtos/update-user.dto';
 import { ValidateUserDto } from './dtos/validate-user.dto';
@@ -129,7 +131,7 @@ export class UserController {
     description: 'Invalid user details or failed validation.',
   })
   async validateUser(@Body() validateUserDto: ValidateUserDto) {
-    return this.userService.validateUser(validateUserDto);
+    return await this.userService.validateUser(validateUserDto);
   }
 
   @UseGuards(AuthorizationGuard)

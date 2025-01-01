@@ -1,15 +1,5 @@
 import { z } from 'zod';
 
-const RolesEnum = z.enum(['1', '2', '3', '4', '5']); // Role IDs
-
-export const Roles = [
-  { id: '1', name: 'admin' },
-  { id: '2', name: 'recycler' },
-  { id: '3', name: 'wasteGenerator' },
-  { id: '4', name: 'partner' },
-  { id: '5', name: 'auditor' },
-];
-
 export const CreateUserSchema = z.object({
   email: z
     .string({ message: 'email must be a string' })
@@ -21,13 +11,14 @@ export const CreateUserSchema = z.object({
     .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid EVM wallet address format')
     .or(z.literal(''))
     .optional(),
-  roleIds: z.array(RolesEnum, {
+  roleIds: z.array(z.string(), {
     message: 'Role IDs must be an array of valid role IDs',
   }),
   authId: z.string({ message: 'authId must be a string' }).optional(),
   authProvider: z
     .string({ message: 'authProvider must be a string' })
     .optional(),
+  picture: z.string({ message: 'picture must be a string' }).optional(),
 });
 
 export type CreateUserDto = z.infer<typeof CreateUserSchema>;

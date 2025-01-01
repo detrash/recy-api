@@ -6,10 +6,10 @@ async function main() {
   const roles = [
     { id: '1', name: 'admin' },
     { id: '2', name: 'recycler' },
-    { id: '3', name: 'wasteGenerator' },
+    { id: '3', name: 'waste-generator' },
     { id: '4', name: 'partner' },
     { id: '5', name: 'auditor' },
-    { id: '6', name: 'new' },
+    { id: '6', name: 'new-user' },
   ];
 
   for (const role of roles) {
@@ -20,7 +20,7 @@ async function main() {
     });
   }
 
-  console.log('Roles seeded successfully.');
+  console.log('Sseeded successfully.');
 }
 
 main()
