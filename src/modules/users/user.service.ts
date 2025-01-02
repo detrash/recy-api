@@ -584,11 +584,15 @@ export class UserService {
       materials: calculateTotalMaterials(validMaterials),
       monthlyChanges: {
         residueKgs: {
-          percentageChange: percentageChangeResidueKgsMonthly,
+          percentageChange: Math.round(
+            percentageChangeResidueKgsMonthly,
+          ).toString(),
           changeType: changeTypeResidueKgsMonthly,
         },
         reports: {
-          percentageChange: percentageChangeReportsMonthly,
+          percentageChange: Math.round(
+            percentageChangeReportsMonthly,
+          ).toString(),
           changeType: changeTypeReportsMonthly,
         },
       },

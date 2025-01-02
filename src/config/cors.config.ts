@@ -33,7 +33,6 @@ export const corsOptionsDelegate: Parameters<
   // TODO: esperando recurso do pino logger
   console.log({
     curEnv: process.env.NODE_ENV,
-    previewUrlRoot: process.env.PR_PREVIEW_ROOT_URL,
     origin,
   });
 
@@ -51,7 +50,9 @@ function getAllowedOrigins(): string[] {
 }
 
 function enableWildcard(): boolean {
-  return process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'staging';
+  return (
+    process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging'
+  );
 }
 
 function extractOrigin(req: Request): string {
