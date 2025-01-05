@@ -86,14 +86,9 @@ export class UserService {
     const hasWasteGeneratorRole = roles.some(
       (role) => role.name === Roles.WASTE_GENERATOR,
     );
+
     const hasPartnerRole = roles.some((role) => role.name === Roles.PARTNER);
     const hasAuditorRole = roles.some((role) => role.name === Roles.AUDITOR);
-
-    if ((hasWasteGeneratorRole || hasPartnerRole) && !hasAuditorRole) {
-      throw new ForbiddenException(
-        'Waste Generators or Partners can only be assigned the "Auditor" role in addition to their main role.',
-      );
-    }
 
     if (hasAuditorRole && !(hasWasteGeneratorRole || hasPartnerRole)) {
       throw new ForbiddenException(

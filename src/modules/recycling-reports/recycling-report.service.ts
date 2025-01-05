@@ -4,6 +4,7 @@ import { ulid } from 'ulid';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { AuditStatusConstants } from '@/shared/constants';
+import { UserRole } from '@/shared/enums/user.enums';
 import { paginate, PaginatedResult } from '@/shared/utils/pagination.util';
 
 import { UploadService } from '../../shared/modules/upload/upload.service';
@@ -42,12 +43,15 @@ export class RecyclingReportService {
     let residueEvidenceFileUrl = '';
 
     if (!residueEvidence && residueEvidenceFile) {
+      const { mimetype, originalname } = residueEvidenceFile;
+
       const options = {
-        file: residueEvidenceFile,
-        fileName: `${reportId}.png`,
-        type: 'image/png',
+        file: residueEvidenceFile.buffer,
+        fileName: originalname,
+        type: mimetype,
         bucketName: 'detrash-prod',
       };
+
       residueEvidenceFileUrl = await this.uploadService.upload(options);
     }
 
@@ -64,13 +68,33 @@ export class RecyclingReportService {
       },
     });
 
-    // Log the creation of the audit entry for tracking
-    await this.auditService.createAudit({
-      reportId,
-      status: AuditStatusConstants.PENDING,
-      auditorId: null,
-      comments: '',
+    const userRoles = await this.prisma.userRole.findMany({
+      where: {
+        userId: submittedBy,
+        role: {
+          name: UserRole.WASTE_GENERATOR,
+        },
+      },
+      select: {
+        role: {
+          select: { name: true },
+        },
+      },
     });
+
+    const isWasteGenerator = userRoles.some(
+      (role) => role.role.name === UserRole.WASTE_GENERATOR,
+    );
+
+    // Waste Generators reports don't generate audits they receive tokens after audits sended by recyclers
+    if (!isWasteGenerator) {
+      await this.auditService.createAudit({
+        reportId,
+        status: AuditStatusConstants.PENDING,
+        auditorId: null,
+        comments: '',
+      });
+    }
 
     return createdReport;
   }

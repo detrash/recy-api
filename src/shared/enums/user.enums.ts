@@ -14,7 +14,7 @@ export enum UserRole {
   PARTNER = 'partner',
   RECYCLER = 'recycler',
   WASTE_GENERATOR = 'waste-generator',
-  // NEW_USER = 'new-user',
+  NEW_USER = 'new-user',
 }
 
 /**
@@ -67,4 +67,5 @@ export const USER_PERMISSION_SCOPES: Record<UserRole, Permission[]> = {
     Permission.READ_REPORTS,
     Permission.WRITE_REPORTS,
   ],
+  [UserRole.NEW_USER]: [Permission.READ_REPORTS, Permission.WRITE_REPORTS],
 };

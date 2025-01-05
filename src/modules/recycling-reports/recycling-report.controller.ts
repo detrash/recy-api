@@ -81,7 +81,7 @@ export class RecyclingReportController {
 
     const mergedData = {
       ...createRecyclingReportDto,
-      residueEvidenceFile: residueEvidenceFile?.buffer,
+      residueEvidenceFile: residueEvidenceFile,
     };
 
     const parsedData: CreateRecyclingReportDto =

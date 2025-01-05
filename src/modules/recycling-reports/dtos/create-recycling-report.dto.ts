@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { File } from 'buffer';
 import { z } from 'zod';
 
 import { ResidueType } from './residue-type.enum';
@@ -46,8 +47,15 @@ export const CreateRecyclingReportSchema = z
       )
       .optional(),
     residueEvidenceFile: z
-      .instanceof(Buffer)
-      .refine((buffer) => buffer.length > 0, 'File content cannot be empty')
+      .custom<Express.Multer.File>()
+      // .refine((file: Express.Multer.File | undefined) => {
+      //   if (!file) return false; // If there's no file, return false
+      //   // You can further validate the file properties
+      //   const { mimetype, size } = file;
+      //   return (
+      //     mimetype.startsWith('image/') && size <= 5 * 1024 * 1024 // Limit to images less than 5MB
+      //   );
+      // }, 'File must be an image and less than 5MB')
       .optional(),
   })
   .refine((data) => data.residueEvidence || data.residueEvidenceFile, {
@@ -83,6 +91,6 @@ export class CreateRecyclingReportSwaggerDto {
   @ApiProperty({ required: false, type: String })
   residueEvidence?: string;
 
-  @ApiProperty({ required: false, type: Buffer })
-  residueEvidenceFile?: Buffer;
+  @ApiProperty({ required: false, type: File })
+  residueEvidenceFile?: Express.Multer.File;
 }
