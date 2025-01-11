@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -51,6 +52,7 @@ export class UserController {
   }
 
   @UseGuards(AuthorizationGuard)
+  @ApiBearerAuth('Recy-Auth')
   @Get()
   @ApiOperation({
     summary: 'Retrieve all Users',
