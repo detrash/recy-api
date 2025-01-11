@@ -21,7 +21,7 @@ export async function bootstrap() {
   const logger = app.get(Logger);
 
   app.useLogger(logger);
-  app.useGlobalFilters(new AllExceptionsFilter(logger));
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   app.enableVersioning({
     type: VersioningType.URI,

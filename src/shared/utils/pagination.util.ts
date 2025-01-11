@@ -1,3 +1,4 @@
+import { BadRequestException, HttpException } from '@nestjs/common';
 import { z } from 'zod';
 
 export const PaginationSchema = z.object({
@@ -36,8 +37,13 @@ export async function paginate<T>(
   params: PaginationParams,
 ): Promise<PaginatedResult<T>> {
   const parsed = PaginationSchema.safeParse(params);
+
   if (!parsed.success) {
-    throw new Error('Invalid pagination parameters');
+    const errorDetails = parsed.error.errors.map((e) => ({
+      field: e.path.join('.'),
+      message: e.message,
+    }));
+    throw new BadRequestException(errorDetails);
   }
 
   const { page = 1, limit = 10 } = parsed.data;
