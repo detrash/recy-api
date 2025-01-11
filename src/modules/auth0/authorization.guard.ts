@@ -32,6 +32,10 @@ export class AuthorizationGuard implements CanActivate {
       }),
     );
 
+    console.log('context', context);
+
+    console.log('Authorization Header:', request.headers['authorization']);
+
     try {
       await validateAccessToken(request, response);
       return true;
@@ -43,7 +47,6 @@ export class AuthorizationGuard implements CanActivate {
       if (error instanceof UnauthorizedError) {
         throw new UnauthorizedException('Requires authentication');
       }
-
       throw new InternalServerErrorException();
     }
   }

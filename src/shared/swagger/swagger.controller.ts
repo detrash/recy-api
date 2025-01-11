@@ -1,23 +1,22 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-export const setupSwagger = async (app: INestApplication) => {
+export const setupSwagger = (app: INestApplication): void => {
   const config = new DocumentBuilder()
     .setTitle('Recy Network')
-    .setDescription('Recy Network API description')
+    .setDescription('API for managing Recy Network resources')
     .setVersion('1.0')
     .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-      },
-      'access-token',
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'Recy-Auth',
     )
-    .addSecurityRequirements('bearer')
     .build();
 
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('docs', app, documentFactory);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 };
