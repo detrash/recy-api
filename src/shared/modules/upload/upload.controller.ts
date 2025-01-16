@@ -1,11 +1,4 @@
-import {
-  Controller,
-  ParseFilePipe,
-  Post,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, ParseFilePipe, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -31,9 +24,9 @@ export class UploadController {
           // new MaxFileSizeValidator({ maxSize: 1000 }),
           // new FileTypeValidator({ fileType: 'image/jpeg' }),
         ],
-      }),
+      })
     )
-    file: Express.Multer.File,
+    file: Express.Multer.File
   ) {
     const options: UploadFileDto = {
       fileName: file.originalname,

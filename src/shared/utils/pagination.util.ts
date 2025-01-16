@@ -1,14 +1,8 @@
 import { z } from 'zod';
 
 export const PaginationSchema = z.object({
-  page: z.preprocess(
-    (val) => parseInt(val as string, 10),
-    z.number().int().min(1).optional(),
-  ),
-  limit: z.preprocess(
-    (val) => parseInt(val as string, 10),
-    z.number().int().min(1).max(100).optional(),
-  ),
+  page: z.preprocess((val) => parseInt(val as string, 10), z.number().int().min(1).optional()),
+  limit: z.preprocess((val) => parseInt(val as string, 10), z.number().int().min(1).max(100).optional()),
 });
 
 export type PaginationDto = z.infer<typeof PaginationSchema>;
@@ -33,7 +27,7 @@ export interface PaginationParams {
 export async function paginate<T>(
   getCount: () => Promise<number>,
   getData: (skip: number, take: number) => Promise<T[]>,
-  params: PaginationParams,
+  params: PaginationParams
 ): Promise<PaginatedResult<T>> {
   const parsed = PaginationSchema.safeParse(params);
   if (!parsed.success) {

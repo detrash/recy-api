@@ -1,17 +1,9 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-  Type,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable, Type } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { claimCheck, InsufficientScopeError } from 'express-oauth2-jwt-bearer';
 import { promisify } from 'util';
 
-function createPermissionsGuard(
-  requiredRoutePermissions: string[],
-): Type<CanActivate> {
+function createPermissionsGuard(requiredRoutePermissions: string[]): Type<CanActivate> {
   @Injectable()
   class PermissionsGuardImpl implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -22,9 +14,8 @@ function createPermissionsGuard(
         claimCheck((payload) => {
           const permissionsJwtClaim = (payload.permissions as string[]) || [];
 
-          const hasRequiredRoutePermissions = requiredRoutePermissions.every(
-            (requiredRoutePermission) =>
-              permissionsJwtClaim.includes(requiredRoutePermission),
+          const hasRequiredRoutePermissions = requiredRoutePermissions.every((requiredRoutePermission) =>
+            permissionsJwtClaim.includes(requiredRoutePermission)
           );
 
           if (!hasRequiredRoutePermissions) {
@@ -32,7 +23,7 @@ function createPermissionsGuard(
           }
 
           return hasRequiredRoutePermissions;
-        }),
+        })
       );
 
       try {
@@ -48,6 +39,5 @@ function createPermissionsGuard(
   return PermissionsGuardImpl;
 }
 
-export const PermissionsGuard = (
-  routePermissions: string[],
-): Type<CanActivate> => createPermissionsGuard(routePermissions);
+export const PermissionsGuard = (routePermissions: string[]): Type<CanActivate> =>
+  createPermissionsGuard(routePermissions);

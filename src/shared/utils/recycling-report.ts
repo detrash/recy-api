@@ -38,8 +38,7 @@ export function calculateTotalMaterials(materials: Materials): {
           // Add the amount of this residue type to the totals object
           // If the residue type already exists in the totals object, add the current amount
           // If it doesn't exist, initialize it with the current amount (defaulting to 0 if undefined)
-          totals[residueType] =
-            (totals[residueType] || 0) + (current[residueType] || 0);
+          totals[residueType] = (totals[residueType] || 0) + (current[residueType] || 0);
         }
       }
     }

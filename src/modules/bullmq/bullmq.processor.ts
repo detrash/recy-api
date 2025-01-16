@@ -9,16 +9,13 @@ import path from 'path';
 import { UploadService } from '@/shared/modules/upload/upload.service';
 
 import { PrismaService } from '../prisma/prisma.service';
-import { Metadata } from '../recycling-reports/types';
+import { Metadata, MetadataDatabase } from '../recycling-reports/types';
 import { JOBS, REPORT_QUEUE } from './bullmq.constants';
 
 // TODO: type correctly and moving to monorepo to a separate app called works
 @Processor(REPORT_QUEUE)
 export class BullMQProcessor extends WorkerHost {
-  constructor(
-    private readonly uploadService: UploadService,
-    private readonly prisma: PrismaService,
-  ) {
+  constructor(private readonly uploadService: UploadService, private readonly prisma: PrismaService) {
     super();
   }
 
@@ -31,30 +28,20 @@ export class BullMQProcessor extends WorkerHost {
     }
   }
 
-  private async generateReportImage(
-    metadata: Metadata,
-    reportId: string,
-    user: User,
-  ): Promise<Buffer> {
+  private async generateReportImage(metadata: Metadata, reportId: string, user: User): Promise<Buffer> {
     try {
       const canvasWidth = 1280;
       const canvasHeight = 720;
       const canvas = createCanvas(canvasWidth, canvasHeight);
       const ctx = canvas.getContext('2d');
 
-      const filePath = path.join(
-        __dirname,
-        '../../../public/imgs/recy-report-template.png',
-      );
+      const filePath = path.join(__dirname, '../../../public/imgs/recy-report-template.png');
 
       if (!existsSync(filePath)) {
         throw new Error(`Template file not found at path: ${filePath}`);
       }
 
-      const fontPath = path.join(
-        __dirname,
-        '../../../public/fonts/Roboto-Regular.ttf',
-      );
+      const fontPath = path.join(__dirname, '../../../public/fonts/Roboto-Regular.ttf');
 
       if (!existsSync(fontPath)) {
         throw new Error(`Font file not found at path: ${fontPath}`);
@@ -86,24 +73,17 @@ export class BullMQProcessor extends WorkerHost {
       ctx.fillText(user.email, leftTextX, leftTextYStart + textSpacing);
 
       ctx.fillStyle = '#173C09';
-      ctx.fillText(
-        'Report Number:',
-        leftTextX,
-        leftTextYStart + textSpacing * 2,
-      );
+      ctx.fillText('Report Number:', leftTextX, leftTextYStart + textSpacing * 2);
 
       ctx.fillStyle = '#0D4075';
       ctx.fillText(reportId, leftTextX, leftTextYStart + textSpacing * 3);
 
       // Filter and position materials for the right side
-      const materials = metadata.attributes.filter(
-        (material) => material.value && /kg/i.test(material.value),
-      );
+      const materials = metadata.attributes.filter((material) => material.value && /kg/i.test(material.value));
 
       // Positioning for materials on the right side
       const rightTextX = canvasWidth - 500; // Moved closer to center
-      const rightTextYStart =
-        baseYPosition - materials.length * (textSpacing / 2); // Align with left text
+      const rightTextYStart = baseYPosition - materials.length * (textSpacing / 2); // Align with left text
 
       let rightTextY = rightTextYStart;
       materials.forEach((attribute) => {
@@ -133,8 +113,7 @@ export class BullMQProcessor extends WorkerHost {
     const { walletAddress, email } = user;
     const { materials } = report;
 
-    const capitalize = (word: string): string =>
-      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    const capitalize = (word: string): string => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 
     // Prepare metadata for the report
     const jsonMetadata: Metadata = {
@@ -161,11 +140,7 @@ export class BullMQProcessor extends WorkerHost {
     };
 
     // Generate PNG image buffer representing the report
-    const pngImageBuffer = await this.generateReportImage(
-      jsonMetadata,
-      report.id,
-      user,
-    );
+    const pngImageBuffer = await this.generateReportImage(jsonMetadata, report.id, user);
 
     // Prepare upload tasks
     const uploadTasks = [
@@ -186,12 +161,13 @@ export class BullMQProcessor extends WorkerHost {
     ];
 
     // Execute uploads in parallel
-    const [reportEvidenceUrlUploaded] = await Promise.all(uploadTasks);
+    const [reportEvidenceUrlUploaded, metadataUrlUploaded] = await Promise.all(uploadTasks);
 
     // Update the metadata with the actual image URL
-    const metadataWithReportEvidence = {
+    const metadataWithReportEvidence: MetadataDatabase = {
       json: jsonMetadata,
       reportEvidence: reportEvidenceUrlUploaded,
+      url: metadataUrlUploaded,
     };
 
     const reportUpdated = await this.prisma.recyclingReport.update({

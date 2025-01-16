@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { TurnstileService } from '../turnstile/turnstile.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
+import { TurnstileService } from '../turnstile/turnstile.service';
 import { TokenResponse } from './types';
 
 @Module({

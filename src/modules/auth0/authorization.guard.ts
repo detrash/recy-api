@@ -6,11 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import {
-  auth,
-  InvalidTokenError,
-  UnauthorizedError,
-} from 'express-oauth2-jwt-bearer';
+import { auth, InvalidTokenError, UnauthorizedError } from 'express-oauth2-jwt-bearer';
 import process from 'process';
 import { promisify } from 'util';
 
@@ -29,12 +25,8 @@ export class AuthorizationGuard implements CanActivate {
           secret: process.env.JWT_SECRET,
           tokenSigningAlg: 'HS256',
         }),
-      }),
+      })
     );
-
-    console.log('context', context);
-
-    console.log('Authorization Header:', request.headers['authorization']);
 
     try {
       await validateAccessToken(request, response);
