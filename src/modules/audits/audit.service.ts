@@ -62,7 +62,7 @@ export class AuditService {
           const detrashWallet = this.config.get<string>('WALLET') || '';
 
           await this.web3Service.mintRecyCertificate({
-            recipient: recyclingReport.walletAddress || detrashWallet,
+            recipient: detrashWallet,
             tokenURI: metadata.url,
           });
         } else {
