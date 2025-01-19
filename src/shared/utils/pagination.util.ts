@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { z } from 'zod';
 
 export const PaginationSchema = z.object({
@@ -43,7 +43,15 @@ export async function paginate<T>(
       field: e.path.join('.'),
       message: e.message,
     }));
-    throw new BadRequestException(errorDetails);
+
+    const combinedMessage = errorDetails
+      .map((detail) => `${detail.field}: ${detail.message}`)
+      .join('; ');
+
+    throw new BadRequestException({
+      message: combinedMessage,
+      details: errorDetails,
+    });
   }
 
   const { page = 1, limit = 10 } = parsed.data;

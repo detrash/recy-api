@@ -11,21 +11,23 @@ export class ZodValidationPipe<T> implements PipeTransform {
     try {
       return this.schema.parse(value);
     } catch (error) {
-      const zodError = error as ZodError;
-      const errorDetails = zodError.errors.map((e) => ({
-        field: e.path.join('.'),
-        issue: e.message,
-        invalidValue: e.code,
-      }));
+      if (error instanceof ZodError) {
+        const errorDetails = error.errors.map((e) => ({
+          field: e.path.join('.'),
+          message: e.message,
+        }));
 
-      this.logger.warn('Validation error:', {
-        details: errorDetails,
-      });
+        this.logger.warn('Validation error', { details: errorDetails });
 
-      throw new BadRequestException({
-        message: 'Validation failed',
-        errors: errorDetails,
-      });
+        throw new BadRequestException({
+          message: 'Validation failed',
+          error: 'Bad Request',
+          details: errorDetails,
+        });
+      }
+
+      this.logger.error('Unexpected error during validation', { error });
+      throw error;
     }
   }
 }
