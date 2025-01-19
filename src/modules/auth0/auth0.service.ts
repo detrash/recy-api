@@ -58,15 +58,10 @@ export class Auth0Service {
         throw new Error('No matching roles found for the provided role names.');
       }
 
-      await this.managementClient.users.assignRoles(
-        { id: userId },
-        { roles: roleIds },
-      );
+      await this.managementClient.users.assignRoles({ id: userId }, { roles: roleIds });
 
       return {
-        message: `Roles [${roleNames.join(
-          ', ',
-        )}] successfully assigned to user with ID: ${userId}`,
+        message: `Roles [${roleNames.join(', ')}] successfully assigned to user with ID: ${userId}`,
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -92,14 +87,9 @@ export class Auth0Service {
         return;
       }
 
-      await this.managementClient.users.deleteRoles(
-        { id: userId },
-        { roles: [roleToRemove.id] },
-      );
+      await this.managementClient.users.deleteRoles({ id: userId }, { roles: [roleToRemove.id] });
 
-      console.log(
-        `Role "${roleName}" successfully removed from user ${userId}.`,
-      );
+      console.log(`Role "${roleName}" successfully removed from user ${userId}.`);
     } catch (error) {
       console.error(`Error removing role "${roleName}" from Auth0:`, error);
       throw new Error(`Failed to remove role "${roleName}" from Auth0.`);
@@ -112,13 +102,11 @@ export class Auth0Service {
         { id: authId },
         {
           user_metadata: metadata,
-        },
+        }
       );
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(
-          `Error updating metadata for user ${authId}: ${error.message}`,
-        );
+        throw new Error(`Error updating metadata for user ${authId}: ${error.message}`);
       }
     }
   }

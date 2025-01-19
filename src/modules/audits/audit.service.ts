@@ -1,7 +1,9 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Audit } from '@prisma/client';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Audit, Prisma } from '@prisma/client';
 import { Queue } from 'bullmq';
+import { async } from 'rxjs';
 import { ulid } from 'ulid';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
@@ -9,7 +11,9 @@ import { AuditStatusConstants } from '@/shared/constants';
 import { paginate, PaginatedResult } from '@/shared/utils/pagination.util';
 
 import { JOBS, REPORT_QUEUE } from '../bullmq/bullmq.constants';
+import { MetadataDatabase } from '../recycling-reports/types';
 import { UserService } from '../users/user.service';
+import { Web3Service } from '../web3/web3.service';
 import { CreateAuditDto } from './dtos/create-audit.dto';
 import { UpdateAuditDto } from './dtos/update-audit.dto';
 import { AuditQueryParams } from './interface/audit.types';
@@ -19,7 +23,9 @@ export class AuditService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
-    @InjectQueue(REPORT_QUEUE) readonly bullMQQueue: Queue,
+    private readonly web3Service: Web3Service,
+    private readonly config: ConfigService,
+    @InjectQueue(REPORT_QUEUE) readonly bullMQQueue: Queue
   ) {}
 
   private async processAfterAuditValidated(auditId: string) {
@@ -29,9 +35,7 @@ export class AuditService {
       });
 
       if (!audit || audit.status !== AuditStatusConstants.APPROVED) {
-        throw new NotFoundException(
-          `Audit with ID ${auditId} not found or not audited.`,
-        );
+        throw new NotFoundException(`Audit with ID ${auditId} not found or not audited.`);
       }
 
       const recyclingReport = await this.prisma.recyclingReport.findUnique({
@@ -39,28 +43,38 @@ export class AuditService {
       });
 
       if (!recyclingReport) {
-        throw new NotFoundException(
-          `Recycling report with ID ${audit.reportId} not found.`,
-        );
+        throw new NotFoundException(`Recycling report with ID ${audit.reportId} not found.`);
       }
 
       if (recyclingReport) {
-        const user = await this.userService.checkUserExists(
-          recyclingReport.submittedBy,
-        );
+        const user = await this.userService.checkUserExists(recyclingReport.submittedBy);
 
         const JOB_DATA = {
           user: user,
           report: recyclingReport,
         };
 
-        this.bullMQQueue.add(JOBS.reportEvidence, JOB_DATA);
+        await this.bullMQQueue.add(JOBS.reportEvidence, JOB_DATA);
+
+        if (recyclingReport?.metadata && typeof recyclingReport.metadata === 'object') {
+          const metadata = recyclingReport.metadata as unknown as MetadataDatabase;
+
+          const detrashWallet = this.config.get<string>('WALLET') || '';
+
+          await this.web3Service.mintRecyCertificate({
+            recipient: detrashWallet,
+            tokenURI: metadata.url,
+          });
+        } else {
+          throw new Error('Invalid metadata structure in recycling report');
+        }
 
         // TODO: integrate with blockchain
         //   // Creating report on polygon after validate true
         //   async mintNFTPolygon(data: MintNftDto) {
         //     return this.web3Service.mintNFTPolygon(data);
         //   }
+
         //   // if user is recycler
         //   async mintCelo(data: MintCeloDto) {
         //     return this.web3Service.mintCelo(data);
@@ -69,7 +83,7 @@ export class AuditService {
         //   // 2) Mint de 10% do volume em cRECY para a carteira dona do contrato.
         //   // 3) Mint de 40% do volume para a carteira de incentivos e liquidez 0xBdF566d020e206456534e873f5EF385A762aC4FC
         //   // 4) Transfer da carteira de incentivos e liquidez de 0.5 cRECYs por relatório para cada gerador de resíduos
-        //   // 5) que mandou relatórios (e conectaram a carteira) na data entre esse mint de cRECY e o último mint de cRECY.
+        //   // mandou relatórios (e conectaram a carteira) na data entre esse mint de cRECY e o último mint de cRECY.
 
         return audit;
       }
@@ -87,9 +101,7 @@ export class AuditService {
       });
 
       if (!recyclingReport) {
-        throw new NotFoundException(
-          `RecyclingReport with ID ${reportId} not found.`,
-        );
+        throw new NotFoundException(`RecyclingReport with ID ${reportId} not found.`);
       }
 
       // Generate ULID for the audit ID
@@ -111,9 +123,7 @@ export class AuditService {
     }
   }
 
-  async findAllAudits(
-    params: AuditQueryParams,
-  ): Promise<PaginatedResult<Audit>> {
+  async findAllAudits(params: AuditQueryParams): Promise<PaginatedResult<Audit>> {
     return paginate<Audit>(
       () =>
         this.prisma.audit.count({
@@ -126,7 +136,7 @@ export class AuditService {
           orderBy: { createdAt: 'desc' },
           where: {},
         }),
-      params,
+      params
     );
   }
 
@@ -140,14 +150,9 @@ export class AuditService {
     return audit;
   }
 
-  async updateAudit(
-    id: string,
-    updateAuditDto: UpdateAuditDto,
-  ): Promise<Audit> {
+  async updateAudit(id: string, updateAuditDto: UpdateAuditDto): Promise<Audit> {
     if (!updateAuditDto.auditorId) {
-      throw new NotFoundException(
-        'Auditor ID is required to updated an Audit.',
-      );
+      throw new NotFoundException('Auditor ID is required to updated an Audit.');
     }
 
     const existingAudit = await this.prisma.audit.findUnique({ where: { id } });
@@ -165,6 +170,7 @@ export class AuditService {
       updatedAudit.status === AuditStatusConstants.APPROVED &&
       existingAudit.status !== AuditStatusConstants.APPROVED
     ) {
+      console.log('updated');
       await this.processAfterAuditValidated(updatedAudit.id);
     }
 

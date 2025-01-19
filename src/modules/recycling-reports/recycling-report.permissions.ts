@@ -7,7 +7,4 @@ export const RecyclingReportPermissionsAdmin = [
   Permission.WRITE_REPORTS,
 ];
 
-export const RecyclingReportPermissions = [
-  Permission.READ_REPORTS,
-  Permission.WRITE_REPORTS,
-];
+export const RecyclingReportPermissions = [Permission.READ_REPORTS, Permission.WRITE_REPORTS];

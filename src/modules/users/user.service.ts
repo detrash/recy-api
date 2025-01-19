@@ -10,10 +10,7 @@ import { ulid } from 'ulid';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { paginate, PaginatedResult } from '@/shared/utils/pagination.util';
-import {
-  calculateTotalMaterials,
-  getTotalResidueKgsReported,
-} from '@/shared/utils/recycling-report';
+import { calculateTotalMaterials, getTotalResidueKgsReported } from '@/shared/utils/recycling-report';
 import { Role, Roles } from '@/utils/enums/roles.enum';
 
 import { Auth0Service } from '../auth0/auth0.service';
@@ -26,10 +23,7 @@ import { ValidateUserResponse } from './types';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly auth0Service: Auth0Service,
-  ) {}
+  constructor(private readonly prisma: PrismaService, private readonly auth0Service: Auth0Service) {}
 
   async checkUserExists(userId: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
@@ -44,8 +38,7 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const { email, name, phone, walletAddress, roleIds, authId, authProvider } =
-      createUserDto;
+    const { email, name, phone, walletAddress, roleIds, authId, authProvider } = createUserDto;
 
     // Check if the user already exists
     const existingUser = await this.prisma.user.findUnique({
@@ -64,36 +57,26 @@ export class UserService {
     });
 
     // Check if any role IDs are invalid (i.e., don't exist in the database)
-    const invalidRoleIds = roleIds.filter(
-      (roleId) => !roles.some((role) => role.id === roleId),
-    );
+    const invalidRoleIds = roleIds.filter((roleId) => !roles.some((role) => role.id === roleId));
 
     if (invalidRoleIds.length > 0) {
-      throw new ForbiddenException(
-        `One or more Role IDs are invalid: ${invalidRoleIds.join(', ')}`,
-      );
+      throw new ForbiddenException(`One or more Role IDs are invalid: ${invalidRoleIds.join(', ')}`);
     }
 
     // Check if the "admin" role is being assigned
     const hasAdminRole = roles.some((role) => role.name === Roles.ADMIN);
     if (hasAdminRole) {
-      throw new ForbiddenException(
-        'You are not allowed to assign the "admin" role.',
-      );
+      throw new ForbiddenException('You are not allowed to assign the "admin" role.');
     }
 
     // Check for restrictions between "Waste Generator" or "Partner" roles and "Auditor"
-    const hasWasteGeneratorRole = roles.some(
-      (role) => role.name === Roles.WASTE_GENERATOR,
-    );
+    const hasWasteGeneratorRole = roles.some((role) => role.name === Roles.WASTE_GENERATOR);
 
     const hasPartnerRole = roles.some((role) => role.name === Roles.PARTNER);
     const hasAuditorRole = roles.some((role) => role.name === Roles.AUDITOR);
 
     if (hasAuditorRole && !(hasWasteGeneratorRole || hasPartnerRole)) {
-      throw new ForbiddenException(
-        'Only Waste Generators or Partners can be assigned the "Auditor" role.',
-      );
+      throw new ForbiddenException('Only Waste Generators or Partners can be assigned the "Auditor" role.');
     }
 
     // Generate a ULID for the new user ID
@@ -156,58 +139,38 @@ export class UserService {
         // Add role validation logic here
         const hasAdminRole = roles.some((role) => role.name === Roles.ADMIN);
         if (hasAdminRole) {
-          throw new ForbiddenException(
-            'You are not allowed to assign the "admin" role.',
-          );
+          throw new ForbiddenException('You are not allowed to assign the "admin" role.');
         }
 
-        const hasWasteGeneratorRole = roles.some(
-          (role) => role.name === Roles.WASTE_GENERATOR,
-        );
-        const hasPartnerRole = roles.some(
-          (role) => role.name === Roles.PARTNER,
-        );
-        const hasAuditorRole = roles.some(
-          (role) => role.name === Roles.AUDITOR,
-        );
+        const hasWasteGeneratorRole = roles.some((role) => role.name === Roles.WASTE_GENERATOR);
+        const hasPartnerRole = roles.some((role) => role.name === Roles.PARTNER);
+        const hasAuditorRole = roles.some((role) => role.name === Roles.AUDITOR);
 
         if ((hasWasteGeneratorRole || hasPartnerRole) && !hasAuditorRole) {
           throw new ForbiddenException(
-            'Waste Generators or Partners can only be assigned the "Auditor" role in addition to their main role.',
+            'Waste Generators or Partners can only be assigned the "Auditor" role in addition to their main role.'
           );
         }
 
         if (hasAuditorRole && !(hasWasteGeneratorRole || hasPartnerRole)) {
-          throw new ForbiddenException(
-            'Only Waste Generators or Partners can be assigned the "Auditor" role.',
-          );
+          throw new ForbiddenException('Only Waste Generators or Partners can be assigned the "Auditor" role.');
         }
 
-        const currentRoles = existingUser.userRoles.map(
-          (userRole) => userRole.role.id,
-        );
+        const currentRoles = existingUser.userRoles.map((userRole) => userRole.role.id);
 
         // Filter roles to add
-        const rolesToAdd = roles.filter(
-          (role) => !currentRoles.includes(role.id),
-        );
+        const rolesToAdd = roles.filter((role) => !currentRoles.includes(role.id));
 
         // Filter roles to remove, ensuring "new-user" is removed if other roles are selected
         const rolesToRemove = existingUser.userRoles.filter(
           (userRole) =>
-            !roleIds.includes(userRole.role.id) ||
-            (userRole.role.name === Roles.NEW_USER && roleIds.length > 1),
+            !roleIds.includes(userRole.role.id) || (userRole.role.name === Roles.NEW_USER && roleIds.length > 1)
         );
 
-        const hasNewUserRole = existingUser.userRoles.some(
-          (item) => item.role.name === Roles.NEW_USER,
-        );
+        const hasNewUserRole = existingUser.userRoles.some((item) => item.role.name === Roles.NEW_USER);
 
         if (hasNewUserRole && (updateData.authId || existingUser.authId))
-          this.auth0Service.deleteRole(
-            updateData.authId || existingUser.authId || '',
-            Roles.NEW_USER,
-          );
+          this.auth0Service.deleteRole(updateData.authId || existingUser.authId || '', Roles.NEW_USER);
 
         // Remove old roles and assign new ones in the database
         await this.prisma.user.update({
@@ -234,15 +197,10 @@ export class UserService {
 
       if (updatedUser.authId) {
         if (roleIds?.length) {
-          const roleNames = updatedUser.userRoles.map(
-            (userRole) => userRole.role.name,
-          );
+          const roleNames = updatedUser.userRoles.map((userRole) => userRole.role.name);
 
           // Update roles in Auth0
-          await this.auth0Service.updateRole(
-            updatedUser.authId,
-            roleNames as Role[],
-          );
+          await this.auth0Service.updateRole(updatedUser.authId, roleNames as Role[]);
         }
 
         await this.auth0Service.updateMetadata(String(updatedUser.authId), {
@@ -259,9 +217,7 @@ export class UserService {
         throw error;
       }
 
-      throw new InternalServerErrorException(
-        'An error occurred while updating the user.',
-      );
+      throw new InternalServerErrorException('An error occurred while updating the user.');
     }
   }
 
@@ -309,13 +265,11 @@ export class UserService {
           },
           where: {},
         }),
-      params,
+      params
     );
   }
 
-  async validateUser(
-    validateUserDto: ValidateUserDto,
-  ): Promise<ValidateUserResponse> {
+  async validateUser(validateUserDto: ValidateUserDto): Promise<ValidateUserResponse> {
     const { authId, email, name, picture, authProvider } = validateUserDto;
 
     // Check if the user already exists by email, including the 'userRoles' relation
@@ -346,9 +300,7 @@ export class UserService {
 
       // Check if any value has changed
       const isUpdated =
-        existingAuthId !== authId ||
-        existingAuthProvider !== authProvider ||
-        existingPicture !== picture;
+        existingAuthId !== authId || existingAuthProvider !== authProvider || existingPicture !== picture;
 
       if (isUpdated) {
         // Update the user if necessary
@@ -405,9 +357,7 @@ export class UserService {
     });
 
     // Extract role names from the new user's roles
-    const newUserRoleNames = newUser.userRoles.map(
-      (userRole) => userRole.role.name,
-    );
+    const newUserRoleNames = newUser.userRoles.map((userRole) => userRole.role.name);
 
     // Update metadata and assign the role names in Auth0
     await this.auth0Service.updateMetadata(authId, {
@@ -441,21 +391,9 @@ export class UserService {
 
     // Get the current month and the last month
     const currentMonth = new Date();
-    const firstDayOfCurrentMonth = new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth(),
-      1,
-    );
-    const firstDayOfLastMonth = new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth() - 1,
-      1,
-    );
-    const lastDayOfLastMonth = new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth(),
-      0,
-    ); // last day of the previous month
+    const firstDayOfCurrentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+    const firstDayOfLastMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+    const lastDayOfLastMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0); // last day of the previous month
 
     // Filter reports for the current month
     const currentMonthReports = allReports?.filter((report) => {
@@ -466,16 +404,12 @@ export class UserService {
     // Filter reports for the last month
     const lastMonthReports = allReports?.filter((report) => {
       const reportDate = new Date(report.reportDate);
-      return (
-        reportDate >= firstDayOfLastMonth && reportDate <= lastDayOfLastMonth
-      );
+      return reportDate >= firstDayOfLastMonth && reportDate <= lastDayOfLastMonth;
     });
 
     // Calculate total residue for all reports (no filtering by month)
     const { totalKg: totalResidueKgAllReports } = getTotalResidueKgsReported(
-      allReports
-        ?.filter((item) => item.materials)
-        .map((item) => item.materials as Material), // Assert that item.materials is of type Material
+      allReports?.filter((item) => item.materials).map((item) => item.materials as Material) // Assert that item.materials is of type Material
     );
 
     // Calculate total residue for the current month
@@ -483,9 +417,7 @@ export class UserService {
       totalKg: totalKgCurrentMonth,
       // residueMaterialWeights: residueMaterialWeightsCurrentMonth,
     } = getTotalResidueKgsReported(
-      currentMonthReports
-        .filter((item) => item.materials)
-        .map((item) => item.materials as Material), // Assert that item.materials is of type Material
+      currentMonthReports.filter((item) => item.materials).map((item) => item.materials as Material) // Assert that item.materials is of type Material
     );
 
     // Calculate total residue for the last month
@@ -493,9 +425,7 @@ export class UserService {
       totalKg: totalKgLastMonth,
       // residueMaterialWeights: residueMaterialWeightsLastMonth,
     } = getTotalResidueKgsReported(
-      lastMonthReports
-        .filter((item) => item.materials)
-        .map((item) => item.materials as Material), // Assert that item.materials is of type Material
+      lastMonthReports.filter((item) => item.materials).map((item) => item.materials as Material) // Assert that item.materials is of type Material
     );
 
     // Function to calculate the percentage change between current and previous values
@@ -523,17 +453,12 @@ export class UserService {
     };
 
     // Calculate percentage change for residues and reports
-    const {
-      percentage: percentageChangeResidueKgsMonthly,
-      changeType: changeTypeResidueKgsMonthly,
-    } = calculateMonthlyChange(totalKgCurrentMonth, totalKgLastMonth);
+    const { percentage: percentageChangeResidueKgsMonthly, changeType: changeTypeResidueKgsMonthly } =
+      calculateMonthlyChange(totalKgCurrentMonth, totalKgLastMonth);
 
-    const {
-      percentage: percentageChangeReportsMonthly,
-      changeType: changeTypeReportsMonthly,
-    } = calculateMonthlyChange(
+    const { percentage: percentageChangeReportsMonthly, changeType: changeTypeReportsMonthly } = calculateMonthlyChange(
       currentMonthReports.length,
-      lastMonthReports.length,
+      lastMonthReports.length
     );
 
     // Fetch the previous stats before update
@@ -567,9 +492,7 @@ export class UserService {
 
     const validMaterials = allReports
       .map((item) => item.materials)
-      .filter(
-        (material) => material && typeof material === 'object',
-      ) as Materials;
+      .filter((material) => material && typeof material === 'object') as Materials;
 
     // Return the statistics for the user
     return {
@@ -579,15 +502,11 @@ export class UserService {
       materials: calculateTotalMaterials(validMaterials),
       monthlyChanges: {
         residueKgs: {
-          percentageChange: Math.round(
-            percentageChangeResidueKgsMonthly,
-          ).toString(),
+          percentageChange: Math.round(percentageChangeResidueKgsMonthly).toString(),
           changeType: changeTypeResidueKgsMonthly,
         },
         reports: {
-          percentageChange: Math.round(
-            percentageChangeReportsMonthly,
-          ).toString(),
+          percentageChange: Math.round(percentageChangeReportsMonthly).toString(),
           changeType: changeTypeReportsMonthly,
         },
       },

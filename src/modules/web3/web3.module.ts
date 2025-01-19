@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Web3 from 'web3';
 
+import { Web3Controller } from './web3.controller';
 import { Web3Service } from './web3.service';
 
 @Module({
+  controllers: [Web3Controller],
   imports: [ConfigModule],
   providers: [
     {

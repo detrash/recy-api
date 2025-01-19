@@ -8,9 +8,7 @@ export const jwtDevelopment = async () => {
   const { JWT_SECRET } = process.env;
 
   if (!JWT_SECRET) {
-    console.error(
-      chalk.red('JWT_SECRET is not set in the environment variables!'),
-    );
+    console.error(chalk.red('JWT_SECRET is not set in the environment variables!'));
     return;
   }
 
@@ -24,9 +22,7 @@ export const jwtDevelopment = async () => {
     permissions: [] as string[],
   };
 
-  const instructions = chalk.blueBright(
-    '\n\nspace: select | a: select all | i: invert selection | enter: confirm',
-  );
+  const instructions = chalk.blueBright('\n\nspace: select | a: select all | i: invert selection | enter: confirm');
 
   const modules = await checkbox({
     message: chalk.green('Select the modules you want to grant access to'),

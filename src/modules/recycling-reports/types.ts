@@ -8,6 +8,12 @@ export interface Metadata {
   [key: string]: unknown;
 }
 
+export interface MetadataDatabase {
+  json: Metadata;
+  reportEvidence: string;
+  url: string;
+}
+
 // Material type where each ResidueType has a weightKg property
 export interface Material {
   [ResidueType.METAL]?: number;

@@ -3,9 +3,7 @@ import { Request } from 'express';
 
 import { HttpRequestHeaderKeysEnum } from '@/shared/http';
 
-export const corsOptionsDelegate: Parameters<
-  INestApplication['enableCors']
->[0] = function (req: Request, callback) {
+export const corsOptionsDelegate: Parameters<INestApplication['enableCors']>[0] = function (req: Request, callback) {
   const corsOptions: Parameters<typeof callback>[1] = {
     origin: false as boolean | string | string[],
     preflightContinue: false,
@@ -45,9 +43,7 @@ export const corsOptionsDelegate: Parameters<
 function getAllowedOrigins(): string[] {
   const allowedOrigins = ['https://partner1.com', 'https://partner2.com'];
 
-  const partnerOrigins = process.env.PARTNER_ORIGINS
-    ? process.env.PARTNER_ORIGINS.split(',')
-    : [];
+  const partnerOrigins = process.env.PARTNER_ORIGINS ? process.env.PARTNER_ORIGINS.split(',') : [];
 
   const swaggerOrigin = process.env.SWAGGER_ORIGIN || 'http://localhost:3333';
 
@@ -55,9 +51,7 @@ function getAllowedOrigins(): string[] {
 }
 
 function enableWildcard(): boolean {
-  return (
-    process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging'
-  );
+  return process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging';
 }
 
 function extractOrigin(req: Request): string {

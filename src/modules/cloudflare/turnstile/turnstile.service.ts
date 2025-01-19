@@ -7,20 +7,15 @@ import { TurnstileVerificationResponse } from './types';
 export class TurnstileService {
   constructor(
     @Inject('TurnstileServiceOptions')
-    private readonly options: TurnstileOptions,
+    private readonly options: TurnstileOptions
   ) {}
 
-  async turnstileValidateTokenApi(
-    token: string,
-    secretKey: string,
-  ): Promise<TurnstileVerificationResponse> {
+  async turnstileValidateTokenApi(token: string, secretKey: string): Promise<TurnstileVerificationResponse> {
     const formData = new FormData();
     const hostVerificationUrl = this.options.host;
 
     if (!secretKey || !hostVerificationUrl) {
-      throw new InternalServerErrorException(
-        'CAPTCHA environment variables are not configured properly.',
-      );
+      throw new InternalServerErrorException('CAPTCHA environment variables are not configured properly.');
     }
 
     formData.append('secret', secretKey);
@@ -35,36 +30,23 @@ export class TurnstileService {
       });
 
       if (!result.ok) {
-        throw new Error(
-          `CAPTCHA verification failed with status: ${result.status}`,
-        );
+        throw new Error(`CAPTCHA verification failed with status: ${result.status}`);
       }
 
       const data = (await result.json()) as TurnstileVerificationResponse;
 
       if (!data.success) {
-        throw new Error(
-          `CAPTCHA verification error: ${
-            data['error-codes']?.join(', ') || 'Unknown error'
-          }`,
-        );
+        throw new Error(`CAPTCHA verification error: ${data['error-codes']?.join(', ') || 'Unknown error'}`);
       }
 
       return data;
     } catch (error) {
-      throw new BadRequestException(
-        `Error occurred during CAPTCHA verification: ${error}`,
-      );
+      throw new BadRequestException(`Error occurred during CAPTCHA verification: ${error}`);
     }
   }
 
-  async validateToken(
-    token: string,
-  ): Promise<{ success: boolean; error?: string }> {
-    const validationResponse = await this.turnstileValidateTokenApi(
-      token,
-      this.options.secretKey,
-    );
+  async validateToken(token: string): Promise<{ success: boolean; error?: string }> {
+    const validationResponse = await this.turnstileValidateTokenApi(token, this.options.secretKey);
 
     if (!validationResponse.success) {
       return { success: false, error: 'Invalid token' };

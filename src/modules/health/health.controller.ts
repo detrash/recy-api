@@ -1,9 +1,5 @@
 import { Controller, Get, OnModuleDestroy } from '@nestjs/common';
-import {
-  HealthCheck,
-  HealthCheckService,
-  PrismaHealthIndicator,
-} from '@nestjs/terminus';
+import { HealthCheck, HealthCheckService, PrismaHealthIndicator } from '@nestjs/terminus';
 import { RedisHealthIndicator } from '@songkeys/nestjs-redis-health';
 import Redis from 'ioredis';
 
@@ -17,7 +13,7 @@ export class HealthController implements OnModuleDestroy {
     private healthCheckService: HealthCheckService,
     private prisma: PrismaService,
     private databaseIndicator: PrismaHealthIndicator,
-    private redisIndicator: RedisHealthIndicator,
+    private redisIndicator: RedisHealthIndicator
   ) {
     /**
      * TODO:

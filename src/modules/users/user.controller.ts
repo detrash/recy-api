@@ -13,14 +13,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Response } from 'express';
 
@@ -68,13 +61,10 @@ export class UserController {
     name: 'limit',
     required: false,
     type: Number,
-    description:
-      'The number of items per page (must be an integer between 1 and 100)',
+    description: 'The number of items per page (must be an integer between 1 and 100)',
   })
   @ApiResponse({ status: 200, description: 'List of all users' })
-  async findAllUsers(
-    @Query() params: UserQueryParams,
-  ): Promise<PaginatedResult<User>> {
+  async findAllUsers(@Query() params: UserQueryParams): Promise<PaginatedResult<User>> {
     const { page, limit } = params;
     return this.userService.findAllUsers({ page, limit });
   }
@@ -105,7 +95,7 @@ export class UserController {
   @ApiResponse({ status: 404, description: 'User not found' })
   async updateUser(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(UpdateUserSchema)) updateUserDto: UpdateUserDto,
+    @Body(new ZodValidationPipe(UpdateUserSchema)) updateUserDto: UpdateUserDto
   ): Promise<User> {
     return this.userService.updateUser(id, updateUserDto);
   }

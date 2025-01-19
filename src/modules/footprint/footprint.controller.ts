@@ -1,10 +1,5 @@
 import { Body, Controller, Post, UseGuards, UsePipes } from '@nestjs/common';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import CalculatorSupportEmail from '@/emails';
 import { MailService } from '@/shared/modules/mail/mail.service';
@@ -12,20 +7,12 @@ import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
 import { MailDto } from '../../shared/modules/mail/dtos/mail.dto';
 import { AuthorizationGuard } from '../auth0/authorization.guard';
-import {
-  ResultDto,
-  ResultDtoSchema,
-  SupportDto,
-  SupportDtoSchema,
-} from './dtos';
+import { ResultDto, ResultDtoSchema, SupportDto, SupportDtoSchema } from './dtos';
 import { FootprintService } from './footprint.service';
 @ApiTags('footprint')
 @Controller({ path: 'footprint', version: '1' })
 export class FootprintController {
-  constructor(
-    private readonly footprintService: FootprintService,
-    private readonly mailService: MailService,
-  ) {}
+  constructor(private readonly footprintService: FootprintService, private readonly mailService: MailService) {}
 
   @UseGuards(AuthorizationGuard)
   @Post('calculator/contact')

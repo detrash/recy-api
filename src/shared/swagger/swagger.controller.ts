@@ -6,10 +6,7 @@ export const setupSwagger = (app: INestApplication): void => {
     .setTitle('Recy Network')
     .setDescription('API for managing Recy Network resources')
     .setVersion('1.0')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'Recy-Auth',
-    )
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'Recy-Auth')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

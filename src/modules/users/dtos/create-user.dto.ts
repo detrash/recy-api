@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
 export const CreateUserSchema = z.object({
-  email: z
-    .string({ message: 'email must be a string' })
-    .email({ message: 'Email is required' }),
+  email: z.string({ message: 'email must be a string' }).email({ message: 'Email is required' }),
   name: z.string({ message: 'name must be a string' }),
   phone: z.string({ message: 'phone must be a string' }).optional(),
   walletAddress: z
@@ -15,9 +13,7 @@ export const CreateUserSchema = z.object({
     message: 'Role IDs must be an array of valid role IDs',
   }),
   authId: z.string({ message: 'authId must be a string' }).optional(),
-  authProvider: z
-    .string({ message: 'authProvider must be a string' })
-    .optional(),
+  authProvider: z.string({ message: 'authProvider must be a string' }).optional(),
   picture: z.string({ message: 'picture must be a string' }).optional(),
 });
 

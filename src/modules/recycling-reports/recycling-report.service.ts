@@ -20,21 +20,12 @@ export class RecyclingReportService {
     private readonly userService: UserService,
     private readonly prisma: PrismaService,
     private readonly auditService: AuditService,
-    private readonly uploadService: UploadService,
+    private readonly uploadService: UploadService
   ) {}
 
-  async createRecyclingReport(
-    createRecyclingReportDto: CreateRecyclingReportDto,
-  ): Promise<RecyclingReport> {
-    const {
-      submittedBy,
-      reportDate,
-      phone,
-      materials,
-      walletAddress,
-      residueEvidenceFile,
-      residueEvidence,
-    } = createRecyclingReportDto;
+  async createRecyclingReport(createRecyclingReportDto: CreateRecyclingReportDto): Promise<RecyclingReport> {
+    const { submittedBy, reportDate, phone, materials, walletAddress, residueEvidenceFile, residueEvidence } =
+      createRecyclingReportDto;
 
     // Generate a unique report ID using ULID
     const reportId = ulid();
@@ -82,9 +73,7 @@ export class RecyclingReportService {
       },
     });
 
-    const isWasteGenerator = userRoles.some(
-      (role) => role.role.name === UserRole.WASTE_GENERATOR,
-    );
+    const isWasteGenerator = userRoles.some((role) => role.role.name === UserRole.WASTE_GENERATOR);
 
     // Waste Generators reports don't generate audits they receive tokens after audits sended by recyclers
     if (!isWasteGenerator) {
@@ -99,9 +88,7 @@ export class RecyclingReportService {
     return createdReport;
   }
 
-  async findAllRecyclingReports(
-    params: RecyclingReportQueryParams,
-  ): Promise<PaginatedResult<RecyclingReport>> {
+  async findAllRecyclingReports(params: RecyclingReportQueryParams): Promise<PaginatedResult<RecyclingReport>> {
     return paginate<RecyclingReport>(
       () =>
         this.prisma.recyclingReport.count({
@@ -115,7 +102,7 @@ export class RecyclingReportService {
           include: { user: true, audits: true },
           where: {},
         }),
-      params,
+      params
     );
   }
 
@@ -143,7 +130,7 @@ export class RecyclingReportService {
 
   async updateRecyclingReport(
     id: string,
-    updateRecyclingReportDto: UpdateRecyclingReportDto,
+    updateRecyclingReportDto: UpdateRecyclingReportDto
   ): Promise<RecyclingReport> {
     const existingReport = await this.prisma.recyclingReport.findUnique({
       where: { id },
@@ -158,11 +145,8 @@ export class RecyclingReportService {
       data: {
         ...updateRecyclingReportDto,
         // Prisma use Json
-        materials: JSON.parse(
-          JSON.stringify(updateRecyclingReportDto.materials),
-        ),
-        submittedBy:
-          updateRecyclingReportDto.submittedBy || existingReport.submittedBy,
+        materials: JSON.parse(JSON.stringify(updateRecyclingReportDto.materials)),
+        submittedBy: updateRecyclingReportDto.submittedBy || existingReport.submittedBy,
       },
     });
 

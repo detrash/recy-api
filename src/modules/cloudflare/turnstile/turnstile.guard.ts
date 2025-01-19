@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  CanActivate,
-  ExecutionContext,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 
 import { TurnstileOptions } from './interfaces/turnstile-options.interface';
 import { TurnstileService } from './turnstile.service';
@@ -14,7 +8,7 @@ export class TurnstileGuard implements CanActivate {
   constructor(
     private readonly turnstileService: TurnstileService,
     @Inject('TurnstileServiceOptions')
-    private readonly options: TurnstileOptions,
+    private readonly options: TurnstileOptions
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -25,9 +19,7 @@ export class TurnstileGuard implements CanActivate {
       throw new BadRequestException('Missing turnstile verification code.');
     }
 
-    const { success } = await this.turnstileService.validateToken(
-      responseToken,
-    );
+    const { success } = await this.turnstileService.validateToken(responseToken);
 
     if (!success) {
       throw new BadRequestException('Invalid turnstile verification code.');

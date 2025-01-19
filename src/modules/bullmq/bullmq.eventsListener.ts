@@ -1,8 +1,4 @@
-import {
-  OnQueueEvent,
-  QueueEventsHost,
-  QueueEventsListener,
-} from '@nestjs/bullmq';
+import { OnQueueEvent, QueueEventsHost, QueueEventsListener } from '@nestjs/bullmq';
 
 import { REPORT_QUEUE } from './bullmq.constants';
 
@@ -14,13 +10,9 @@ export class BullMQEventsListener extends QueueEventsHost {
       jobId: string;
       prev?: string;
     },
-    id: string,
+    id: string
   ) {
-    console.log(
-      `Active event on ${REPORT_QUEUE} with id: ${id} and args: ${JSON.stringify(
-        args,
-      )}`,
-    );
+    console.log(`Active event on ${REPORT_QUEUE} with id: ${id} and args: ${JSON.stringify(args)}`);
   }
 
   @OnQueueEvent('completed')
@@ -30,13 +22,9 @@ export class BullMQEventsListener extends QueueEventsHost {
       returnvalue: string;
       prev?: string;
     },
-    id: string,
+    id: string
   ) {
-    console.log(
-      `Completed event on ${REPORT_QUEUE} with id: ${id} and args: ${JSON.stringify(
-        args,
-      )}`,
-    );
+    console.log(`Completed event on ${REPORT_QUEUE} with id: ${id} and args: ${JSON.stringify(args)}`);
   }
 
   @OnQueueEvent('failed')
@@ -46,12 +34,8 @@ export class BullMQEventsListener extends QueueEventsHost {
       failedReason: string;
       prev?: string;
     },
-    id: string,
+    id: string
   ) {
-    console.log(
-      `Failed event on ${REPORT_QUEUE} with id: ${id} and args: ${JSON.stringify(
-        args,
-      )}`,
-    );
+    console.log(`Failed event on ${REPORT_QUEUE} with id: ${id} and args: ${JSON.stringify(args)}`);
   }
 }
