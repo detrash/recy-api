@@ -10,32 +10,21 @@ export const corsOptionsDelegate: Parameters<INestApplication['enableCors']>[0] 
     credentials: true,
     maxAge: 86400,
     allowedHeaders: Object.values(HttpRequestHeaderKeysEnum),
-    methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Métodos aceitos
+    methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   };
 
   const origin = extractOrigin(req);
 
-  // Se wildcard estiver habilitado (para dev ou staging)
   if (enableWildcard()) {
-    corsOptions.origin = '*'; // Aceita todas as origens em dev/staging
-  } else {
-    // Lista de origens permitidas
+    corsOptions.origin = '*';
     corsOptions.origin = getAllowedOrigins();
 
-    // Adiciona a origem recebida (se estiver na lista permitida)
     if (corsOptions.origin.includes(origin)) {
       corsOptions.origin = origin;
     } else {
-      corsOptions.origin = false; // Bloqueia se a origem não for permitida
+      corsOptions.origin = false;
     }
   }
-
-  // Log para depuração
-  console.log({
-    environment: process.env.NODE_ENV,
-    origin,
-    corsConfig: corsOptions,
-  });
 
   callback(null as unknown as Error, corsOptions);
 };

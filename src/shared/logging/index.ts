@@ -29,7 +29,9 @@ export function getLogLevel(): string {
 }
 
 export function createNestLoggingModuleOptions(settings: LoggerSettings) {
-  const environment = process.env.NODE_ENV ?? 'local';
+  const environment = process.env.NODE_ENV ?? 'development';
+  const transport = ['development'].includes(environment) ? { target: 'pino-pretty' } : undefined;
+  const autoLogging = ['development'].includes(environment);
 
   return {
     exclude: [{ path: '*/health', method: RequestMethod.GET }],
@@ -37,11 +39,13 @@ export function createNestLoggingModuleOptions(settings: LoggerSettings) {
       customLevels: loggingLevelSet,
       level: getLogLevel(),
       base: {
+        pid: process.pid,
         serviceName: settings.serviceName,
         serviceVersion: settings.version,
-        environment,
+        env: environment,
       },
-      transport: ['local', 'test'].includes(environment) ? { target: 'pino-pretty' } : undefined,
+      autoLogging,
+      transport,
     },
   };
 }

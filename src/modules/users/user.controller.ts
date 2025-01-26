@@ -12,11 +12,10 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { Response } from 'express';
 
+import { PinoLogger } from '@/shared/logging';
 import { PaginatedResult } from '@/shared/utils/pagination.util';
 import { ZodValidationPipe } from '@/shared/utils/zod-validation.pipe';
 
@@ -66,6 +65,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'List of all users' })
   async findAllUsers(@Query() params: UserQueryParams): Promise<PaginatedResult<User>> {
     const { page, limit } = params;
+
     return this.userService.findAllUsers({ page, limit });
   }
 

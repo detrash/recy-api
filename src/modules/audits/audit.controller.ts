@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-  UsePipes,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, UsePipes } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Audit } from '@prisma/client';
 
@@ -61,12 +50,9 @@ export class AuditController {
     name: 'limit',
     required: false,
     type: Number,
-    description:
-      'The number of items per page (must be an integer between 1 and 100)',
+    description: 'The number of items per page (must be an integer between 1 and 100)',
   })
-  async findAll(
-    @Query() params: AuditQueryParams,
-  ): Promise<PaginatedResult<Audit>> {
+  async findAll(@Query() params: AuditQueryParams): Promise<PaginatedResult<Audit>> {
     const { page, limit } = params;
     return this.auditService.findAllAudits({ page, limit });
   }
@@ -98,7 +84,7 @@ export class AuditController {
   async update(
     @Param('id') id: string,
     @Body(new ZodValidationPipe(UpdateAuditSchema))
-    updateAuditDto: UpdateAuditDto,
+    updateAuditDto: UpdateAuditDto
   ): Promise<Audit> {
     return this.auditService.updateAudit(id, updateAuditDto);
   }
