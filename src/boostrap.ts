@@ -1,9 +1,10 @@
 import './tracing';
 
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
-import { Logger } from 'nestjs-pino';
+
+import { Logger as PinoLogger } from '@/shared/logging';
 
 import { AppModule } from './app.module';
 import { corsOptionsDelegate } from './config/cors.config';
@@ -18,16 +19,16 @@ export async function bootstrap() {
 
   app.use(cookieParser());
 
-  const logger = app.get(Logger);
-
-  app.useLogger(logger);
-  app.useGlobalFilters(new AllExceptionsFilter(logger));
+  app.useLogger(app.get(PinoLogger));
+  app.flushLogs();
 
   app.enableVersioning({
     type: VersioningType.URI,
   });
 
   await setupSwagger(app);
+
+  app.useGlobalFilters(new AllExceptionsFilter(app.get(PinoLogger)));
 
   if (process.env.NODE_ENV === 'development') {
     await jwtDevelopment();
@@ -37,9 +38,9 @@ export async function bootstrap() {
 
   app.enableCors(corsOptionsDelegate);
 
-  logger.log('BOOTSTRAPPED SUCCESSFULLY');
+  Logger.log('BOOTSTRAPPED SUCCESSFULLY');
 
   const port = process.env.PORT || 3333;
   await app.listen(port);
-  logger.log(`Application running on port ${port}`, 'Bootstrap');
+  Logger.log(`Application running on port ${port}`, 'Bootstrap');
 }

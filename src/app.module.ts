@@ -7,6 +7,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { DatadogTraceModule } from 'nestjs-ddtrace';
 
+import { createNestLoggingModuleOptions, LoggerModule } from '@/shared/logging';
+
+import packageJson from '../package.json';
 import { AuditModule } from './modules/audits/audit.module';
 import { Auth0Module } from './modules/auth0/auth0.module';
 import { REPORT_QUEUE } from './modules/bullmq/bullmq.constants';
@@ -19,7 +22,6 @@ import { RecyclingReportModule } from './modules/recycling-reports';
 import { RoleModule } from './modules/roles';
 import { UserModule } from './modules/users/user.module';
 import { Web3Module } from './modules/web3/web3.module';
-import { LoggerModule } from './shared/modules/logger/logger.module';
 import { MailModule } from './shared/modules/mail/mail.module';
 import { UploadModule } from './shared/modules/upload/upload.module';
 @Module({
@@ -28,11 +30,16 @@ import { UploadModule } from './shared/modules/upload/upload.module';
       isGlobal: true,
       envFilePath: ['.env'],
     }),
+    LoggerModule.forRoot(
+      createNestLoggingModuleOptions({
+        serviceName: packageJson.name,
+        version: packageJson.version,
+      })
+    ),
     Auth0Module,
     RoleModule,
     Web3Module,
     UploadModule,
-    LoggerModule,
     FootprintModule,
     MailModule,
     UserModule,

@@ -4,6 +4,7 @@ import { RedisHealthIndicator } from '@songkeys/nestjs-redis-health';
 import Redis from 'ioredis';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
+import { PinoLogger } from '@/shared/logging';
 
 @Controller('health')
 export class HealthController implements OnModuleDestroy {
@@ -27,10 +28,6 @@ export class HealthController implements OnModuleDestroy {
         return 1000 * 10; // 10 sec
       },
     });
-    /**
-     * TODO: integrate with pino logger
-     */
-    this.redis.on('error', (err) => console.error(err));
   }
 
   @Get()
