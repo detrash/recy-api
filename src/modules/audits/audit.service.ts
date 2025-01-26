@@ -79,6 +79,7 @@ export class AuditService {
         //   async mintCelo(data: MintCeloDto) {
         //     return this.web3Service.mintCelo(data);
         //   }
+        // OBSS: Discutir colocar os tokens em uma carteira provisoria para analise de fraude e poder queimar antes de mandar para o usuario
         //   // 1) Mint de 50% do volume em cRECY para a carteira que mandou o relatório tokenizado (o agente de tratamento sustentável de resíduos).
         //   // 2) Mint de 10% do volume em cRECY para a carteira dona do contrato.
         //   // 3) Mint de 40% do volume para a carteira de incentivos e liquidez 0xBdF566d020e206456534e873f5EF385A762aC4FC
