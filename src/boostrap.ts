@@ -28,6 +28,8 @@ export async function bootstrap() {
 
   await setupSwagger(app);
 
+  app.useGlobalFilters(new AllExceptionsFilter(app.get(PinoLogger)));
+
   if (process.env.NODE_ENV === 'development') {
     await jwtDevelopment();
   }
