@@ -5,7 +5,6 @@ import { Module } from '@nestjs/common';
 
 import { PrismaService } from '@/modules/prisma/prisma.service';
 
-import { LoggerModule } from '../../shared/modules/logger/logger.module';
 import { Auth0Module } from '../auth0/auth0.module';
 import { REPORT_QUEUE } from '../bullmq/bullmq.constants';
 import { UserService } from '../users/user.service';
@@ -16,7 +15,6 @@ import { AuditService } from './audit.service';
 @Module({
   imports: [
     Auth0Module,
-    LoggerModule,
     Web3Module,
     BullModule.registerQueue({
       name: REPORT_QUEUE,

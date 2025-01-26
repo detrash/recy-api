@@ -14,8 +14,7 @@ export class HealthController implements OnModuleDestroy {
     private healthCheckService: HealthCheckService,
     private prisma: PrismaService,
     private databaseIndicator: PrismaHealthIndicator,
-    private redisIndicator: RedisHealthIndicator,
-    private logger: PinoLogger
+    private redisIndicator: RedisHealthIndicator
   ) {
     /**
      * TODO:
@@ -29,7 +28,6 @@ export class HealthController implements OnModuleDestroy {
         return 1000 * 10; // 10 sec
       },
     });
-    this.redis.on('error', (err) => this.logger.error(err));
   }
 
   @Get()
