@@ -13,20 +13,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RecyclingReport } from '@prisma/client';
 
-import {
-  PaginatedResult,
-  PaginationParams,
-} from '@/shared/utils/pagination.util';
+import { PaginatedResult, PaginationParams } from '@/shared/utils/pagination.util';
 
 import { AuthorizationGuard } from '../auth0/authorization.guard';
 import { PermissionsGuard } from '../auth0/permission.guard';
@@ -37,18 +27,13 @@ import {
 } from './dtos/create-recycling-report.dto';
 import { UpdateRecyclingReportDto } from './dtos/update-recycling-report.dto';
 import { RecyclingReportQueryParams } from './interface/recycling-report.types';
-import {
-  RecyclingReportPermissions,
-  RecyclingReportPermissionsAdmin,
-} from './recycling-report.permissions';
+import { RecyclingReportPermissions, RecyclingReportPermissionsAdmin } from './recycling-report.permissions';
 import { RecyclingReportService } from './recycling-report.service';
 
 @ApiTags('recycling-reports')
 @Controller({ path: 'recycling-reports', version: '1' })
 export class RecyclingReportController {
-  constructor(
-    private readonly recyclingReportService: RecyclingReportService,
-  ) {}
+  constructor(private readonly recyclingReportService: RecyclingReportService) {}
 
   @UseGuards(PermissionsGuard(RecyclingReportPermissions))
   @UseGuards(AuthorizationGuard)
@@ -67,13 +52,11 @@ export class RecyclingReportController {
   @ApiBody({ type: CreateRecyclingReportSwaggerDto })
   async createRecyclingReport(
     @Body() createRecyclingReportDto: CreateRecyclingReportDto,
-    @UploadedFile() residueEvidenceFile: Express.Multer.File,
+    @UploadedFile() residueEvidenceFile: Express.Multer.File
   ): Promise<RecyclingReport> {
     if (typeof createRecyclingReportDto.materials === 'string') {
       try {
-        createRecyclingReportDto.materials = JSON.parse(
-          createRecyclingReportDto.materials,
-        );
+        createRecyclingReportDto.materials = JSON.parse(createRecyclingReportDto.materials);
       } catch (e) {
         throw new BadRequestException('Invalid JSON format for materials');
       }
@@ -84,8 +67,7 @@ export class RecyclingReportController {
       residueEvidenceFile: residueEvidenceFile,
     };
 
-    const parsedData: CreateRecyclingReportDto =
-      CreateRecyclingReportSchema.parse(mergedData);
+    const parsedData: CreateRecyclingReportDto = CreateRecyclingReportSchema.parse(mergedData);
 
     return this.recyclingReportService.createRecyclingReport(parsedData);
   }
@@ -102,15 +84,14 @@ export class RecyclingReportController {
     name: 'limit',
     required: false,
     type: Number,
-    description:
-      'The number of items per page (must be an integer between 1 and 100)',
+    description: 'The number of items per page (must be an integer between 1 and 100)',
   })
   @ApiResponse({
     status: 200,
     description: 'List of recycling reports.',
   })
   async findAllRecyclingReports(
-    @Query() params: RecyclingReportQueryParams,
+    @Query() params: RecyclingReportQueryParams
   ): Promise<PaginatedResult<RecyclingReport>> {
     const { page, limit } = params;
     return this.recyclingReportService.findAllRecyclingReports({ page, limit });
@@ -128,9 +109,7 @@ export class RecyclingReportController {
     status: 404,
     description: 'The recycling report with the specified ID was not found.',
   })
-  async findRecyclingReportById(
-    @Param('id') id: string,
-  ): Promise<RecyclingReport> {
+  async findRecyclingReportById(@Param('id') id: string): Promise<RecyclingReport> {
     return this.recyclingReportService.findRecyclingReportById(id);
   }
 
@@ -152,12 +131,9 @@ export class RecyclingReportController {
   })
   async updateRecyclingReport(
     @Param('id') id: string,
-    @Body() updateRecyclingReportDto: UpdateRecyclingReportDto,
+    @Body() updateRecyclingReportDto: UpdateRecyclingReportDto
   ): Promise<RecyclingReport> {
-    return this.recyclingReportService.updateRecyclingReport(
-      id,
-      updateRecyclingReportDto,
-    );
+    return this.recyclingReportService.updateRecyclingReport(id, updateRecyclingReportDto);
   }
 
   @UseGuards(PermissionsGuard(RecyclingReportPermissionsAdmin))
@@ -172,9 +148,7 @@ export class RecyclingReportController {
     status: 404,
     description: 'The recycling report with the specified ID was not found.',
   })
-  async deleteRecyclingReport(
-    @Param('id') id: string,
-  ): Promise<RecyclingReport> {
+  async deleteRecyclingReport(@Param('id') id: string): Promise<RecyclingReport> {
     return this.recyclingReportService.deleteRecyclingReport(id);
   }
 
@@ -190,9 +164,7 @@ export class RecyclingReportController {
     status: 404,
     description: 'User not found or no reports found for the specified user.',
   })
-  async findRecyclingReportsByUser(
-    @Param('userId') userId: string,
-  ): Promise<RecyclingReport[]> {
+  async findRecyclingReportsByUser(@Param('userId') userId: string): Promise<RecyclingReport[]> {
     return this.recyclingReportService.findRecyclingReportsByUser(userId);
   }
 }

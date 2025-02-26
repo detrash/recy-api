@@ -165,7 +165,10 @@ export class BullMQProcessor extends WorkerHost {
 
     // Update the metadata with the actual image URL
     const metadataWithReportEvidence: MetadataDatabase = {
-      json: jsonMetadata,
+      json: {
+        ...jsonMetadata,
+        image: reportEvidenceUrlUploaded,
+      },
       reportEvidence: reportEvidenceUrlUploaded,
       url: metadataUrlUploaded,
     };

@@ -15,7 +15,7 @@ export const CreateAuditSchema = z.object({
       AuditStatusConstants.COMPLETED,
       AuditStatusConstants.FAILED,
     ],
-    { message: 'Invalid status' },
+    { message: 'Invalid status' }
   ),
 });
 
