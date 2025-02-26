@@ -4,7 +4,7 @@ import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 
-import { Logger as PinoLogger } from '@/shared/logging';
+import { getErrorInterceptor, Logger as PinoLogger } from '@/shared/logging';
 
 import { AppModule } from './app.module';
 import { corsOptionsDelegate } from './config/cors.config';
@@ -21,6 +21,8 @@ export async function bootstrap() {
 
   app.useLogger(app.get(PinoLogger));
   app.flushLogs();
+
+  app.useGlobalInterceptors(getErrorInterceptor());
 
   app.enableVersioning({
     type: VersioningType.URI,

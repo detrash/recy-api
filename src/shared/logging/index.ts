@@ -1,5 +1,5 @@
-import { RequestMethod } from '@nestjs/common';
-import { getLoggerToken, Logger, LoggerModule, PinoLogger } from 'nestjs-pino';
+import { NestInterceptor, RequestMethod } from '@nestjs/common';
+import { getLoggerToken, Logger, LoggerErrorInterceptor, LoggerModule, PinoLogger } from 'nestjs-pino';
 
 export { getLoggerToken, Logger, LoggerModule, PinoLogger };
 
@@ -26,6 +26,10 @@ export function getLogLevel(): string {
   }
 
   return logLevel;
+}
+
+export function getErrorInterceptor(): NestInterceptor {
+  return new LoggerErrorInterceptor();
 }
 
 export function createNestLoggingModuleOptions(settings: LoggerSettings) {
