@@ -5,7 +5,6 @@ import { HttpRequestHeaderKeysEnum } from '@/shared/http';
 
 export const corsOptionsDelegate: Parameters<INestApplication['enableCors']>[0] = function (req: Request, callback) {
   const corsOptions: Parameters<typeof callback>[1] = {
-    origin: false as boolean | string | string[],
     preflightContinue: false,
     credentials: true,
     maxAge: 86400,
@@ -17,9 +16,8 @@ export const corsOptionsDelegate: Parameters<INestApplication['enableCors']>[0] 
 
   if (enableWildcard()) {
     corsOptions.origin = '*';
-    corsOptions.origin = getAllowedOrigins();
-
-    if (corsOptions.origin.includes(origin)) {
+  } else {
+    if (getAllowedOrigins().includes(origin)) {
       corsOptions.origin = origin;
     } else {
       corsOptions.origin = false;
@@ -34,9 +32,7 @@ function getAllowedOrigins(): string[] {
 
   const partnerOrigins = process.env.PARTNER_ORIGINS ? process.env.PARTNER_ORIGINS.split(',') : [];
 
-  const swaggerOrigin = process.env.SWAGGER_ORIGIN || 'http://localhost:3333';
-
-  return [...allowedOrigins, ...partnerOrigins, swaggerOrigin];
+  return [...allowedOrigins, ...partnerOrigins];
 }
 
 function enableWildcard(): boolean {
