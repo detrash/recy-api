@@ -8,16 +8,16 @@
   "features": {},
   "remoteUser": "node",
   "init": true,
-  "overrideCommand": true,
+  "overrideCommand": false,
 
   "containerEnv": {
     "NODE_ENV": "development",
     "NO_CLIPBOARD": "1"
   },
 
-  "postCreateCommand": "npm install --legacy-peer-deps || true",
+  "postCreateCommand": "chown -R node:node /workspaces/recy-api && corepack enable && npm ci",
 
-  "postStartCommand": "bash -lc 'npx prisma generate && npx prisma migrate dev --name init && npm run start:dev'",
+  "postStartCommand": "npx prisma generate && npx prisma migrate dev --name init && npm run start:dev",
 
   "forwardPorts": [3000, 6379, 5432, 9229],
   "customizations": {
