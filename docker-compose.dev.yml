@@ -6,7 +6,8 @@ services:
     command: sleep infinity 
     working_dir: /workspaces/recy-api
     volumes:
-      - .:/workspaces/recy-api
+      - .:/workspaces/recy-api:delegated
+      - /workspaces/recy-api/node_modules/
     depends_on:
       recy-postgres:
         condition: service_healthy
