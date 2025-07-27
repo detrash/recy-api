@@ -1,0 +1,35 @@
+{
+  "name": "Recy API (Dev)",
+  "dockerComposeFile": ["../docker-compose.dev.yml"],
+  "service": "recy-api",
+  "runServices": ["recy-postgres", "recy-redis"],
+  "workspaceFolder": "/workspaces/recy-api",
+
+  "features": {},
+  "remoteUser": "node",
+  "init": true,
+  "overrideCommand": true,
+
+  "containerEnv": {
+    "NODE_ENV": "development",
+    "NO_CLIPBOARD": "1"
+  },
+
+  "postCreateCommand": "npm install --legacy-peer-deps || true",
+
+  "postStartCommand": "bash -lc 'npx prisma generate && npx prisma migrate dev --name init && npm run start:dev'",
+
+  "forwardPorts": [3000, 6379, 5432, 9229],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "Prisma.prisma",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": { "editor.formatOnSave": true }
+    }
+  },
+  "updateRemoteUserUID": true
+}

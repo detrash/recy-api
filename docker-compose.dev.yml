@@ -1,0 +1,50 @@
+services:
+  recy-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: sleep infinity 
+    working_dir: /workspaces/recy-api
+    volumes:
+      - .:/workspaces/recy-api
+    depends_on:
+      recy-postgres:
+        condition: service_healthy
+      recy-redis:
+        condition: service_started
+    env_file:
+      - .env.development 
+    environment:
+      NO_CLIPBOARD: "1"
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+
+  recy-postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  recy-redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres-volume:

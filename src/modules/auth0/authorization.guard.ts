@@ -20,11 +20,6 @@ export class AuthorizationGuard implements CanActivate {
       auth({
         issuerBaseURL: process.env.AUTH0_ISSUER,
         audience: process.env.AUTH0_AUDIENCE,
-
-        ...(process.env.NODE_ENV === 'development' && {
-          secret: process.env.JWT_SECRET,
-          tokenSigningAlg: 'HS256',
-        }),
       })
     );
 

@@ -1,0 +1,29 @@
+# syntax=docker/dockerfile:1
+ARG NODE_VERSION=20.17
+ARG ALPINE_VERSION=3.19
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+
+# Toolchain (node-gyp) + libs de imagem + utilitários de dev + netcat p/ wait-for
+RUN apk add --no-cache \
+    bash \
+    curl \
+    git \
+    openssh-client \
+    python3 \
+    build-base \
+    pkgconfig \
+    cairo-dev \
+    pango-dev \
+    pixman-dev \
+    fontconfig \
+    ttf-freefont \
+    libjpeg-turbo-dev \
+    netcat-openbsd \
+ && corepack enable \
+ && npm i -g @nestjs/cli prisma
+
+# Diretório de trabalho (alinha com "workspaceFolder" do devcontainer)
+WORKDIR /workspaces/recy-api
+
+# Usuário não-root para dev (já existe na imagem oficial do Node)
+USER node

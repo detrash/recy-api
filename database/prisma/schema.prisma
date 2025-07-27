@@ -7,6 +7,79 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @default(now()) @updatedAt
+  email            String            @unique
+  name             String
+  phone            String?
+  walletAddress    String?
+  id               String            @id @default(uuid())
+  authId           String?
+  picture          String?
+  authProvider     String?
+  audits           Audit[]           @relation("UserAudits")
+  recyclingReports RecyclingReport[] @relation("UserRecyclingReport")
+  userHistory      UserHistory[]     @relation("UserHistory")
+  userRoles        UserRole[]        @relation("UserRoles")
+
+  @@unique([authProvider, authId])
+}
+
+model Role {
+  id    String     @id @default(uuid())
+  name  String     @unique
+  users UserRole[]
+}
+
+model UserRole {
+  id     String @id @default(uuid())
+  userId String
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id])
+  user   User   @relation("UserRoles", fields: [userId], references: [id])
+}
+
+model RecyclingReport {
+  id              String   @id @default(uuid())
+  submittedBy     String
+  reportDate      DateTime @default(now())
+  phone           String?
+  materials       Json
+  walletAddress   String?
+  residueEvidence String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+  metadata        Json?
+  audits          Audit[]  @relation("ReportAudits")
+  user            User     @relation("UserRecyclingReport", fields: [submittedBy], references: [id])
+}
+
+model Audit {
+  id              String          @id @default(uuid())
+  reportId        String
+  auditorId       String?
+  comments        String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now()) @updatedAt
+  status          AuditStatus     @default(PENDING)
+  auditor         User?           @relation("UserAudits", fields: [auditorId], references: [id])
+  recyclingReport RecyclingReport @relation("ReportAudits", fields: [reportId], references: [id])
+}
+
+model UserHistory {
+  id                         String   @id @default(uuid())
+  userId                     String
+  totalResidueKgs            Float
+  totalReports               Int
+  timestamp                  DateTime @default(now())
+  percentageChangeResidueKgs Float?
+  percentageChangeReports    Float?
+  user                       User     @relation("UserHistory", fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
 enum ResidueType {
   GLASS
   METAL
@@ -23,80 +96,4 @@ enum AuditStatus {
   REJECTED
   COMPLETED
   FAILED
-}
-
-model User {
-  id            String   @id @default(uuid()) 
-  name          String
-  email         String   @unique
-  phone         String?
-  walletAddress String?
-  authProvider String?
-  authId       String?
-  picture       String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now()) @updatedAt
-
-  audits           Audit[]           @relation("UserAudits")
-  userRoles        UserRole[]        @relation("UserRoles")
-  recyclingReports RecyclingReport[] @relation("UserRecyclingReport")
-  userHistory      UserHistory[]     @relation("UserHistory")
-  @@unique([authProvider, authId])
-}
-
-model Role {
-  id    String     @id @default(uuid())
-  name  String     @unique
-  users UserRole[]
-}
-
-model UserRole {
-  id     String @id @default(uuid())
-  userId String
-  roleId String
-
-  user User @relation("UserRoles", fields: [userId], references: [id])
-  role Role @relation(fields: [roleId], references: [id])
-}
-
-model RecyclingReport {
-  id            String   @id @default(uuid())
-  submittedBy   String
-  reportDate    DateTime @default(now())
-  phone         String?
-  materials     Json
-  walletAddress String?
-  residueEvidence String
-  metadata      Json?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now()) @updatedAt
-
-  user   User    @relation("UserRecyclingReport", fields: [submittedBy], references: [id])
-  audits Audit[] @relation("ReportAudits")
-}
-
-model Audit {
-  id        String   @id @default(uuid())
-  reportId  String
-  auditorId String?
-  status      AuditStatus  @default(PENDING)
-  comments  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  recyclingReport RecyclingReport @relation("ReportAudits", fields: [reportId], references: [id])
-  auditor         User?            @relation("UserAudits", fields: [auditorId], references: [id])
-}
-
-model UserHistory {
-  id                    String    @id @default(uuid())
-  userId                String 
-  totalResidueKgs      Float
-  totalReports         Int
-  timestamp            DateTime  @default(now())
-  percentageChangeResidueKgs Float?
-  percentageChangeReports Float? 
-  user                 User      @relation("UserHistory", fields: [userId], references: [id])
-
-  @@index([userId])  
 }

@@ -1,4 +1,6 @@
-.env
+.env*
+!.env.production.example
+!.env.development.example
 
 # compiled output
 yarn.lock

@@ -19,6 +19,13 @@ export class Web3Service {
     return network === 'celo' ? this.celoWeb3 : this.polygonWeb3;
   }
 
+  //// NEW CONTRACTS /////
+  // 1 mint
+  // 2 set
+  // 3 validate
+  // 4 claim
+  ////////////////////////
+
   // const contract = new web3.eth.Contract(
   //   cRecyABI,
   //   process.env.CELO_CONTRACT_ADDRESS,
